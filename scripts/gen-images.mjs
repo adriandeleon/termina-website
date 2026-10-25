@@ -43,7 +43,7 @@ for (const [name, size] of [["favicon.png", 64], ["apple-touch-icon.png", 180], 
 const C = { bg: "#1b1e2a", panel: "#232736", border: "#3a3f54", text: "#e8eaf3", accent: "#43dec5", faint: "#6c7288" };
 
 const cards = [
-  { slug: "default", kicker: "Terminal emulator", title: "A terminal that leaves the shell its keys", out: "og-image.png" },
+  { slug: "default", kicker: "Terminal emulator", title: "One terminal for every desktop", out: "og-image.png" },
   { slug: "features", kicker: "Features", title: "Tabs, profiles, links and a palette" },
   { slug: "docs", kicker: "Documentation", title: "Termina documentation" },
   { slug: "keybindings", kicker: "Reference", title: "Every command and its key" },

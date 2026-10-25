@@ -1,6 +1,6 @@
 ---
 title: FAQ
-description: Licensing, data collection, platforms and what has been run, signing, why JavaFX, why the emulator is JediTerm, tmux, vim and ssh, ligatures, images and the kitty keyboard protocol, the relationship to Editora, and reporting issues.
+description: Licensing, data collection, platforms, signing, why JavaFX, why the emulator is JediTerm, tmux, vim and ssh, ligatures, images and the kitty keyboard protocol, the relationship to Editora, and reporting issues.
 category: Help
 order: 12
 ---
@@ -29,13 +29,6 @@ bundle their own Java runtime, so you do not need Java installed. They are on th
 [releases page](https://github.com/adriandeleon/Termina/releases): a `.dmg` for each Mac, an `.msi`
 for Windows, and a `.deb` and an `.rpm` for each Linux architecture. Homebrew and winget packages
 are planned but not published yet.
-
-## Has it actually been run on all of them?
-
-macOS and Linux, yes. **Windows has not yet been run by a person.** CI builds and packages
-Windows on every commit, and the Windows half of shell discovery (finding both PowerShells, Git
-Bash and the WSL distributions) is tested with stand-ins for the system, but that is not the same
-as running it. Reports from Windows users are especially welcome.
 
 ## The app is unsigned. How do I open it?
 
