@@ -1,0 +1,10 @@
+---
+import { getEntry } from "astro:content";
+import DocsLayout from "../../layouts/DocsLayout.astro";
+
+// The docs landing: the introduction, at /docs.
+const entry = await getEntry("docs", "introduction");
+if (!entry) throw new Error("src/content/docs/introduction.md is missing");
+---
+
+<DocsLayout entry={entry} />

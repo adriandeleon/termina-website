@@ -1,0 +1,149 @@
+---
+import { href } from "../lib/site";
+import Layout from "../layouts/Layout.astro";
+import { commandGroups } from "../lib/commands";
+import { keysOf } from "../lib/keys";
+import { version } from "../lib/termina";
+
+// Every command in the menus, grouped as the menus are, with its keys on each platform. Generated
+// from the app's own menu table at the release tag (scripts/GenCommands.java), so it cannot drift
+// from the menus.
+const groups = commandGroups.map((g) => ({
+  title: g.title,
+  commands: g.commands.map((c) => ({ title: c.title, id: c.id, keys: keysOf(c) })),
+}));
+const total = groups.reduce((n, g) => n + g.commands.length, 0);
+const bound = groups.reduce((n, g) => n + g.commands.filter((c) => c.keys).length, 0);
+---
+
+<Layout
+  title="Keybindings — Termina"
+  description="Every Termina command with its keys on Linux, Windows and macOS: tabs and windows, copy and paste, zoom and full screen, the command palette and help."
+  ogImage="og/keybindings.png"
+>
+  <main class="page" data-pagefind-body data-pagefind-meta="kind:Reference">
+    <h1>Keybindings</h1>
+    <p class="lead">
+      All {total} commands in Termina {version}'s menus, {bound} of them with a key.
+      Every one is also in the <strong>command palette</strong>
+      (<kbd data-mac="⌥X">Alt+X</kbd>, or another chord you choose under
+      <strong>Settings → Terminal → Keyboard</strong>), and
+      <strong>Help → Keyboard Shortcuts</strong> lists them inside the app.
+    </p>
+
+    <div class="legend">
+      <span>This page shows the Linux and Windows keys, and the Mac keys on a Mac</span>
+      <span>Off macOS a chord is <kbd>Ctrl+Shift</kbd>, because <kbd>Ctrl</kbd> plus a letter is the shell's</span>
+    </div>
+
+    <div class="columns">
+      {
+        groups.map((g) => (
+          <section class="group">
+            <h2>{g.title}</h2>
+            <table>
+              <tbody>
+                {g.commands.map((c) => (
+                  <tr id={c.id}>
+                    <td class="title">{c.title}</td>
+                    <td class="keys">
+                      {c.keys ? <kbd data-mac={c.keys.mac}>{c.keys.pc}</kbd> : <span class="none">palette</span>}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </section>
+        ))
+      }
+    </div>
+
+    <p class="note">
+      The terminal handles a few keys itself, ahead of the shell:
+      <kbd>Shift+PageUp</kbd>, <kbd>Shift+PageDown</kbd>, <kbd>Shift+Home</kbd> and
+      <kbd>Shift+End</kbd> move through the scrollback, <kbd>Shift+Insert</kbd>
+      pastes, <kbd>Ctrl+Insert</kbd> copies and a middle click pastes. Hold
+      <kbd data-mac="⌘">Ctrl</kbd> and click to open a link, and hold
+      <kbd>Shift</kbd> to select text inside a program that has taken the mouse.
+      See <a href={href("/docs/keyboard")}>the keyboard guide</a> for the rules
+      behind the chords and the keys inside the palette.
+    </p>
+  </main>
+</Layout>
+
+<style>
+  .page {
+    max-width: var(--maxw);
+    margin: 0 auto;
+    padding: 3rem 1.25rem 2rem;
+  }
+  h1 {
+    font-size: 2.4rem;
+    margin: 0 0 0.5rem;
+    letter-spacing: -0.02em;
+  }
+  .lead {
+    color: var(--muted);
+    font-size: 1.05rem;
+    margin: 0 0 1.5rem;
+    max-width: 48rem;
+  }
+  .lead strong {
+    color: var(--text);
+  }
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1.5rem;
+    color: var(--faint);
+    font-size: 0.85rem;
+    margin: 0 0 2rem;
+  }
+  .columns {
+    columns: 2 26rem;
+    column-gap: 2.5rem;
+  }
+  .group {
+    break-inside: avoid;
+    margin: 0 0 2rem;
+  }
+  .group h2 {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--faint);
+    margin: 0 0 0.4rem;
+    padding-bottom: 0.4rem;
+    border-bottom: 1px solid var(--border);
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.93rem;
+  }
+  td {
+    padding: 0.42rem 0;
+    border-bottom: 1px solid var(--border-soft);
+    vertical-align: top;
+  }
+  tr:target td {
+    background: var(--accent-soft);
+  }
+  .title {
+    color: var(--text);
+    padding-right: 1rem;
+  }
+  .keys {
+    text-align: right;
+    white-space: nowrap;
+  }
+  .none {
+    color: var(--faint);
+    font-size: 0.8rem;
+  }
+  .note {
+    color: var(--muted);
+    font-size: 0.9rem;
+    max-width: 48rem;
+  }
+</style>

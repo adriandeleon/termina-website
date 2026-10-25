@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://adriandeleon.github.io/termina-website/sitemap-index.xml

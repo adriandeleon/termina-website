@@ -1,0 +1,282 @@
+---
+// A fixed "on this page" rail for the home page, parked in the empty margin to
+// the right of the 980px content column. Clicking jumps to a section; the
+// current one is marked as you scroll.
+//
+// Only appears when there is genuinely room for it (see the media query below),
+// so it can never crowd the content on a laptop or tablet. Entries whose target
+// section isn't on the page are dropped at runtime, which keeps the rail honest
+// when a conditional section (Latest, What's new) renders empty. Editora's,
+// with Termina's sections.
+//
+// Note it is deliberately rendered as a direct child of the layout slot, i.e.
+// at body level: `position: fixed` is resolved against the nearest ancestor
+// with a filter/transform/backdrop-filter, and the site header has
+// `backdrop-filter: blur(8px)` — nesting a fixed element under it clamps it to
+// the header strip.
+// Listed in the order the sections actually appear on the page: a table of
+// contents that disagrees with the document reads as broken, and the
+// current-section highlight is derived from the same sequence.
+const items = [
+  { id: "top", label: "Top" },
+  { id: "see-it", label: "The window" },
+  { id: "why", label: "Why Termina" },
+  { id: "latest", label: "Blog & news" },
+  { id: "whats-new", label: "What's new" },
+  { id: "features", label: "Features" },
+  { id: "keys", label: "Keys" },
+  { id: "download", label: "Download" },
+  { id: "quickstart", label: "From source" },
+];
+---
+
+<nav class="page-toc" aria-label="On this page">
+  <span class="toc-title">On this page</span>
+  <ul>
+    {
+      items.map((i) => (
+        <li>
+          <a href={`#${i.id}`} data-toc={i.id} title={i.label}>
+            <span class="toc-dot" aria-hidden="true" />
+            <span class="toc-label">{i.label}</span>
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+</nav>
+
+<script is:inline>
+  (function () {
+    // The rail renders at the top of the page, so this script runs before the
+    // sections below it have been parsed. Waiting for DOMContentLoaded is what
+    // makes the "drop entries with no target" pruning below correct — running
+    // it immediately found nothing but `top` and deleted the whole index.
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", init);
+    } else {
+      init();
+    }
+
+    function init() {
+    var nav = document.querySelector(".page-toc");
+    if (!nav) return;
+    var links = [].slice.call(nav.querySelectorAll("a[data-toc]"));
+
+    // Drop entries whose section isn't on the page (conditional sections), and
+    // keep only the ones we can actually observe.
+    var tracked = [];
+    links.forEach(function (a) {
+      var id = a.getAttribute("data-toc");
+      var el = id === "top" ? document.body : document.getElementById(id);
+      if (!el) {
+        a.parentElement.remove();
+        return;
+      }
+      if (id !== "top") tracked.push({ a: a, el: el });
+    });
+    if (!tracked.length) return;
+
+    // Scan in document order, never the order the entries happen to be listed
+    // in: "last section whose top is above the reading line" is only the
+    // current one if the sequence matches the page. When the two disagreed,
+    // jumping to a section highlighted whichever later-listed entry sat higher
+    // up the page.
+    tracked.sort(function (x, y) {
+      var pos = x.el.compareDocumentPosition(y.el);
+      if (pos & Node.DOCUMENT_POSITION_FOLLOWING) return -1;
+      if (pos & Node.DOCUMENT_POSITION_PRECEDING) return 1;
+      return 0;
+    });
+
+    var topLink = nav.querySelector('a[data-toc="top"]');
+
+    function setActive(a) {
+      links.forEach(function (l) {
+        l.classList.toggle("is-active", l === a);
+      });
+    }
+
+    // Mark the section whose start is nearest above the reading line.
+    function update() {
+      if (window.scrollY < 120 && topLink) {
+        setActive(topLink);
+        return;
+      }
+      var line = 140; // just under the sticky header
+      var current = tracked[0];
+      for (var i = 0; i < tracked.length; i++) {
+        if (tracked[i].el.getBoundingClientRect().top <= line) current = tracked[i];
+      }
+      // At the very bottom the last section may never cross the line.
+      if (window.innerHeight + window.scrollY >= document.body.scrollHeight - 4) {
+        current = tracked[tracked.length - 1];
+      }
+      setActive(current.a);
+    }
+
+    var ticking = false;
+    function onScroll() {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(function () {
+        update();
+        ticking = false;
+      });
+    }
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll, { passive: true });
+    update();
+
+    if (topLink) {
+      topLink.addEventListener("click", function (e) {
+        e.preventDefault();
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      });
+    }
+    }
+  })();
+</script>
+
+<style>
+  .page-toc {
+    display: none; /* enabled only when the margin is wide enough */
+    position: fixed;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 5;
+    width: 14rem;
+    max-height: 80vh;
+    overflow-y: auto;
+    font-size: 0.95rem;
+    line-height: 1.45;
+  }
+
+  .toc-title {
+    display: block;
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: var(--faint);
+    margin: 0 0 0.75rem 0.9rem;
+  }
+
+  .page-toc ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    border-left: 1px solid var(--border);
+  }
+
+  .page-toc a {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.42rem 0.5rem 0.42rem 0.9rem;
+    margin-left: -1px;
+    border-left: 2px solid transparent;
+    color: var(--muted);
+    transition:
+      color 0.15s ease,
+      border-color 0.15s ease;
+  }
+  .page-toc a:hover {
+    color: var(--text);
+    text-decoration: none;
+  }
+  .page-toc a.is-active {
+    color: var(--accent);
+    border-left-color: var(--accent);
+    font-weight: 600;
+  }
+
+  .toc-dot {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--border);
+    flex: none;
+    transition: background 0.15s ease;
+  }
+  .page-toc a:hover .toc-dot {
+    background: var(--muted);
+  }
+  .page-toc a.is-active .toc-dot {
+    background: var(--accent);
+  }
+
+  /* The rail lives in the margin beside the 980px (--maxw) content column, so
+     what fits is (viewport - 980) / 2 per side. Rather than one cutoff that
+     makes the index vanish on anything but a very wide display, it degrades:
+     labelled rail where there is room, a compact dot rail (labels on hover,
+     via each link's title) where there isn't, hidden only when even that
+     would touch the content.
+
+     Tier 2: 34px rail + 20px gutter needs a 54px margin => from 1090px.
+     Tier 1: 224px rail + 32px gutter needs a 256px margin => from 1495px. */
+  @media (min-width: 1090px) {
+    .page-toc {
+      display: block;
+      width: 2.15rem;
+      left: calc(50% + (var(--maxw) / 2) + 1.25rem);
+    }
+    .toc-title,
+    .toc-label {
+      display: none;
+    }
+    /* Dots carry the whole index at this size, so make them a real target. */
+    .page-toc a {
+      justify-content: center;
+      padding: 0.42rem 0.3rem;
+    }
+    .toc-dot {
+      width: 8px;
+      height: 8px;
+    }
+  }
+
+  /* Tier 2: slimmer labelled rail. 176px + 20px gutter needs a 196px margin
+     => from 1372px, which covers the common 1440-wide laptop. Labels beat dots
+     whenever they fit at all. */
+  @media (min-width: 1380px) {
+    .page-toc {
+      width: 11rem;
+      left: calc(50% + (var(--maxw) / 2) + 1.25rem);
+      font-size: 0.85rem;
+    }
+    .toc-title,
+    .toc-label {
+      display: block;
+    }
+    .page-toc a {
+      justify-content: flex-start;
+      padding: 0.34rem 0.4rem 0.34rem 0.75rem;
+      gap: 0.45rem;
+    }
+    .toc-dot {
+      width: 5px;
+      height: 5px;
+    }
+  }
+
+  /* Tier 3: full-size rail. 224px + 32px gutter needs a 256px margin. */
+  @media (min-width: 1495px) {
+    .page-toc {
+      width: 14rem;
+      left: calc(50% + (var(--maxw) / 2) + 2rem);
+      font-size: 0.95rem;
+    }
+    .page-toc a {
+      padding: 0.42rem 0.5rem 0.42rem 0.9rem;
+      gap: 0.6rem;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .page-toc a,
+    .toc-dot {
+      transition: none;
+    }
+  }
+</style>

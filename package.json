@@ -1,0 +1,21 @@
+{
+  "name": "termina-website",
+  "type": "module",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "dev": "astro dev",
+    "build": "node scripts/gen-images.mjs && astro build",
+    "preview": "astro preview",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "@astrojs/rss": "^4.0.18",
+    "@astrojs/sitemap": "^3.7.3",
+    "astro": "^5.6.1"
+  },
+  "devDependencies": {
+    "astro-pagefind": "^2.0.1",
+    "pagefind": "^1.5.2"
+  }
+}

@@ -1,0 +1,857 @@
+---
+import { version, repo } from "../lib/termina";
+import { site, href } from "../lib/site";
+import SiteSearch from "../components/SiteSearch.astro";
+
+interface Props {
+  title?: string;
+  description?: string;
+  /** Social-card image, relative to the site root (e.g. "og/compare.png").
+      Falls back to the shared card when a page has none. */
+  ogImage?: string;
+  /** Overrides the self-referencing canonical. Archived docs point at the
+      current version so search engines consolidate there rather than ranking
+      an old release's page against its replacement. */
+  canonicalPath?: string;
+}
+
+const {
+  title = "Termina: a terminal emulator that keeps out of the shell's way",
+  description = "Termina is a free, open-source terminal emulator for macOS, Windows and Linux: a real shell on a real pseudo-terminal, xterm emulation by JediTerm, tabs, shell profiles, clickable paths, a command palette and four themes.",
+  ogImage,
+  canonicalPath,
+} = Astro.props;
+
+const base = import.meta.env.BASE_URL;
+const url = (p: string) => `${base}/${p}`.replace(/\/{2,}/g, "/");
+
+// Absolute URLs for SEO/social tags (Astro.site is set in astro.config).
+// Normalize the trailing slash: the build emits directory URLs, so a canonical
+// written by hand as "/docs/search" must not disagree with the page's own
+// "/docs/search/" — search engines treat those as two URLs.
+// Every page this layout renders is emitted as a directory, so the rule is
+// unconditional.
+const withSlash = (p: string) => (p.endsWith("/") ? p : `${p}/`);
+const canonical = new URL(withSlash(canonicalPath ?? Astro.url.pathname), Astro.site).href;
+const ogImageUrl = new URL(href(ogImage ?? "og-image.png"), Astro.site).href;
+
+const nav = [
+  { href: url("#features"), label: "Features" },
+  { href: url("docs"), label: "Docs" },
+  { href: url("keybindings"), label: "Keybindings" },
+  { href: url("news"), label: "News" },
+  { href: url("blog"), label: "Blog" },
+  { href: repo, label: "GitHub", external: true },
+];
+
+const footerCols = [
+  {
+    title: "Documentation",
+    links: [
+      { href: url("docs/getting-started"), label: "Getting started" },
+      { href: url("docs/tabs-and-windows"), label: "Tabs and windows" },
+      { href: url("docs/shell-profiles"), label: "Shell profiles" },
+      { href: url("docs/keyboard"), label: "Keyboard" },
+      { href: url("docs/faq"), label: "FAQ" },
+      { href: url("keybindings"), label: "Keybindings" },
+    ],
+  },
+  {
+    title: "Project",
+    links: [
+      { href: url("news"), label: "News" },
+      { href: url("blog"), label: "Blog" },
+      { href: `${repo}/blob/master/CHANGELOG.md`, label: "Changelog" },
+      { href: "https://editora-project.dev", label: "Editora" },
+    ],
+  },
+  {
+    title: "Open source",
+    links: [
+      { href: repo, label: "GitHub" },
+      { href: `${repo}/releases`, label: "Releases" },
+      { href: `${repo}/blob/master/LICENSE`, label: "MIT License" },
+      { href: `${repo}/issues`, label: "Report an issue" },
+    ],
+  },
+];
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  name: "Termina",
+  applicationCategory: "DeveloperApplication",
+  operatingSystem: "macOS, Windows, Linux",
+  softwareVersion: version,
+  description,
+  url: new URL(href("/"), site).href,
+  license: `${repo}/blob/master/LICENSE`,
+  offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
+};
+
+// Highlight the active top-level page.
+const path = Astro.url.pathname.replace(/\/$/, "");
+const isActive = (href: string) => {
+  const h = href.replace(/\/$/, "");
+  if (h === url("").replace(/\/$/, "")) return path === h;
+  return path.startsWith(h) && h.startsWith(base);
+};
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImageUrl} />
+    <meta property="og:site_name" content="Termina" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImageUrl} />
+    <link rel="icon" type="image/png" href={url("favicon.png")} />
+    <link rel="apple-touch-icon" href={url("apple-touch-icon.png")} />
+    <link
+      rel="alternate"
+      type="application/rss+xml"
+      title="Termina Blog"
+      href={url("blog/rss.xml")}
+    />
+    <link
+      rel="alternate"
+      type="application/rss+xml"
+      title="Termina News"
+      href={url("news/rss.xml")}
+    />
+    <script
+      type="application/ld+json"
+      set:html={JSON.stringify(jsonLd)}
+    />
+    <script is:inline>
+      // Apply the chosen theme before paint to avoid a flash of the default.
+      // Precedence: saved choice → OS light/dark → Editora Dark, the app's own default.
+      (function () {
+        try {
+          var t = localStorage.getItem("termina-theme");
+          if (!t) {
+            var light =
+              window.matchMedia &&
+              window.matchMedia("(prefers-color-scheme: light)").matches;
+            t = light ? "editora-light" : "editora-dark";
+          }
+          if (t && t !== "editora-dark")
+            document.documentElement.dataset.theme = t;
+        } catch (e) {}
+      })();
+    </script>
+  </head>
+  <body>
+    <a class="skip-link" href="#content">Skip to content</a>
+    <header class="site-nav">
+      <div class="nav-inner">
+        <a class="brand" href={url("")}>
+          <img src={url("termina-icon.svg")} alt="" width="26" height="26" />
+          <span>Termina</span>
+          <span class="version">v{version}</span>
+        </a>
+        <nav class="nav-links">
+          {
+            nav.map((item) => (
+              <a
+                href={item.href}
+                class={isActive(item.href) ? "active" : ""}
+                target={item.external ? "_blank" : undefined}
+                rel={item.external ? "noopener noreferrer" : undefined}
+              >
+                {item.label}
+                {item.external && (
+                  <svg
+                    class="ext-icon"
+                    viewBox="0 0 24 24"
+                    width="11"
+                    height="11"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2.2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    aria-hidden="true"
+                  >
+                    <path d="M14 4h6v6" />
+                    <path d="M20 4 11 13" />
+                    <path d="M19 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1h5" />
+                  </svg>
+                )}
+              </a>
+            ))
+          }
+          <SiteSearch />
+          <label class="theme-picker" title="Theme">
+            <span class="sr-only">Theme</span>
+            <select id="theme-select" aria-label="Theme">
+              <option value="editora-dark">Editora Dark</option>
+              <option value="editora-light">Editora Light</option>
+              <option value="clear-dark">Clear Dark</option>
+              <option value="clear-light">Clear Light</option>
+            </select>
+          </label>
+        </nav>
+      </div>
+    </header>
+
+    <script is:inline>
+      // Sync the picker with the active theme and persist changes.
+      (function () {
+        var sel = document.getElementById("theme-select");
+        if (!sel) return;
+        var current = document.documentElement.dataset.theme || "editora-dark";
+        sel.value = current;
+        sel.addEventListener("change", function () {
+          var t = sel.value;
+          if (t === "editora-dark") delete document.documentElement.dataset.theme;
+          else document.documentElement.dataset.theme = t;
+          try {
+            localStorage.setItem("termina-theme", t);
+          } catch (e) {}
+        });
+      })();
+
+      // Chords are rendered in their Linux and Windows form; on a Mac each one shows its Mac form
+      // (data-mac, from lib/keys.ts) instead, as the app's own menus do.
+      document.addEventListener("DOMContentLoaded", function () {
+        if (!/Mac|iPhone|iPad/i.test(navigator.platform || navigator.userAgent)) return;
+        document.querySelectorAll("[data-mac]").forEach(function (el) {
+          var mac = el.getAttribute("data-mac");
+          if (mac) {
+            el.textContent = mac;
+            return;
+          }
+          // No chord on macOS (Hide Menu Bar: the menus are in the screen menu bar there).
+          var none = document.createElement("span");
+          none.className = "no-mac";
+          none.textContent = "not on macOS";
+          el.replaceWith(none);
+        });
+      });
+    </script>
+
+    <div id="content" tabindex="-1">
+      <slot />
+    </div>
+
+    <footer class="footer">
+      <div class="footer-cols">
+        <div class="footer-brand">
+          <a class="brand" href={url("")}>
+            <img src={url("termina-icon.svg")} alt="" width="24" height="24" />
+            <span>Termina</span>
+          </a>
+          <p class="footer-tag">
+            A cross-platform terminal emulator that leaves the shell its keys.
+          </p>
+        </div>
+        {
+          footerCols.map((col) => (
+            <nav class="footer-col">
+              <h3>{col.title}</h3>
+              {col.links.map((l) => (
+                <a href={l.href}>{l.label}</a>
+              ))}
+            </nav>
+          ))
+        }
+      </div>
+      <p class="footer-base">
+        Termina v{version}. Free &amp; open source under the MIT License. Created
+        by <a href="https://www.adeleon.dev">Adrián De León</a>.
+      </p>
+    </footer>
+
+    <!-- Cloudflare Web Analytics goes here once the domain has its own token
+         (Editora's site has the snippet; the token is per site). -->
+  </body>
+</html>
+
+<style is:global>
+  :root {
+    /* Palette mirrors Termina's default theme, Editora Dark ("Caret & Ink",
+       src/main/resources/com/termina/styles/editora-dark.css in the app), the
+       pair Editora, Termina and Torrenta share. The names stay the ones
+       Editora's site uses, so its components port without renaming. */
+    --bg: #1b1e2a; /* -color-bg-default */
+    --bg-soft: #232736; /* -color-bg-subtle */
+    --bg-inset: #12141d; /* -color-bg-inset */
+    --border: #3a3f54; /* -color-border-default */
+    --border-soft: #2a2e3f; /* -color-border-muted */
+    --text: #e8eaf3; /* -color-fg-default */
+    --muted: #9ba1b5; /* -color-fg-muted */
+    --faint: #6c7288; /* -color-fg-subtle */
+    --accent: #43dec5; /* -color-accent-fg: Caret teal */
+    --accent-soft: rgba(67, 222, 197, 0.14);
+    --on-accent: #062720; /* -color-fg-emphasis */
+    --warn: #e3a93c; /* -color-warning-fg */
+    --done: #5bc98a; /* -color-success-fg */
+    --error: #ee7a6e; /* -color-danger-fg */
+    --up: #9aa2d4; /* the periwinkle of the icon's prompt */
+
+    /* The terminal surface and its sixteen ANSI colours, exactly as
+       com.termina.ui.Theme draws them, so the demos on these pages recolour
+       the way the app does when the theme changes. */
+    --term-bg: #171a24;
+    --term-fg: #e8eaf3;
+    --ansi-0: #12141d;
+    --ansi-1: #ff7b72;
+    --ansi-2: #7ee787;
+    --ansi-3: #ffa657;
+    --ansi-4: #79c0ff;
+    --ansi-5: #d2a8ff;
+    --ansi-6: #43dec5;
+    --ansi-7: #c6cad8;
+    --ansi-8: #6c7288;
+    --ansi-9: #ffa198;
+    --ansi-10: #a2f0aa;
+    --ansi-11: #ffc793;
+    --ansi-12: #a5d6ff;
+    --ansi-13: #e2c5ff;
+    --ansi-14: #6fdcc9;
+    --ansi-15: #e8eaf3;
+
+    --radius: 12px;
+    --maxw: 980px;
+    --mono: "JetBrains Mono", "Cascadia Code", "Fira Code", ui-monospace,
+      SFMono-Regular, Menlo, Consolas, monospace;
+    /* Inter is the app's interface face; used when installed, never fetched. */
+    --sans: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+      Helvetica, Arial, sans-serif;
+  }
+
+  /* Theme overrides — each mirrors a Termina theme (com.termina.ui.Theme).
+     :root above is Editora Dark, so only the others need a block. */
+  [data-theme="editora-light"] {
+    color-scheme: light;
+    --bg: #ffffff;
+    --bg-soft: #f4f5f9;
+    --bg-inset: #eceef5;
+    --border: #c6cad8;
+    --border-soft: #dde0ea;
+    --text: #1b1e2a;
+    --muted: #575d6e;
+    --faint: #8b91a3;
+    --accent: #0e8577;
+    --accent-soft: rgba(14, 133, 119, 0.1);
+    --on-accent: #ffffff;
+    --warn: #96690a;
+    --done: #2e7d4f;
+    --error: #c03434;
+    --up: #4f58a0;
+
+    --term-bg: #ffffff;
+    --term-fg: #1b1e2a;
+    --ansi-0: #1b1e2a;
+    --ansi-1: #cf222e;
+    --ansi-2: #1a7f37;
+    --ansi-3: #953800;
+    --ansi-4: #0550ae;
+    --ansi-5: #8250df;
+    --ansi-6: #0e8577;
+    --ansi-7: #575d6e; /* white rendered dark, or programs that set it write invisible text */
+    --ansi-8: #8b91a3;
+    --ansi-9: #a40e26;
+    --ansi-10: #116329;
+    --ansi-11: #7d4e00;
+    --ansi-12: #0a3069;
+    --ansi-13: #6639ba;
+    --ansi-14: #0b6e62;
+    --ansi-15: #1b1e2a;
+  }
+
+  /* macOS Terminal's Clear Dark and Clear Light, decoded from Apple's own
+     .terminal profiles. In the app a ported palette borrows the Caret & Ink
+     chrome of its brightness, so the site does too: Editora's tokens, with the
+     page itself taking the terminal's surface and text. */
+  [data-theme="clear-dark"] {
+    --bg: #191d27;
+    --bg-soft: #222735;
+    --bg-inset: #12151d;
+    --text: #e0e0e0;
+
+    --term-bg: #191d27;
+    --term-fg: #e0e0e0;
+    --ansi-0: #35424c;
+    --ansi-1: #b45648;
+    --ansi-2: #6caa71;
+    --ansi-3: #c4ac62;
+    --ansi-4: #6d96b4;
+    --ansi-5: #bd7bcd;
+    --ansi-6: #7ccbcd;
+    --ansi-7: #dee5eb;
+    --ansi-8: #465c6d;
+    --ansi-9: #df6c5a;
+    --ansi-10: #79be7e;
+    --ansi-11: #e5c872;
+    --ansi-12: #67b5ed;
+    --ansi-13: #d389e5;
+    --ansi-14: #84dde0;
+    --ansi-15: #e5eff5;
+  }
+
+  [data-theme="clear-light"] {
+    color-scheme: light;
+    --bg: #ffffff;
+    --bg-soft: #f4f5f9;
+    --bg-inset: #eceef5;
+    --border: #c6cad8;
+    --border-soft: #dde0ea;
+    --text: #2d3840;
+    --muted: #575d6e;
+    --faint: #8b91a3;
+    --accent: #0e8577;
+    --accent-soft: rgba(14, 133, 119, 0.1);
+    --on-accent: #ffffff;
+    --warn: #96690a;
+    --done: #2e7d4f;
+    --error: #c03434;
+    --up: #4f58a0;
+
+    /* Apple's choice, kept: white, bright yellow, bright cyan and bright white
+       are low-contrast on this ground, in the app and here (ThemeTest pins it). */
+    --term-bg: #ffffff;
+    --term-fg: #2d3840;
+    --ansi-0: #2d3840;
+    --ansi-1: #b45648;
+    --ansi-2: #6caa71;
+    --ansi-3: #c4ac62;
+    --ansi-4: #5685a8;
+    --ansi-5: #ad64be;
+    --ansi-6: #69c6c9;
+    --ansi-7: #c1c8cc;
+    --ansi-8: #506573;
+    --ansi-9: #df6c5a;
+    --ansi-10: #79be7e;
+    --ansi-11: #e5c872;
+    --ansi-12: #49a2e1;
+    --ansi-13: #d389e5;
+    --ansi-14: #77e1e5;
+    --ansi-15: #d8e1e7;
+  }
+
+  /* ANSI colour classes for hand-written terminal output (the demos, and
+     shell blocks in the docs that want them). */
+  .a0 { color: var(--ansi-0); }
+  .a1 { color: var(--ansi-1); }
+  .a2 { color: var(--ansi-2); }
+  .a3 { color: var(--ansi-3); }
+  .a4 { color: var(--ansi-4); }
+  .a5 { color: var(--ansi-5); }
+  .a6 { color: var(--ansi-6); }
+  .a7 { color: var(--ansi-7); }
+  .a8 { color: var(--ansi-8); }
+  .a9 { color: var(--ansi-9); }
+  .a10 { color: var(--ansi-10); }
+  .a11 { color: var(--ansi-11); }
+  .a12 { color: var(--ansi-12); }
+  .a13 { color: var(--ansi-13); }
+  .a14 { color: var(--ansi-14); }
+  .a15 { color: var(--ansi-15); }
+  .ab { font-weight: 700; }
+  .au { text-decoration: underline; text-underline-offset: 2px; }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    /* A long unbroken token (a command id, a path, a URL) in running text used
+       to push the page 25px wider than a 375px phone, so the whole page
+       scrolled sideways. Break those rather than let one word set the width. */
+    overflow-wrap: break-word;
+    transition:
+      background 0.2s ease,
+      color 0.2s ease;
+  }
+
+  /* Inline code is the usual offender: paths, settings keys and shell
+     snippets have no spaces to wrap at. */
+  :not(pre) > code {
+    overflow-wrap: anywhere;
+  }
+
+  #content {
+    outline: none;
+  }
+
+  /* Keyboard users otherwise tab through the nav links, the search trigger
+     and the theme picker on every page before reaching the content. */
+  .skip-link {
+    position: absolute;
+    left: 0.75rem;
+    top: -3rem;
+    z-index: 200;
+    padding: 0.55rem 1rem;
+    border-radius: 0 0 8px 8px;
+    background: var(--accent);
+    color: var(--on-accent);
+    font-weight: 600;
+    transition: top 0.15s ease;
+  }
+  .skip-link:focus {
+    top: 0;
+    text-decoration: none;
+  }
+
+  a {
+    color: var(--accent);
+    text-decoration: none;
+  }
+
+  a:hover {
+    text-decoration: underline;
+  }
+
+  code,
+  kbd {
+    font-family: var(--mono);
+    font-size: 0.875em;
+  }
+
+  /* Inline code reads like a chip in the app. */
+  :not(pre) > code {
+    background: var(--bg-soft);
+    border: 1px solid var(--border-soft);
+    border-radius: 6px;
+    padding: 0.1em 0.4em;
+    color: var(--accent);
+  }
+
+  kbd {
+    background: var(--bg-soft);
+    border: 1px solid var(--border);
+    border-bottom-width: 2px;
+    border-radius: 6px;
+    padding: 0.1em 0.45em;
+    color: var(--text);
+    white-space: nowrap;
+  }
+
+  .no-mac {
+    color: var(--faint);
+    font-size: 0.8rem;
+  }
+
+  /* "Beta" pill — used on feature cards and beta news/blog entries. */
+  .beta-pill {
+    display: inline-block;
+    margin-left: 0.5rem;
+    font-size: 0.62rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    vertical-align: middle;
+    color: var(--warn);
+    background: color-mix(in srgb, var(--warn) 15%, transparent);
+    border: 1px solid color-mix(in srgb, var(--warn) 45%, transparent);
+    border-radius: 999px;
+    padding: 0.08rem 0.4rem;
+  }
+
+  /* Tokens for hand-highlighted shell blocks. */
+  .tok-comment {
+    color: var(--faint);
+    font-style: italic;
+  }
+  .tok-keyword {
+    color: var(--accent);
+  }
+  .tok-string {
+    color: var(--done);
+  }
+  .tok-flag {
+    color: var(--up);
+  }
+
+  /* --- shared chrome --- */
+  .site-nav {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    /* translucent version of the active theme's background */
+    background: color-mix(in srgb, var(--bg) 85%, transparent);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .nav-inner {
+    max-width: var(--maxw);
+    margin: 0 auto;
+    padding: 0.85rem 1.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 700;
+    color: var(--text);
+    font-size: 1.05rem;
+  }
+
+  .brand:hover {
+    text-decoration: none;
+  }
+
+  .brand .version {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    font-weight: 500;
+    color: var(--muted);
+    background: var(--bg-soft);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 0.05rem 0.5rem;
+  }
+
+  .nav-links {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    /* The links, the search trigger and the theme picker share the 980px bar,
+       so the row is deliberately tight: keep enough slack that a platform
+       with wider font metrics still fits on one line. */
+    gap: 0.5rem 0.85rem;
+    font-size: 0.9rem;
+    min-width: 0;
+  }
+
+  .nav-links a {
+    color: var(--muted);
+    /* Without this the trailing external-link icon wraps onto its own line
+       inside the anchor once the bar gets tight, which makes "GitHub" twice as
+       tall as its neighbours and throws the row out of alignment. Keep each
+       label and its icon together and let the row wrap between items. */
+    white-space: nowrap;
+  }
+
+  .nav-links a:hover,
+  .nav-links a.active {
+    color: var(--text);
+    text-decoration: none;
+  }
+
+  .nav-links a .ext-icon {
+    margin-left: 0.2rem;
+    vertical-align: -1px;
+    opacity: 0.6;
+  }
+
+  .nav-links a:hover .ext-icon {
+    opacity: 1;
+  }
+
+  .theme-picker select {
+    appearance: none;
+    -webkit-appearance: none;
+    font-family: var(--sans);
+    font-size: 0.85rem;
+    color: var(--text);
+    background: var(--bg-soft);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 0.3rem 1.9rem 0.3rem 0.8rem;
+    cursor: pointer;
+    /* chevron drawn with the theme's muted color */
+    background-image: linear-gradient(45deg, transparent 50%, var(--muted) 50%),
+      linear-gradient(135deg, var(--muted) 50%, transparent 50%);
+    background-position:
+      right 0.95rem center,
+      right 0.65rem center;
+    background-size:
+      5px 5px,
+      5px 5px;
+    background-repeat: no-repeat;
+  }
+
+  .theme-picker select:hover {
+    border-color: var(--accent);
+  }
+
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  .footer {
+    border-top: 1px solid var(--border);
+    margin-top: 2rem;
+  }
+
+  .footer-cols {
+    max-width: var(--maxw);
+    margin: 0 auto;
+    padding: 3rem 1.25rem 2rem;
+    display: grid;
+    grid-template-columns: 1.6fr 1fr 1fr 1fr;
+    gap: 2rem;
+  }
+
+  .footer-tag {
+    color: var(--muted);
+    font-size: 0.9rem;
+    margin: 0.75rem 0 0;
+    max-width: 18rem;
+  }
+
+  .footer-col {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .footer-col h3 {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--faint);
+    margin: 0 0 0.25rem;
+  }
+
+  .footer-col a {
+    color: var(--muted);
+    font-size: 0.9rem;
+  }
+
+  .footer-col a:hover {
+    color: var(--text);
+    text-decoration: none;
+  }
+
+  .footer-base {
+    max-width: var(--maxw);
+    margin: 0 auto;
+    padding: 1.25rem;
+    border-top: 1px solid var(--border-soft);
+    color: var(--faint);
+    font-size: 0.85rem;
+    text-align: center;
+  }
+
+  /* Shared docs/prose pages */
+  .doc {
+    max-width: 50rem;
+    margin: 0 auto;
+    padding: 3rem 1.25rem 2rem;
+  }
+  .doc h1 {
+    font-size: 2.4rem;
+    margin: 0 0 0.5rem;
+    letter-spacing: -0.02em;
+  }
+  .doc .lead {
+    color: var(--muted);
+    font-size: 1.05rem;
+    margin: 0 0 2.5rem;
+  }
+  .doc h2 {
+    font-size: 1.4rem;
+    margin: 2.5rem 0 0.75rem;
+    padding-bottom: 0.4rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .doc h3 {
+    font-size: 1.1rem;
+    margin: 1.75rem 0 0.5rem;
+  }
+  .doc p,
+  .doc li {
+    color: var(--muted);
+  }
+  .doc p {
+    margin: 0.75rem 0;
+  }
+  .doc ul {
+    padding-left: 1.25rem;
+  }
+  .doc li {
+    margin: 0.4rem 0;
+  }
+  .doc strong {
+    color: var(--text);
+  }
+  .doc pre {
+    background: var(--bg-soft);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1rem 1.25rem;
+    overflow-x: auto;
+    line-height: 1.6;
+  }
+  .doc pre code {
+    font-size: 0.85rem;
+    color: var(--text);
+  }
+  .doc table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1rem 0;
+    font-size: 0.92rem;
+  }
+  .doc th,
+  .doc td {
+    text-align: left;
+    padding: 0.5rem 0.75rem;
+    border-bottom: 1px solid var(--border-soft);
+    vertical-align: top;
+  }
+  .doc th {
+    color: var(--text);
+    border-bottom-color: var(--border);
+  }
+  .doc td {
+    color: var(--muted);
+  }
+
+  @media (max-width: 700px) {
+    .footer-cols {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  @media (max-width: 600px) {
+    .nav-links {
+      gap: 0.9rem;
+      font-size: 0.85rem;
+    }
+    .brand .version {
+      display: none;
+    }
+  }
+</style>

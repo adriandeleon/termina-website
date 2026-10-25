@@ -1,0 +1,331 @@
+---
+import { commandGroups } from "../lib/commands";
+import { keysOf } from "../lib/keys";
+// A self-contained, theme-aware animation of Termina's command palette over a shell: a query types
+// itself in, the list of commands filters, and the selection lands on the one that "runs". Pure CSS
+// keyframes, no JS and no asset, so it stays crisp, recolours with the site theme and freezes on a
+// tidy frame under prefers-reduced-motion. Editora's PaletteDemo with a terminal behind it, drawn
+// in the selected theme's own ANSI colours (--ansi-*, from com.termina.ui.Theme). The rows are real
+// commands, looked up by id in the generated command data, so a title or chord that changes in the
+// app changes here too.
+const byId = new Map<string, (typeof commandGroups)[number]["commands"][number]>();
+for (const g of commandGroups) for (const c of g.commands) byId.set(c.id, c);
+const rows = [
+  { id: "reopenClosedTab", match: true },
+  { id: "newTab", match: false },
+  { id: "renameTab", match: false },
+  { id: "previousTab", match: false },
+  { id: "keyboardShortcuts", match: false },
+].flatMap(({ id, match }) => {
+  const c = byId.get(id);
+  return c ? [{ title: c.title, keys: keysOf(c), match }] : [];
+});
+const palette = byId.get("commandPalette");
+const paletteKeys = palette ? keysOf(palette) : null;
+
+// The shell behind the palette, one run per [ANSI class, text]: what `ls -l` and `git log` look
+// like in a repository, in the colours the theme gives them.
+type Run = [string, string];
+const prompt = (cmd: string): Run[] => [
+  ["a2 ab", "you@laptop"],
+  ["", ":"],
+  ["a4 ab", "~/src/termina"],
+  ["a5", " (master)"],
+  ["", " $ "],
+  ["", cmd],
+];
+const entry = (perms: string, size: string, date: string, name: Run): Run[] => [
+  ["a6", perms],
+  ["a2", size.padStart(6)],
+  ["a4", `  ${date}  `],
+  name,
+];
+const lines: Run[][] = [
+  prompt("ls -l"),
+  entry("drwxr-xr-x", "-", "23 Oct 23:09", ["a12 ab", "branding"]),
+  entry("drwxr-xr-x", "-", "23 Oct 23:09", ["a12 ab", "docs"]),
+  entry("drwxr-xr-x", "-", "23 Oct 23:09", ["a12 ab", "src"]),
+  entry(".rw-r--r--", "31k", "23 Oct 23:09", ["", "CHANGELOG.md"]),
+  entry(".rwxr-xr-x", "11k", "23 Oct 23:09", ["a2 ab", "mvnw"]),
+  entry(".rw-r--r--", "24k", "23 Oct 23:09", ["a3 au", "pom.xml"]),
+  entry(".rw-r--r--", "42k", "23 Oct 23:09", ["a3 au", "README.md"]),
+  prompt("git log --oneline -3"),
+  [["a3", "89783dd "], ["a6", "("], ["a6 ab", "HEAD -> "], ["a2 ab", "master"], ["a6", ", "], ["a3 ab", "tag: v0.10.0"], ["a6", ")"], ["", " release: 0.10.0"]],
+  [["a3", "dee8a8a "], ["", "Merge pull request #23 from feature/settings-sidebar-icons"]],
+  [["a3", "a21a5ab "], ["", "an icon beside each page in the settings sidebar"]],
+  prompt(""),
+];
+---
+
+<div class="palette-demo" aria-hidden="true">
+  <div class="pd-tabs">
+    <span class="pd-tab is-active">termina</span>
+    <span class="pd-tab">~</span>
+    <span class="pd-plus">+</span>
+  </div>
+  <div class="pd-term">
+    {
+      lines.map((runs, i) => (
+        <div class="pd-line">
+          {runs.map(([cls, text]) => (cls ? <span class={cls}>{text}</span> : text))}
+          {i === lines.length - 1 && <span class="pd-cursor" />}
+        </div>
+      ))
+    }
+  </div>
+
+  <div class="pd-palette">
+    <div class="pd-input">
+      {paletteKeys && <span class="pd-prompt" data-mac={paletteKeys.mac}>{paletteKeys.pc}</span>}
+      <span class="pd-typed">reo</span><span class="pd-caret"></span>
+    </div>
+    <ul class="pd-list">
+      {
+        rows.map((r, i) => (
+          <li class={`pd-row${r.match ? " is-match" : ""}`} style={`--i:${i}`}>
+            <span class="pd-title">{r.title}</span>
+            {r.keys && <span class="pd-chord" data-mac={r.keys.mac}>{r.keys.pc}</span>}
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</div>
+
+<style>
+  .palette-demo {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--term-bg);
+    overflow: hidden;
+    box-shadow:
+      0 20px 50px -20px rgba(0, 0, 0, 0.6),
+      0 0 0 1px var(--border-soft);
+    font-family: var(--sans);
+    user-select: none;
+  }
+
+  /* the tab strip: tabs tile the width, the selected one underlined in the accent */
+  .pd-tabs {
+    display: flex;
+    align-items: stretch;
+    background: var(--bg-soft);
+    border-bottom: 1px solid var(--border-soft);
+    font-size: clamp(0.6rem, 1.3vw, 0.78rem);
+    color: var(--muted);
+  }
+  .pd-tab {
+    flex: 1;
+    text-align: center;
+    padding: 0.35rem 0;
+    border-bottom: 2px solid transparent;
+  }
+  .pd-tab.is-active {
+    color: var(--text);
+    border-bottom-color: var(--accent);
+  }
+  .pd-plus {
+    padding: 0.35rem 0.8rem;
+    color: var(--faint);
+  }
+
+  /* the shell the palette floats over */
+  .pd-term {
+    padding: 0.5rem 0.8rem;
+    color: var(--term-fg);
+    font-family: var(--mono);
+    font-size: clamp(0.5rem, 1.3vw, 0.8rem);
+    line-height: 1.45;
+    white-space: pre;
+    overflow: hidden;
+    opacity: 0.55;
+  }
+  .pd-cursor {
+    display: inline-block;
+    width: 0.6em;
+    height: 1.1em;
+    vertical-align: text-bottom;
+    background: var(--term-fg);
+  }
+
+  /* the floating palette */
+  .pd-palette {
+    position: absolute;
+    left: 50%;
+    top: 12%;
+    transform: translateX(-50%);
+    width: min(85%, 30rem);
+    background: color-mix(in srgb, var(--bg-soft) 92%, var(--bg));
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    box-shadow: 0 18px 44px rgba(0, 0, 0, 0.45);
+    overflow: hidden;
+    animation: pd-pop 0.5s ease both;
+  }
+
+  .pd-input {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.7rem 0.9rem;
+    border-bottom: 1px solid var(--border-soft);
+    font-size: clamp(0.72rem, 1.5vw, 0.9rem);
+  }
+  .pd-prompt {
+    color: var(--on-accent);
+    background: var(--accent);
+    border-radius: 5px;
+    padding: 0.05rem 0.4rem;
+    font-size: 0.78em;
+    font-weight: 600;
+  }
+  .pd-typed {
+    display: inline-block;
+    color: var(--text);
+    white-space: nowrap;
+    overflow: hidden;
+    vertical-align: bottom;
+    width: 3ch; /* "reo" is 3 chars */
+    /* typewriter: reveal the query by animating width in char-steps —
+       width-based reveal is bulletproof across browsers (unlike animating
+       the `content` property). */
+    animation: pd-type 8s steps(3, end) infinite;
+  }
+  .pd-caret {
+    width: 2px;
+    height: 1.05em;
+    background: var(--accent);
+    animation: pd-blink 1s steps(1) infinite;
+  }
+
+  .pd-list {
+    list-style: none;
+    margin: 0;
+    padding: 0.3rem;
+  }
+  .pd-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.42rem 0.6rem;
+    border-radius: 7px;
+    font-size: clamp(0.68rem, 1.4vw, 0.85rem);
+    color: var(--muted);
+    /* non-matching rows fade out once the query has narrowed the list */
+    animation: pd-filter 8s ease infinite;
+  }
+  .pd-row.is-match {
+    color: var(--text);
+    /* the matching row keeps the selection highlight through the cycle */
+    animation: pd-select 8s ease infinite;
+  }
+  .pd-title {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .pd-chord {
+    flex: none;
+    color: var(--faint);
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    padding: 0.02rem 0.4rem;
+    font-size: 0.82em;
+  }
+
+  @keyframes pd-pop {
+    from {
+      opacity: 0;
+      transform: translateX(-50%) translateY(-6px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+  }
+  @keyframes pd-blink {
+    50% {
+      opacity: 0;
+    }
+  }
+  /* Reveal "reo" one glyph at a time, hold, then backspace for the loop. */
+  @keyframes pd-type {
+    0% {
+      width: 0;
+    }
+    14%,
+    92% {
+      width: 3ch;
+    }
+    100% {
+      width: 0;
+    }
+  }
+
+  /* Once the query is in (~24%), the non-matching rows collapse away. */
+  @keyframes pd-filter {
+    0%,
+    22% {
+      opacity: 1;
+      max-height: 2.2rem;
+      transform: none;
+    }
+    28%,
+    90% {
+      opacity: 0;
+      max-height: 0;
+      padding-top: 0;
+      padding-bottom: 0;
+      transform: translateY(-4px);
+    }
+    100% {
+      opacity: 1;
+      max-height: 2.2rem;
+    }
+  }
+  /* The matching row slides to the top and lights up as the "run" moment. */
+  @keyframes pd-select {
+    0%,
+    22% {
+      background: transparent;
+    }
+    30%,
+    82% {
+      background: var(--accent-soft);
+      box-shadow: inset 2px 0 0 var(--accent);
+    }
+    86% {
+      background: var(--accent);
+      box-shadow: none;
+    }
+    88%,
+    100% {
+      background: transparent;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .pd-palette,
+    .pd-typed,
+    .pd-row,
+    .pd-caret {
+      animation: none !important;
+    }
+    .pd-typed {
+      width: 3ch;
+    }
+    /* freeze on the filtered, selected frame */
+    .pd-row:not(.is-match) {
+      display: none;
+    }
+    .pd-row.is-match {
+      background: var(--accent-soft);
+      box-shadow: inset 2px 0 0 var(--accent);
+      color: var(--text);
+    }
+  }
+</style>

@@ -1,0 +1,1333 @@
+---
+import { href } from "../lib/site";
+import { existsSync } from "node:fs";
+import { resolve } from "node:path";
+import Layout from "../layouts/Layout.astro";
+import { getCollection } from "astro:content";
+import { groupedFeatures } from "../lib/features";
+import { version, repo } from "../lib/termina";
+import { whatsNew, next } from "../lib/whatsnew";
+import { commandGroups } from "../lib/commands";
+import { keysOf } from "../lib/keys";
+import PaletteDemo from "../components/PaletteDemo.astro";
+import PageToc from "../components/PageToc.astro";
+
+const base = import.meta.env.BASE_URL;
+const url = (p: string) => `${base}/${p}`.replace(/\/{2,}/g, "/");
+const logo = url("termina-icon.svg");
+
+const allCommands = commandGroups.flatMap((g) => g.commands);
+const commandCount = allCommands.length;
+
+// Thumbnail for a feature card: public/screenshots/features/<slug>.<ext> when there is one,
+// WebP first (scripts/gen-images.mjs makes one beside every PNG).
+const shotExts = ["webp", "png", "jpg", "jpeg", "avif", "svg"];
+const featureShot = (id: string) => {
+  const p = shotExts
+    .map((e) => `screenshots/features/${id}.${e}`)
+    .find((fp) => existsSync(resolve("public", fp)));
+  return p ? url(p) : null;
+};
+
+// The window screenshot, from the app's capture harness (README); a PNG with a WebP beside it.
+const heroShot = existsSync(resolve("public", "screenshots/hero/terminal.png"));
+
+// Latest entries for the home-page teaser, News and Blog interleaved by date. Same-day items
+// tie-break on version (newest release first), then on the link.
+const newsItems = (await getCollection("news")).map((e) => ({
+  kind: "News",
+  href: href(`/news/${e.id}`),
+  title: e.data.title,
+  description: e.data.description,
+  date: e.data.date,
+  version: e.data.version,
+  beta: e.data.beta,
+}));
+const blogItems = (await getCollection("blog")).map((e) => ({
+  kind: "Blog",
+  href: href(`/blog/${e.id}`),
+  title: e.data.title,
+  description: e.data.description,
+  date: e.data.date,
+  version: undefined as string | undefined,
+  beta: e.data.beta,
+}));
+const latest = [...newsItems, ...blogItems]
+  .sort(
+    (a, b) =>
+      b.date.valueOf() - a.date.valueOf() ||
+      (b.version ?? "").localeCompare(a.version ?? "", undefined, { numeric: true }) ||
+      b.href.localeCompare(a.href),
+  )
+  .slice(0, 4);
+const fmtDate = (d: Date) =>
+  d.toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric", timeZone: "UTC" });
+
+const featureGroups = await groupedFeatures();
+
+// The keys a newcomer reaches for first, read from the generated command data.
+const keyIds = [
+  "commandPalette",
+  "newTab",
+  "closeTab",
+  "reopenClosedTab",
+  "copy",
+  "paste",
+  "nextTab",
+  "goToTab",
+  "zoomIn",
+  "fullScreen",
+  "settings",
+  "keyboardShortcuts",
+];
+const keyRows = keyIds.flatMap((id) => {
+  const c = allCommands.find((x) => x.id === id);
+  const k = c && keysOf(c);
+  return k ? [{ title: c.title, ...k }] : [];
+});
+
+const platforms = [
+  { name: "macOS", note: "DMG, Apple Silicon and Intel" },
+  { name: "Windows", note: "MSI installer (x64)" },
+  { name: "Linux", note: "DEB / RPM, x64 and ARM64" },
+];
+---
+
+<Layout>
+  <PageToc />
+
+  <section id="top" class="hero">
+    <div class="hero-inner">
+      <img class="hero-logo" src={logo} alt="Termina logo" width="96" height="96" />
+      <h2 class="hero-name">Termina</h2>
+      <h1 class="hero-title">A terminal that leaves the shell its keys</h1>
+      <p class="tagline">
+        A terminal emulator for macOS, Windows and Linux. A real shell on a real
+        pseudo-terminal, xterm emulation by JetBrains' JediTerm, every shell the
+        machine has one click away, and paths in the output that open the file.
+        <kbd>Ctrl</kbd> stays the shell's. No account, no telemetry.
+      </p>
+      <div class="cta">
+        <a class="btn btn-primary" href="#download">Download</a>
+        <a class="btn btn-ghost" href="#see-it">See the window</a>
+      </div>
+
+      <div class="badges">
+        <a id="badge-stars" class="badge" href={`${repo}/stargazers`} hidden>
+          <span class="badge-icon">★</span>
+          <span id="badge-stars-count">—</span>
+        </a>
+        <a class="badge" href={`${repo}/blob/master/LICENSE`}>MIT License</a>
+        <a id="badge-ci" class="badge" href={`${repo}/actions/workflows/ci.yml`} hidden>
+          <span id="badge-ci-dot" class="badge-dot"></span>
+          <span id="badge-ci-text">build</span>
+        </a>
+        <a class="badge" href={repo}>Open source on GitHub</a>
+      </div>
+    </div>
+
+    <div class="hero-media">
+      <PaletteDemo />
+      <p class="hero-media-cap">
+        The command palette over a shell, in the colours of the theme you pick
+        above. Every menu command is in it, with its key.
+      </p>
+    </div>
+  </section>
+
+  <main>
+    {
+      heroShot && (
+        <section id="see-it" class="section see-it">
+          <h2>A look at the window</h2>
+          <p class="section-lead">
+            The real thing: tabs that tile the width and are named after where
+            each shell is, a dot on the one where something happened, and
+            <code>eza</code>'s colours and Nerd Font icons drawn on the cell
+            grid. Nothing else is in the way.
+          </p>
+          <figure class="demo-poster">
+            <picture>
+              <source srcset={url("screenshots/hero/terminal.webp")} type="image/webp" />
+              <img
+                src={url("screenshots/hero/terminal.png")}
+                alt="Termina's window: a tab strip over a shell showing a coloured directory listing with file-type icons and a git log"
+                fetchpriority="high"
+              />
+            </picture>
+            <figcaption>Termina {version} with the Editora&nbsp;Dark theme, on Linux.</figcaption>
+          </figure>
+        </section>
+      )
+    }
+
+    <section id="why" class="section why">
+      <h2>Why Termina</h2>
+      <p class="section-lead">
+        One terminal that looks and behaves the same on all three desktops, and
+        that never takes a key the shell was using.
+      </p>
+      <div class="pillars">
+        <div class="pillar">
+          <svg class="pillar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <rect x="2" y="6" width="20" height="12" rx="2" />
+            <path d="M6 10h.01M10 10h.01M14 10h.01M18 10h.01M8 14h8" />
+          </svg>
+          <h3>The shell keeps its keys</h3>
+          <p>
+            <kbd>Ctrl+W</kbd> deletes a word and <kbd>Ctrl+T</kbd> transposes, so
+            Termina's own chords are <kbd>Ctrl+Shift</kbd> on Linux and Windows and
+            <kbd>⌘</kbd> on a Mac. Alt works as Meta, including Option on macOS,
+            and AltGr still composes.
+          </p>
+        </div>
+        <div class="pillar">
+          <svg class="pillar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="m4 17 6-5-6-5" />
+            <path d="M12 19h8" />
+          </svg>
+          <h3>Every shell it can find</h3>
+          <p>
+            Both PowerShells, Command Prompt, Git Bash and each WSL distribution on
+            Windows; the shells in <code>/etc/shells</code> and on the path
+            elsewhere. Found rather than configured and never written down, so
+            each is a profile a new tab can open as the day it is installed.
+          </p>
+        </div>
+        <div class="pillar">
+          <svg class="pillar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M12 2 4 5v6c0 5 3.4 9.4 8 11 4.6-1.6 8-6 8-11V5l-8-3Z" />
+            <path d="m9 12 2 2 4-4" />
+          </svg>
+          <h3>Yours, quietly</h3>
+          <p>
+            No account, no ads, no telemetry. The one request it makes is a daily
+            look at GitHub for a newer release, which one setting turns off.
+            Settings are a plain file you can read and edit, and every change
+            applies the moment you make it.
+          </p>
+        </div>
+      </div>
+
+      <h3 class="why-sub">Three layers, two of them not ours</h3>
+      <p class="why-sub-lead">
+        xterm compatibility is a long tail of cursor modes, character sets, scroll
+        regions and four mouse wire formats, so the emulator is JetBrains'
+        <a href="https://github.com/JetBrains/jediterm">JediTerm</a>, the one inside
+        IntelliJ. The pseudo-terminal is <a href="https://github.com/JetBrains/pty4j">pty4j</a>:
+        <code>forkpty</code> on macOS and Linux, ConPTY on Windows. What is Termina's
+        is everything you see and press: a JavaFX renderer that paints once a frame
+        however fast the output arrives, and a key encoder that leaves dead keys,
+        AltGr and input methods working. <a href={href("/docs")}>Read the docs</a>.
+      </p>
+
+      <p class="why-cta">
+        <a class="btn btn-primary" href="#download">Download Termina</a>
+        <span>Free and open source, for macOS, Windows and Linux.</span>
+      </p>
+    </section>
+
+    {
+      latest.length > 0 && (
+        <section id="latest" class="section">
+          <div class="latest-head">
+            <h2>From the blog &amp; news</h2>
+            <span class="latest-links">
+              <a href={href("/news")}>All news</a> · <a href={href("/blog")}>All posts</a>
+            </span>
+          </div>
+          <div class="latest-grid">
+            {latest.map((p) => (
+              <a class="latest-card" href={p.href}>
+                <span class="latest-tags">
+                  <span class={`latest-kind kind-${p.kind.toLowerCase()}`}>{p.kind}</span>
+                  {p.beta && <span class="beta-pill">Beta</span>}
+                </span>
+                <span class="latest-title">{p.title}</span>
+                {p.description && <span class="latest-desc">{p.description}</span>}
+                <span class="latest-date">{fmtDate(p.date)}</span>
+              </a>
+            ))}
+          </div>
+        </section>
+      )
+    }
+
+    {
+      whatsNew.length > 0 && (
+        <section id="whats-new" class="section">
+          <h2>What's new</h2>
+          <p class="section-lead">
+            The highlights of {version} and the releases just before it. See{" "}
+            <a href={`${repo}/blob/master/CHANGELOG.md`}>the changelog</a> for everything.
+          </p>
+          <ul class="news">
+            {whatsNew.map((n) => (
+              <li>
+                <span class="news-title" set:html={n.title} />
+                {n.detail && (
+                  <span class="news-detail">
+                    {": "}
+                    <span set:html={n.detail} />
+                  </span>
+                )}
+              </li>
+            ))}
+          </ul>
+          {next.length > 0 && (
+            <>
+              <h3 class="next-title">In development</h3>
+              <p class="next-lead">
+                Working in the repository and headed for the next release, but not in {version}:
+              </p>
+              <ul class="news next">
+                {next.map((n) => (
+                  <li>
+                    <span class="news-title" set:html={n.title} />
+                    {n.detail && (
+                      <span class="news-detail">
+                        {": "}
+                        <span set:html={n.detail} />
+                      </span>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            </>
+          )}
+        </section>
+      )
+    }
+
+    <section id="features" class="section">
+      <h2>Features</h2>
+      {
+        featureGroups.map((g) => (
+          <div class="feature-group">
+            <h3 class="feature-group-title">{g.title}</h3>
+            <div class="grid">
+              {g.items.map((f) => {
+                const shot = featureShot(f.id);
+                return (
+                  <a class="card" href={href(`/features/${f.id}`)}>
+                    {shot ? (
+                      <span class="card-shot">
+                        <img src={shot} alt="" loading="lazy" decoding="async" width="560" height="315" />
+                      </span>
+                    ) : (
+                      <span class="card-shot card-shot-empty" aria-hidden="true">
+                        <svg viewBox="0 0 512 512" fill="none">
+                          <path d="M150 170 L250 256 L150 342" stroke="currentColor" stroke-width="40" stroke-linecap="round" stroke-linejoin="round" />
+                          <rect x="280" y="318" width="110" height="40" rx="12" fill="currentColor" />
+                        </svg>
+                      </span>
+                    )}
+                    <h4>
+                      {f.data.title}
+                      {f.data.beta && <span class="beta-pill">Beta</span>}
+                    </h4>
+                    <p set:html={f.data.summary} />
+                  </a>
+                );
+              })}
+            </div>
+          </div>
+        ))
+      }
+    </section>
+
+    <section id="keys" class="section">
+      <h2>Keys that stay out of the way</h2>
+      <p class="section-lead">
+        Each chord is declared once, on the command, so the menus, the palette and
+        the shortcut reference can never disagree. A few to start with:
+      </p>
+      <ul class="keys">
+        {
+          keyRows.map((k) => (
+            <li>
+              <span>{k.title}</span>
+              <kbd data-mac={k.mac}>{k.pc}</kbd>
+            </li>
+          ))
+        }
+      </ul>
+      <p class="keys-more"><a href={href("/keybindings")}>All {commandCount} commands and their keys &rarr;</a></p>
+    </section>
+
+    <section id="download" class="section">
+      <h2>Download</h2>
+      <p class="section-lead">
+        Native installers for macOS, Windows and Linux are attached to each release.
+        Each bundles its own Java runtime, so there is nothing else to install.
+      </p>
+      <div class="platforms">
+        {
+          platforms.map((p) => (
+            <div class="platform">
+              <strong>{p.name}</strong>
+              <span>{p.note}</span>
+            </div>
+          ))
+        }
+      </div>
+      <div class="cta">
+        <span class="dl-split">
+          <a id="dl-primary" class="btn btn-primary dl-main" href={`${repo}/releases/latest`} data-repo={repo}>
+            Download
+          </a>
+          <button
+            id="dl-toggle"
+            class="btn btn-primary dl-caret"
+            type="button"
+            aria-haspopup="true"
+            aria-expanded="false"
+            aria-label="Show downloads for all platforms"
+            hidden
+          >
+            <span aria-hidden="true">▾</span>
+          </button>
+          <div id="dl-menu" class="dl-menu" role="menu" hidden></div>
+        </span>
+        <a class="btn btn-ghost" href={`${repo}/releases`}>All releases</a>
+      </div>
+      <p id="dl-sub" class="note">
+        On Linux, install with <code>sudo apt install ./Termina-*.deb</code> or
+        <code>sudo dnf install ./Termina-*.rpm</code>. The package adds Termina to
+        the application menu as a terminal emulator.
+      </p>
+      <p class="note">
+        Installers are currently unsigned. On macOS the first launch is blocked:
+        open <em>System Settings → Privacy &amp; Security</em> and click
+        <em>Open Anyway</em>. On Windows, if SmartScreen appears, choose
+        <em>More info → Run anyway</em>. Each release lists SHA-256 checksums.
+        Windows builds are made and packaged on every commit but have not yet been
+        run by a person, so reports from Windows are especially welcome.
+      </p>
+    </section>
+
+    <section id="quickstart" class="section">
+      <h2>Build &amp; run from source</h2>
+      <p class="section-lead">
+        Requires JDK&nbsp;25. A Maven wrapper is bundled, so no local Maven install
+        is needed.
+      </p>
+      <div class="code-window">
+        <div class="code-chrome">
+          <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+          <span class="code-title">terminal</span>
+        </div>
+        <pre><code><span class="tok-comment"># Clone</span>
+<span class="tok-keyword">git</span> clone {repo}.git
+<span class="tok-keyword">cd</span> Termina
+
+<span class="tok-comment"># Run the app</span>
+./mvnw javafx:run
+
+<span class="tok-comment"># Tests, the formatter check and the coverage floors</span>
+./mvnw verify
+
+<span class="tok-comment"># A self-contained app image in target/dist (clean is required)</span>
+./mvnw clean <span class="tok-flag">-Pdist</span> <span class="tok-flag">-DskipTests</span> package</code></pre>
+      </div>
+      <p class="note built-note">
+        Built in the open with the help of AI coding tools. Every change lands as a
+        reviewed, tested commit on GitHub.
+      </p>
+    </section>
+  </main>
+
+  <script is:inline define:vars={{ repo }}>
+    (function () {
+      var api = repo.replace("https://github.com/", "https://api.github.com/repos/");
+
+      // --- OS-detected download ---
+      (function () {
+        var btn = document.getElementById("dl-primary");
+        if (!btn) return;
+        var ua = navigator.userAgent;
+        var plat = navigator.platform || "";
+        var os = "Linux",
+          exts = [".deb", ".rpm"];
+        if (/Mac/i.test(ua)) {
+          os = "macOS";
+          exts = [".dmg"];
+        } else if (/Win/i.test(ua)) {
+          os = "Windows";
+          exts = [".msi"];
+        } else if (/Fedora|Red Hat|SUSE|CentOS/i.test(ua)) {
+          // A distribution that says so in its browser's user agent gets the RPM first.
+          exts = [".rpm", ".deb"];
+        }
+        btn.textContent = "Download for " + os;
+
+        // Detect CPU arch. Browsers report "MacIntel"/"Intel" even on Apple
+        // Silicon, so beyond the UA/platform string (which catches Linux/Windows
+        // ARM) use userAgentData.architecture (Chromium) and a WebGL "Apple GPU"
+        // renderer heuristic (works in Safari) to catch M-series Macs.
+        function webglIsApple() {
+          try {
+            var c = document.createElement("canvas");
+            var gl = c.getContext("webgl") || c.getContext("experimental-webgl");
+            if (!gl) return false;
+            var dbg = gl.getExtension("WEBGL_debug_renderer_info");
+            var r = dbg ? String(gl.getParameter(dbg.UNMASKED_RENDERER_WEBGL)) : "";
+            return /apple/i.test(r) && !/intel|amd|radeon|nvidia/i.test(r);
+          } catch (e) {
+            return false;
+          }
+        }
+        function detectArm(cb) {
+          if (/aarch64|arm64|armv8|\barm\b/i.test(ua + " " + plat)) return cb(true);
+          if (os === "Windows") return cb(false);
+          var uad = navigator.userAgentData;
+          if (uad && uad.getHighEntropyValues) {
+            uad
+              .getHighEntropyValues(["architecture"])
+              .then(function (v) {
+                cb(/arm|aarch/i.test(v.architecture || "") || webglIsApple());
+              })
+              .catch(function () {
+                cb(webglIsApple());
+              });
+            return;
+          }
+          cb(webglIsApple());
+        }
+
+        detectArm(function (isArm) {
+          // Never hand a visitor a package built for the other CPU. The one
+          // cross-arch fallback is ARM Windows to x64, which runs under
+          // emulation; there is no Windows ARM build, while macOS and Linux have
+          // both. With no match the button keeps its link to the releases page.
+          var archPrefs = isArm ? (os === "Windows" ? ["arm64", "x64"] : ["arm64"]) : ["x64"];
+          // Try to deep-link the matching asset from the latest release.
+          fetch(api + "/releases/latest")
+            .then(function (r) {
+              return r.ok ? r.json() : null;
+            })
+            .then(function (rel) {
+              if (!rel || !rel.assets) return;
+              var pick = null;
+              // Arch first, then the OS's package types in order of preference
+              // (asset names end with e.g. "-linux-x64.deb").
+              for (var a = 0; a < archPrefs.length && !pick; a++) {
+                for (var e = 0; e < exts.length && !pick; e++) {
+                  for (var i = 0; i < rel.assets.length; i++) {
+                    if (rel.assets[i].name.toLowerCase().endsWith("-" + archPrefs[a] + exts[e])) {
+                      pick = rel.assets[i];
+                      break;
+                    }
+                  }
+                }
+              }
+              if (pick) {
+                btn.href = pick.browser_download_url;
+                if (rel.tag_name) btn.textContent = "Download for " + os + " (" + rel.tag_name + ")";
+              }
+              buildMenu(rel);
+            })
+            .catch(function () {});
+        });
+
+        // --- Every build, one click away ---
+        // Asset names look like "Termina-0.10.0-macos-arm64.dmg"; anything that
+        // doesn't (checksums_sha256.txt) is skipped.
+        function assetInfo(name) {
+          var m = name.match(/-(macos|windows|linux)-(arm64|aarch64|x64|x86_64)\.(.+)$/i);
+          if (!m) return null;
+          var p = m[1].toLowerCase();
+          var arm = /arm|aarch/i.test(m[2]);
+          var label =
+            p === "macos"
+              ? arm
+                ? "macOS (Apple Silicon)"
+                : "macOS (Intel)"
+              : p === "windows"
+                ? arm
+                  ? "Windows (ARM64)"
+                  : "Windows (x64)"
+                : arm
+                  ? "Linux (ARM64)"
+                  : "Linux (x64)";
+          return {
+            plat: p,
+            arm: arm,
+            ext: m[3],
+            label: label,
+            meta: "." + m[3] + " · " + (arm ? "aarch64" : "x86_64"),
+          };
+        }
+
+        function rank(map, key, dflt) {
+          var v = map[String(key).toLowerCase()];
+          return v === undefined ? dflt : v;
+        }
+
+        function buildMenu(rel) {
+          var menu = document.getElementById("dl-menu");
+          var toggle = document.getElementById("dl-toggle");
+          if (!menu || !toggle || !rel || !rel.assets) return;
+
+          var items = [];
+          for (var i = 0; i < rel.assets.length; i++) {
+            var info = assetInfo(rel.assets[i].name);
+            if (!info) continue;
+            info.url = rel.assets[i].browser_download_url;
+            items.push(info);
+          }
+          if (!items.length) return;
+
+          // macOS, Windows, Linux; DEB before RPM.
+          var platRank = { macos: 0, windows: 1, linux: 2 };
+          var extRank = { dmg: 0, msi: 0, exe: 0, deb: 1, rpm: 2, appimage: 3, "tar.gz": 4, zip: 5 };
+          items.sort(function (a, b) {
+            return (
+              rank(platRank, a.plat, 9) - rank(platRank, b.plat, 9) ||
+              // Apple Silicon first on macOS, x86 first elsewhere.
+              (a.plat === "macos" ? (b.arm ? 1 : 0) - (a.arm ? 1 : 0) : (a.arm ? 1 : 0) - (b.arm ? 1 : 0)) ||
+              rank(extRank, a.ext, 9) - rank(extRank, b.ext, 9) ||
+              a.ext.localeCompare(b.ext)
+            );
+          });
+
+          menu.textContent = "";
+          items.forEach(function (it) {
+            var a = document.createElement("a");
+            a.className = "dl-item";
+            a.href = it.url;
+            a.setAttribute("role", "menuitem");
+            var main = document.createElement("span");
+            main.className = "dl-item-main";
+            var name = document.createElement("span");
+            name.className = "dl-item-name";
+            name.textContent = it.label;
+            var meta = document.createElement("span");
+            meta.className = "dl-item-meta";
+            meta.textContent = it.meta;
+            main.appendChild(name);
+            main.appendChild(meta);
+            var arrow = document.createElement("span");
+            arrow.className = "dl-item-arrow";
+            arrow.setAttribute("aria-hidden", "true");
+            arrow.textContent = "→";
+            a.appendChild(main);
+            a.appendChild(arrow);
+            a.addEventListener("click", close);
+            menu.appendChild(a);
+          });
+          toggle.hidden = false;
+
+          function close() {
+            menu.hidden = true;
+            toggle.setAttribute("aria-expanded", "false");
+          }
+          toggle.addEventListener("click", function (e) {
+            e.stopPropagation();
+            if (menu.hidden) {
+              menu.hidden = false;
+              toggle.setAttribute("aria-expanded", "true");
+            } else {
+              close();
+            }
+          });
+          document.addEventListener("click", function (e) {
+            if (!menu.hidden && !menu.contains(e.target) && !toggle.contains(e.target)) close();
+          });
+          document.addEventListener("keydown", function (e) {
+            if (e.key === "Escape" && !menu.hidden) {
+              close();
+              toggle.focus();
+            }
+          });
+        }
+      })();
+
+      // --- GitHub stars ---
+      fetch(api)
+        .then(function (r) {
+          return r.ok ? r.json() : null;
+        })
+        .then(function (d) {
+          if (!d || typeof d.stargazers_count !== "number") return;
+          // Only surface the star count once it reads as social proof rather
+          // than a liability; below the threshold the "Open source on GitHub"
+          // badge already invites a star.
+          if (d.stargazers_count < 25) return;
+          var el = document.getElementById("badge-stars");
+          document.getElementById("badge-stars-count").textContent =
+            d.stargazers_count.toLocaleString();
+          el.hidden = false;
+        })
+        .catch(function () {});
+
+      // --- CI status (latest run on default branch) ---
+      fetch(api + "/actions/workflows/ci.yml/runs?branch=master&per_page=1")
+        .then(function (r) {
+          return r.ok ? r.json() : null;
+        })
+        .then(function (d) {
+          if (!d || !d.workflow_runs || !d.workflow_runs.length) return;
+          var run = d.workflow_runs[0];
+          var ok = run.conclusion === "success";
+          var el = document.getElementById("badge-ci");
+          document.getElementById("badge-ci-text").textContent = ok
+            ? "build passing"
+            : "build " + (run.conclusion || run.status || "unknown");
+          document.getElementById("badge-ci-dot").style.background = ok
+            ? "#3fb950"
+            : "#d29922";
+          el.hidden = false;
+        })
+        .catch(function () {});
+    })();
+  </script>
+</Layout>
+
+<style>
+  .hero {
+    background:
+      radial-gradient(
+        1200px 600px at 50% -20%,
+        color-mix(in srgb, var(--accent) 16%, transparent),
+        transparent 60%
+      ),
+      var(--bg);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .hero-inner {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 4rem 1.25rem 2.5rem;
+    text-align: center;
+  }
+
+  .badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    justify-content: center;
+    margin-top: 1.25rem;
+  }
+
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.8rem;
+    color: var(--muted);
+    background: var(--bg-soft);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 0.25rem 0.7rem;
+  }
+
+  .badge:hover {
+    color: var(--text);
+    border-color: var(--accent);
+    text-decoration: none;
+  }
+
+  /* `.badge { display: inline-flex }` (author CSS) otherwise overrides the UA
+     `[hidden] { display: none }`, so a not-yet-loaded / gated badge would still
+     show. This restores the hidden attribute for the stars + CI badges. */
+  .badge[hidden] {
+    display: none;
+  }
+
+  .badge-icon {
+    color: var(--warn);
+  }
+
+  .badge-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--faint);
+  }
+
+  /* What's new */
+  .news {
+    list-style: none;
+    margin: 2rem 0 0;
+    padding: 0;
+    display: grid;
+    /* min() so the 380px track floor can't exceed the viewport: on a 375px
+       phone a bare minmax(380px, …) forced every row wider than the screen and
+       scrolled the whole page sideways. */
+    grid-template-columns: repeat(auto-fill, minmax(min(380px, 100%), 1fr));
+    gap: 0.75rem 2rem;
+  }
+
+  .news li {
+    padding: 0.6rem 0;
+    border-bottom: 1px solid var(--border-soft);
+    font-size: 0.95rem;
+  }
+
+  .news-title {
+    font-weight: 600;
+  }
+
+  .news-detail {
+    color: var(--muted);
+  }
+
+  .next-title {
+    font-size: 1.15rem;
+    margin: 3rem 0 0.3rem;
+  }
+
+  .next-lead {
+    color: var(--muted);
+    margin: 0;
+  }
+
+  .news.next {
+    margin-top: 1rem;
+  }
+
+  .news.next .news-title {
+    color: var(--muted);
+  }
+
+  /* Latest blog & news teaser */
+  .latest-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+  .latest-links {
+    font-size: 0.9rem;
+    color: var(--muted);
+  }
+  .latest-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 1rem;
+    margin-top: 2rem;
+  }
+  .latest-card {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    background: var(--bg-soft);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.1rem 1.25rem;
+    color: var(--text);
+  }
+  .latest-card:hover {
+    border-color: var(--accent);
+    text-decoration: none;
+  }
+  .latest-tags {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+  .latest-tags .beta-pill {
+    margin-left: 0;
+  }
+  .latest-kind {
+    align-self: flex-start;
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 0.1rem 0.5rem;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    color: var(--muted);
+  }
+  .latest-kind.kind-news {
+    color: var(--accent);
+    border-color: color-mix(in srgb, var(--accent) 40%, transparent);
+  }
+  .latest-kind.kind-blog {
+    color: var(--warn);
+    border-color: color-mix(in srgb, var(--warn) 40%, transparent);
+  }
+  .latest-title {
+    font-weight: 600;
+    font-size: 1rem;
+  }
+  .latest-desc {
+    color: var(--muted);
+    font-size: 0.9rem;
+  }
+  .latest-date {
+    color: var(--faint);
+    font-size: 0.8rem;
+    margin-top: auto;
+  }
+
+  .hero-logo {
+    margin-bottom: 1rem;
+  }
+
+  .hero-name {
+    font-size: clamp(3rem, 8vw, 5rem);
+    font-weight: 800;
+    line-height: 1;
+    letter-spacing: -0.03em;
+    margin: 0 0 0.5rem;
+    color: var(--text);
+  }
+
+  .hero-title {
+    font-size: clamp(1.4rem, 3.5vw, 2.15rem);
+    font-weight: 600;
+    line-height: 1.15;
+    letter-spacing: -0.01em;
+    color: var(--muted);
+    margin: 0 0 1rem;
+  }
+
+  h1 {
+    font-size: clamp(2rem, 5vw, 3.25rem);
+    line-height: 1.1;
+    margin: 0 0 1rem;
+    letter-spacing: -0.02em;
+  }
+
+  .tagline {
+    font-size: 1.2rem;
+    color: var(--muted);
+    margin: 0 auto 2rem;
+    max-width: 38rem;
+  }
+
+  .cta {
+    display: flex;
+    gap: 0.75rem;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .btn {
+    display: inline-block;
+    padding: 0.7rem 1.5rem;
+    border-radius: 999px;
+    font-weight: 600;
+    border: 1px solid transparent;
+    transition: transform 0.05s ease, background 0.15s ease;
+  }
+
+  .btn:hover {
+    text-decoration: none;
+    transform: translateY(-1px);
+  }
+
+  .btn-primary {
+    background: var(--accent);
+    color: var(--on-accent);
+  }
+
+  .btn-ghost {
+    border-color: var(--border);
+    color: var(--text);
+    background: var(--bg-soft);
+  }
+
+  /* Split download button: OS-detected primary + a caret opening every build. */
+  .dl-split {
+    position: relative;
+    display: inline-flex;
+  }
+
+  .dl-split .dl-main {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+  }
+
+  .dl-split .dl-caret {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+    border-left: 1px solid color-mix(in srgb, var(--on-accent) 35%, transparent);
+    padding: 0.7rem 1rem;
+    font: inherit;
+    line-height: 1.2;
+    cursor: pointer;
+  }
+
+  .dl-menu {
+    position: absolute;
+    top: calc(100% + 0.5rem);
+    left: 0;
+    z-index: 30;
+    min-width: 21rem;
+    /* Every build is one row, so cap the height rather than run off-screen. */
+    max-height: min(60vh, 30rem);
+    overflow-y: auto;
+    padding: 0.4rem;
+    text-align: left;
+    background: var(--bg-soft);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    box-shadow: 0 14px 36px rgba(0, 0, 0, 0.3);
+  }
+
+  /* The rows are built at runtime, so they carry no Astro scope attribute:
+     these have to be :global() under the scoped menu. */
+  .dl-menu :global(.dl-item) {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+    padding: 0.6rem 0.75rem;
+    border-radius: 9px;
+    color: var(--text);
+  }
+
+  .dl-menu :global(.dl-item:hover),
+  .dl-menu :global(.dl-item:focus-visible) {
+    background: color-mix(in srgb, var(--accent) 14%, transparent);
+    text-decoration: none;
+  }
+
+  .dl-menu :global(.dl-item-main) {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+  }
+
+  .dl-menu :global(.dl-item-name) {
+    font-weight: 600;
+  }
+
+  .dl-menu :global(.dl-item-meta) {
+    font-size: 0.8rem;
+    color: var(--muted);
+  }
+
+  .dl-menu :global(.dl-item-arrow) {
+    color: var(--accent);
+    font-weight: 700;
+  }
+
+  @media (max-width: 480px) {
+    .dl-menu {
+      min-width: min(21rem, calc(100vw - 2.5rem));
+    }
+  }
+
+  main {
+    max-width: var(--maxw);
+    margin: 0 auto;
+    padding: 0 1.25rem;
+  }
+
+  .section {
+    padding: 4rem 0;
+    border-bottom: 1px solid var(--border);
+    /* The header is sticky, so a jump from the page index (or any #anchor)
+       would otherwise land with the heading tucked underneath it. */
+    scroll-margin-top: 4.5rem;
+  }
+
+  .section:last-child {
+    border-bottom: none;
+  }
+
+  h2 {
+    font-size: 1.9rem;
+    margin: 0 0 0.5rem;
+    letter-spacing: -0.01em;
+  }
+
+  .section-lead {
+    color: var(--muted);
+    margin: 0 0 2rem;
+    max-width: 42rem;
+  }
+
+  .why p {
+    max-width: 46rem;
+    color: var(--muted);
+    font-size: 1.05rem;
+    margin: 0.5rem 0 0;
+  }
+
+  .feature-group {
+    margin-top: 2.25rem;
+  }
+
+  .feature-group-title {
+    font-size: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--faint);
+    margin: 0 0 0.25rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--border-soft);
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 1rem;
+    margin-top: 1rem;
+  }
+
+  .card {
+    display: block;
+    background: var(--bg-soft);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 0;
+    overflow: hidden;
+    color: inherit;
+    transition:
+      border-color 0.15s ease,
+      transform 0.05s ease;
+  }
+
+  .card:hover {
+    text-decoration: none;
+    border-color: var(--accent);
+  }
+
+  .card h4 {
+    margin: 0.9rem 1.1rem 0.4rem;
+    font-size: 1.05rem;
+    color: var(--text);
+  }
+
+  .card:hover h4 {
+    color: var(--accent);
+  }
+
+  .card p {
+    margin: 0 1.1rem 1.15rem;
+    color: var(--muted);
+    font-size: 0.95rem;
+  }
+
+  .card-shot {
+    display: block;
+    aspect-ratio: 16 / 9;
+    background: var(--bg);
+    border-bottom: 1px solid var(--border);
+    overflow: hidden;
+  }
+  .card-shot img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: top left;
+    display: block;
+  }
+
+  .card-shot-empty {
+    display: grid;
+    place-items: center;
+    color: var(--faint);
+  }
+  .card-shot-empty svg {
+    width: 2.2rem;
+    height: 2.2rem;
+    opacity: 0.55;
+  }
+
+  .platforms {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+  }
+
+  .platform {
+    background: var(--bg-soft);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  .platform strong {
+    font-size: 1.1rem;
+  }
+
+  .platform span {
+    color: var(--muted);
+    font-size: 0.9rem;
+  }
+
+  .note {
+    color: var(--muted);
+    font-size: 0.875rem;
+    margin-top: 1.25rem;
+  }
+
+  .code-window {
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    background: var(--bg-soft);
+  }
+
+  .code-chrome {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.6rem 0.9rem;
+    background: var(--bg);
+    border-bottom: 1px solid var(--border-soft);
+  }
+
+  .code-chrome .dot {
+    width: 11px;
+    height: 11px;
+    border-radius: 50%;
+    background: var(--faint);
+    opacity: 0.5;
+  }
+
+  .code-chrome .dot:nth-child(1) {
+    background: var(--error);
+    opacity: 0.8;
+  }
+  .code-chrome .dot:nth-child(2) {
+    background: var(--warn);
+    opacity: 0.8;
+  }
+  .code-chrome .dot:nth-child(3) {
+    background: var(--done);
+    opacity: 0.8;
+  }
+
+  .code-chrome .code-title {
+    margin-left: 0.5rem;
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    color: var(--faint);
+  }
+
+  pre {
+    margin: 0;
+    padding: 1.25rem;
+    overflow-x: auto;
+    line-height: 1.7;
+  }
+
+  pre code {
+    font-size: 0.85rem;
+    color: var(--text);
+  }
+
+  /* --- hero motion (coded command-palette demo) --- */
+  .hero-media {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 0 1.25rem 3.5rem;
+  }
+  .hero-media-cap {
+    text-align: center;
+    color: var(--faint);
+    font-size: 0.85rem;
+    margin: 0.9rem 0 0;
+  }
+
+  /* --- the window screenshot --- */
+  .demo-poster img {
+    display: block;
+    width: 100%;
+    height: auto;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow:
+      0 20px 50px -20px rgba(0, 0, 0, 0.6),
+      0 0 0 1px var(--border-soft);
+  }
+  .demo-poster {
+    margin: 0;
+  }
+  .demo-poster figcaption {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    color: var(--muted);
+    font-size: 0.85rem;
+    margin-top: 0.9rem;
+  }
+
+  /* --- Why: pillars --- */
+  .pillars {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1.5rem;
+    margin-top: 2rem;
+  }
+  .pillar-icon {
+    width: 30px;
+    height: 30px;
+    color: var(--accent);
+  }
+  .pillar h3 {
+    font-size: 1.15rem;
+    margin: 0.75rem 0 0.4rem;
+    color: var(--text);
+  }
+  .pillar p {
+    margin: 0;
+    color: var(--muted);
+    font-size: 0.95rem;
+  }
+
+  /* Sub-sections inside "Why Termina". */
+  .why-sub {
+    font-size: 1.3rem;
+    margin: 3.5rem 0 0.4rem;
+    padding-top: 2.5rem;
+    border-top: 1px solid var(--border-soft);
+    letter-spacing: -0.01em;
+  }
+  .why-sub-lead {
+    color: var(--muted);
+    margin: 0;
+    max-width: 46rem;
+  }
+
+  /* A second, mid-page conversion point: Download otherwise sits far below the
+     part of the page that does the persuading. */
+  .why-cta {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin: 2.5rem 0 0;
+  }
+  .why-cta span {
+    color: var(--faint);
+    font-size: 0.9rem;
+  }
+
+  /* --- Keys --- */
+  .keys {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(280px, 100%), 1fr));
+    gap: 0.5rem 2rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .keys li {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.55rem 0;
+    border-bottom: 1px solid var(--border-soft);
+    font-size: 0.95rem;
+  }
+  .keys-more {
+    margin: 1.5rem 0 0;
+    font-weight: 600;
+  }
+</style>

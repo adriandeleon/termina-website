@@ -1,0 +1,33 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Termina">
+  <!--
+    Family resemblance to Editora: the same Ink navy tile, the same corner radius, the same teal
+    gradient, and the same two-tone split — a muted periwinkle framing glyph with the teal reserved
+    for the focal element.
+
+    Editora frames a letterform in braces because it is an editor. Termina pairs a prompt chevron
+    with a block cursor because it is a terminal.
+
+    Two shapes only. An earlier version added the input line under the cursor; at 32px and below it
+    stopped being a line and became noise beside the block, which is exactly the size where an app
+    icon has to work hardest.
+  -->
+  <defs>
+    <linearGradient id="caretF" x1="256" y1="206" x2="256" y2="306" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#5EEAD4"/>
+      <stop offset="1" stop-color="#22B8A6"/>
+    </linearGradient>
+  </defs>
+
+  <rect x="16" y="16" width="480" height="480" rx="108" fill="#1B1E2A"/>
+
+  <!--
+    The pair is centred optically rather than by its bounding box: the chevron's stroke extends
+    17px past its path on each side, so matching the raw coordinates would sit the group left of
+    centre.
+  -->
+  <path d="M172 186 L246 256 L172 326"
+        fill="none" stroke="#9AA2D4" stroke-width="34"
+        stroke-linecap="round" stroke-linejoin="round"/>
+
+  <rect x="292" y="208" width="72" height="96" rx="16" fill="url(#caretF)"/>
+</svg>

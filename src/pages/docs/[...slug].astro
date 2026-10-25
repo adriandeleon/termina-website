@@ -1,0 +1,15 @@
+---
+import { getCollection } from "astro:content";
+import DocsLayout from "../../layouts/DocsLayout.astro";
+
+// Every docs page but the introduction, which is /docs itself.
+export async function getStaticPaths() {
+  return (await getCollection("docs"))
+    .filter((entry) => entry.id !== "introduction")
+    .map((entry) => ({ params: { slug: entry.id }, props: { entry } }));
+}
+
+const { entry } = Astro.props;
+---
+
+<DocsLayout entry={entry} />
