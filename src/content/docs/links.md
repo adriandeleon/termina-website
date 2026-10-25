@@ -81,8 +81,7 @@ to.
 
 Windows cannot report a shell's working directory yet, so relative paths are never links there.
 Absolute paths and URLs still work. A file opens through the shell's file handler rather than
-`cmd /c start`, so `&`, `^` and `%` in a name are not interpreted. The Windows side is built by CI
-but has not yet been run by a person.
+`cmd /c start`, so `&`, `^` and `%` in a name are not interpreted.
 
 A link a program declares with OSC 8, such as `ls --hyperlink`, is not honored yet; it is
 clickable only when its visible text is itself the URL or path.

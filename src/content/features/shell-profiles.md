@@ -14,4 +14,4 @@ A profile is a name, a command and, optionally, a starting directory, and a tab 
 - **Reached four ways**: the chevron beside the `+`, File → New Tab With, the command palette, and `Ctrl+Shift+1`…`Ctrl+Shift+9` (`Cmd+Shift+1`…`9` on macOS) for the first nine.
 - **A default for new tabs**, stored by id, so installing a shell never changes what `+` opens.
 
-The Windows half has not yet been run on Windows. See [Shell profiles](/docs/shell-profiles).
+See [Shell profiles](/docs/shell-profiles).

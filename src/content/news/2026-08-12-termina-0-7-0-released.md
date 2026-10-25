@@ -30,8 +30,5 @@ Your own shell is always first and cannot be hidden. Anything else can be, and y
 profiles of your own, such as `wsl.exe -d Ubuntu` or a shell on a server, under
 **Settings → Profiles**. Each entry carries its shell's mark, from Simple Icons.
 
-The Windows half has been driven in tests with the filesystem and `wsl.exe` replaced, but not yet
-run on Windows by a person: reports are welcome.
-
 [Download Termina 0.7.0](https://github.com/adriandeleon/Termina/releases/tag/v0.7.0), or the
 [latest release](https://github.com/adriandeleon/Termina/releases/latest).

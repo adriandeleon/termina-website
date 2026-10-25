@@ -58,10 +58,6 @@ The WSL list comes from `wsl.exe --list --quiet`. Docker Desktop's and Rancher D
 pseudo-distributions are left out. The Default Shell on Windows is PowerShell 7, then Windows
 PowerShell, then Command Prompt, whichever is found first.
 
-**The Windows half has never been run on Windows.** Every branch of it is tested with the
-filesystem and `wsl.exe` replaced, but whether a real machine answers the way the tests assume is
-not something a test can show. Reports are welcome.
-
 ## Opening a tab with a profile
 
 - **The chevron** beside the `+` drops the list. Each entry has its shell's mark, the default has a

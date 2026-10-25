@@ -50,8 +50,6 @@ first time. Allow it once under **System Settings → Privacy & Security → Ope
 Run the `.msi`. It installs for the current user and adds a Start menu entry. The installer is
 unsigned, so SmartScreen may warn on the first run: choose **More info → Run anyway**.
 
-Windows has not yet been run by a person, only built and packaged by CI. Reports are welcome.
-
 ## First launch
 
 The window opens with one tab running your login shell, started with `-l` so your profile sets up
