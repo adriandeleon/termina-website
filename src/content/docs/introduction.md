@@ -1,6 +1,6 @@
 ---
 title: Introduction
-description: What Termina is, the three layers it is built from, what version 0.11.0 can do, and how the documentation is organized.
+description: What Termina is, the three layers it is built from, what version 0.12.0 can do, and how the documentation is organized.
 category: Getting started
 order: 1
 ---
@@ -13,7 +13,7 @@ It is free and open source under the MIT License.
 It runs on macOS (Apple Silicon and Intel), Windows (x64) and Linux (x64 and arm64). The
 installers bundle their own Java runtime, so there is nothing else to install.
 
-Version 0.11.0, released on 2026-10-25, is the latest release. Downloads are on the
+Version 0.12.0, released on 2026-10-25, is the latest release. Downloads are on the
 [releases page](https://github.com/adriandeleon/Termina/releases).
 
 ## How it is built
@@ -36,7 +36,7 @@ A terminal does three jobs, and Termina writes only one of them.
 
 Programs running inside see `TERM=xterm-256color` and `COLORTERM=truecolor`.
 
-## What is in 0.11.0
+## What is in 0.12.0
 
 - **Tabs, panes and windows.** A tab is named after the program running in it, or the directory it
   is in. You can rename it with a double-click, drag it to reorder, reopen it after closing, and
@@ -67,7 +67,7 @@ Programs running inside see `TERM=xterm-256color` and `COLORTERM=truecolor`.
   stripped before the text is sent.
 - **Native installers** for every platform, and a command line (`-e`, `-d`, `--config-dir`).
 
-Not in 0.11.0: key sequences of more than one chord, images in the terminal, and ligatures.
+Not in 0.12.0: key sequences of more than one chord, images in the terminal, and ligatures.
 
 ## Start here
 

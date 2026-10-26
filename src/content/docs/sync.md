@@ -19,6 +19,15 @@ and nothing else.
 3. **Connect.** The first sync runs at once, and it keeps what is here and what is in the
    repository: with nothing synced before, nothing looks removed.
 
+**Or let Termina make the repository.** With the [GitHub CLI](https://cli.github.com) installed and
+signed in (`gh auth login`), the Sync page has **Create on GitHub…** beside **Connect**. It asks for
+a name, `termina-sync` unless you choose another, makes a private repository with
+`gh repo create`, puts its URL in **Repository** and connects, with the same checks as typing it.
+The URL is an SSH one if `gh` is set to use SSH for git, `https://` otherwise. Termina never sees a
+token: `gh` creates the repository as its own active account. Whether `gh` is signed in is asked
+each time the Settings window opens, so the button appears after a `gh auth login` without
+restarting Termina.
+
 Git has to be installed. Termina looks for it on your login shell's path as well as its own, so a
 git installed with Homebrew is found when Termina is started from the Dock or a desktop launcher.
 

@@ -16,11 +16,11 @@ page.
 
 | Platform | File |
 | --- | --- |
-| macOS, Apple Silicon | `Termina-0.11.0-macos-arm64.dmg` |
-| macOS, Intel | `Termina-0.11.0-macos-x64.dmg` |
-| Windows x64 | `Termina-0.11.0-windows-x64.msi` |
-| Debian, Ubuntu (x64 / ARM64) | `Termina-0.11.0-linux-x64.deb` / `Termina-0.11.0-linux-arm64.deb` |
-| Fedora, RHEL, openSUSE (x64 / ARM64) | `Termina-0.11.0-linux-x64.rpm` / `Termina-0.11.0-linux-arm64.rpm` |
+| macOS, Apple Silicon | `Termina-0.12.0-macos-arm64.dmg` |
+| macOS, Intel | `Termina-0.12.0-macos-x64.dmg` |
+| Windows x64 | `Termina-0.12.0-windows-x64.msi` |
+| Debian, Ubuntu (x64 / ARM64) | `Termina-0.12.0-linux-x64.deb` / `Termina-0.12.0-linux-arm64.deb` |
+| Fedora, RHEL, openSUSE (x64 / ARM64) | `Termina-0.12.0-linux-x64.rpm` / `Termina-0.12.0-linux-arm64.rpm` |
 
 Homebrew and winget packages are planned but not published yet; releases are on GitHub only.
 

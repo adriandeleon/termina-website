@@ -74,7 +74,8 @@ row on the Terminal page, is the Command Palette… row here. See
 **Sync** ([details](/docs/sync)):
 
 - **Repository**: the URL of a private Git repository you own, the branch (`main` by default), and
-  **Connect** / **Disconnect**.
+  **Connect** / **Disconnect**. With the GitHub CLI signed in, **Create on GitHub…** makes the
+  repository and connects to it.
 - **Syncing**: how the last sync went, with **Sync Now**; **Sync automatically** (on by
   default); and the interval, 15 minutes by default.
 - **What is synced**: the key bindings, and nothing else.

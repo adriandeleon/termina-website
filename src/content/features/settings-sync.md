@@ -7,6 +7,7 @@ summary: "Your shortcuts on every computer, through a private Git repository you
 ---
 
 - **A repository of yours.** Settings → Sync takes its URL, and git does the rest with your credential helper or SSH key. There is no Termina account and no server of Termina's.
+- **Or one made for you.** With the GitHub CLI signed in, Create on GitHub… makes a private repository and connects to it, without a trip to the browser.
 - **It runs on its own.** After startup, half a minute after you change a shortcut, and every 15 minutes while a Termina window is in front. File → Sync Settings Now, also in the palette, syncs from anywhere.
 - **One list per platform family.** A chord means a different key on a Mac than on Linux, so Macs share `keybindings/macos.properties` and Windows and Linux share `keybindings/windows-linux.properties`, in one repository.
 - **Merged per command.** Two computers that changed different shortcuts both keep them. A shortcut changed on both keeps the version of the computer that syncs, and the other stays in the repository's history.
