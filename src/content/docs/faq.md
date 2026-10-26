@@ -1,6 +1,6 @@
 ---
 title: FAQ
-description: Licensing, data collection, platforms, signing, why JavaFX, why the emulator is JediTerm, tmux, vim and ssh, ligatures, images and the kitty keyboard protocol, the relationship to Editora, and reporting issues.
+description: Licensing, data collection and what sync sends, platforms, signing, why JavaFX, why the emulator is JediTerm, tmux, vim and ssh, the kitty keyboard protocol and notifications, ligatures and images, CPU use when idle, the relationship to Editora, and reporting issues.
 category: Help
 order: 12
 ---
@@ -9,7 +9,8 @@ order: 12
 
 Yes. It is free and released under the MIT License. The source is on
 [GitHub](https://github.com/adriandeleon/Termina). The bundled fonts and the shell marks in the
-profile menu carry their own licenses, listed in the repository's `NOTICE` file.
+profile menu carry their own licenses, listed in the repository's `NOTICE` file; Symbols Nerd Font
+Mono's license is beside the font file.
 
 ## Does it collect data or phone home?
 
@@ -19,8 +20,10 @@ sends nothing about you or the machine beyond the request itself. Turn it off un
 Advanced → Updates → Check for updates at startup**, or set `updates.check=false` in the settings
 file.
 
-Everything else that reaches the network is something you started: the programs you run, and the
-links you click. The debug log stays in the settings folder.
+Everything else that reaches the network is something you started: the programs you run, the
+links you click, and [settings sync](/docs/sync) once you connect it, which pushes and pulls your
+key bindings to the Git repository you named and nowhere else. The debug log stays in the settings
+folder, and a program's desktop notification goes to your own desktop.
 
 ## Which platforms does it run on?
 
@@ -60,14 +63,29 @@ everything around it. See [Introduction](/docs#how-it-is-built).
 Yes. Programs see `TERM=xterm-256color` and `COLORTERM=truecolor`. Full-screen programs get the
 alternate screen and mouse reporting, so vim places its cursor where you click, htop responds to
 clicks, and `less` and `man` scroll with the wheel. tmux runs like any other program, with no
-special integration. Over ssh, the tab is named `ssh` while it runs, and closing it asks first.
-Type-ahead prediction for slow connections is not in 0.10.0.
+special integration, and vim and tmux can copy to your clipboard over ssh (OSC 52). Over ssh, the
+tab is named `ssh` while it runs, closing it asks first, and on a slow connection what you type
+appears at once, dimmed until the far end echoes it. See
+[What programs can ask for](/docs/programs).
 
-## Does it support ligatures, images or the kitty keyboard protocol?
+## Does it support the kitty keyboard protocol, notifications, ligatures or images?
 
-Not in 0.10.0: ligatures are not drawn (Fira Code is bundled, without them), there is no image
-protocol (sixel or kitty graphics), no kitty keyboard protocol, and no desktop notifications from
-programs (OSC 9 or 777).
+The kitty keyboard protocol, yes: a program that asks for it, as Neovim, Vim, Helix, fish and
+nushell do, gets Escape on its own, `Ctrl+I` apart from Tab and `Shift+Enter` as a key of its own,
+and all of the protocol's further flags. Desktop notifications from programs (OSC 9 and 777) and
+links they declare (OSC 8), yes. See [What programs can ask for](/docs/programs).
+
+Ligatures and images, no: ligatures are not drawn (Fira Code is bundled, without them), and there
+is no image protocol (sixel or kitty graphics).
+
+## Does it use the CPU when nothing is happening?
+
+Very little. A tab repaints only while there is something to draw, so with one tab sitting at a
+prompt Termina measured 0.8% of a core, down from 2–3% before 0.11.0. A tab that is not selected
+keeps its output and paints it when you switch to it, so a build in another tab does not compete
+with the one you are typing in; its activity and bell marks still update. Knowing what a tab is
+running costs microseconds, since Termina asks the operating system for the shell's children
+rather than reading the whole process table.
 
 ## How is it related to Editora?
 
@@ -79,6 +97,8 @@ Editora is a text editor by the same author, and Termina takes several things fr
   ported as they are, so the two palettes rank alike. Both open on `Alt+X`.
 - **The bundled fonts**: the same five monospace families and Inter.
 - **The Settings window's shape**: a grouped sidebar, search, and no OK button.
+- **Settings sync**, ported from Editora's: in Termina it carries the key bindings between
+  computers, through a private Git repository you own.
 - **The icon**, which keeps Editora's tile and colors with a shell prompt on it.
 
 Settings are separate. A file path in the terminal can open in Editora with **Open files with**

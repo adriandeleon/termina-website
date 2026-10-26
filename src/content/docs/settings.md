@@ -1,6 +1,6 @@
 ---
 title: Settings
-description: The Settings window and its search, what applies live and what waits, every page in brief, the settings file and where it lives, hand-editing and clamping, Reset to Defaults, the debug log and the update check.
+description: The Settings window and its search, what applies live and what waits, every page in brief (Appearance, Terminal, Profiles, Keyboard, Sync, Advanced), the settings file and where it lives, hand-editing and clamping, Reset to Defaults, the debug log and the update check.
 category: Customization
 order: 10
 ---
@@ -11,8 +11,8 @@ order: 10
 right-click menu, which is the way in when the menu bar is hidden. There is one Settings window,
 shared by every terminal window.
 
-- **A sidebar of pages in two groups**: General (Appearance, Terminal, Profiles) and System
-  (Advanced). The arrow keys move between pages and skip the group headings.
+- **A sidebar of pages in two groups**: General (Appearance, Terminal, Profiles, Keyboard) and
+  System (Sync, Advanced). The arrow keys move between pages and skip the group headings.
 - **Search settings** at the top narrows both the rows and the pages to what matches. A match in a
   row's title beats one in its description, and that row's page opens. Rows also answer to other
   words: "transparency" finds Window opacity.
@@ -38,7 +38,8 @@ tabs** on the next tab.
 
 **Appearance** ([details](/docs/appearance)):
 
-- **Theme**: the color theme.
+- **Theme**: the color theme, and **Import…** for a scheme another terminal wrote (iTerm2,
+  Terminal, Windows Terminal, Ghostty, kitty, Alacritty). **Remove** deletes an imported one.
 - **Font**: family and size.
 - **Tabs**: hide the tab bar with a single tab.
 - **Window**: show the menu bar, put it in the title bar, show a scrollbar, window opacity.
@@ -47,21 +48,36 @@ tabs** on the next tab.
 
 **Terminal**:
 
-- **Display**: cursor shape and visual bell.
+- **Display**: cursor shape, visual bell, and **Desktop notifications** (on by default), which
+  lets a program's notification (OSC 9, OSC 777) reach the desktop. Its tab is marked either way.
 - **Session**: **Ask before closing a running tab** (on by default; asks only when the shell has
   something running in it), **Scrollback lines** (5,000 by default, 0 to 200,000, held in memory),
   and **Shell** (empty uses `$SHELL`, started as a login shell). The shell field says "Not found"
   or "Not executable" as you type.
 - **Links**: **Open files with**, a command for opening a clicked file path, such as
   `editora {file}:{line}`. Empty uses the desktop's own opener. See [Links](/docs/links).
-- **Input**: **Use Alt as Meta** (on by default) and **Ask before pasting several lines** (on by
-  default). See [Keyboard](/docs/keyboard#alt-option-and-altgr).
-- **Keyboard**: the command palette's chord. See
-  [Changing the palette's chord](/docs/keyboard#changing-the-palettes-chord).
+- **Input**: **Use Alt as Meta** (on by default; see
+  [Keyboard](/docs/keyboard#alt-option-and-altgr)), **Ask before pasting several lines** (on by
+  default), **Copy on select** (off by default), **Let programs copy to the clipboard** (OSC 52, on
+  by default), and **Predict typing over slow SSH** (on by default).
 
 **Profiles**: the profile new tabs open with, and the list of profiles: the ones found on the
-machine, which you can hide, and your own, which you can add, edit and remove. See
+machine, which you can hide, and your own, which you can add, edit and remove. Any profile, the
+system shell included, can have its own font, size and theme; Default follows the global one. See
 [Shell profiles](/docs/shell-profiles).
+
+**Keyboard**: every command under the menu it lives in, with its shortcut. Click one and press the
+new chord; Reset and Reset All Shortcuts put them back. The command palette's chord, which had a
+row on the Terminal page, is the Command Palette… row here. See
+[Changing a shortcut](/docs/keyboard#changing-a-shortcut).
+
+**Sync** ([details](/docs/sync)):
+
+- **Repository**: the URL of a private Git repository you own, the branch (`main` by default), and
+  **Connect** / **Disconnect**.
+- **Syncing**: how the last sync went, with **Sync Now**; **Sync automatically** (on by
+  default); and the interval, 15 minutes by default.
+- **What is synced**: the key bindings, and nothing else.
 
 **Advanced**:
 
@@ -72,15 +88,17 @@ machine, which you can hide, and your own, which you can add, edit and remove. S
 ## Reset to Defaults
 
 The button at the bottom of the window asks first, then puts appearance, terminal, window and
-update settings back to how they shipped. Your profiles, the default profile and the hidden
-profiles are kept.
+update settings back to how they shipped, and every shortcut back on its default. Your profiles,
+their fonts and themes, the default profile and the hidden profiles are kept, and settings sync
+stays connected; the shortcuts the reset puts back are synced like any other change.
 
 ## The settings file
 
 Every setting is in one plain properties file, `settings.properties`, in `~/.termina` on every
 platform (`C:\Users\<you>\.termina` on Windows). To use another folder, start Termina with
 `--config-dir DIR` or set the `TERMINA_CONFIG_DIR` environment variable; `--config-dir` wins
-when both are given. The debug log's file is written to the same folder.
+when both are given. The debug log's file is written to the same folder, and settings sync keeps
+its copy of the repository and its backups in `sync/` there.
 
 - **Hand-editing is fine while Termina is closed.** Termina reads the file at startup and writes
   the whole file on every change, so an edit made while it runs can be overwritten.
@@ -96,17 +114,21 @@ The keys most worth knowing:
 
 | Key | Values | Default |
 | --- | --- | --- |
-| `theme` | `editora-dark`, `editora-light`, `clear-dark`, `clear-light` | `editora-dark` |
+| `theme` | `editora-dark`, `editora-light`, `clear-dark`, `clear-light`, or `user-<name>` for an imported theme | `editora-dark` |
 | `font.family` | A font family name; empty picks the best available | empty (JetBrains Mono) |
 | `font.size` | 7 to 40 | `13` |
 | `font.zoom` | 0.3 to 3.0, multiplies the size | `1.0` |
 | `terminal.cursorShape` | `BLOCK`, `UNDERLINE`, `BAR` | `BLOCK` |
 | `terminal.bell` | `true`, `false` | `true` |
+| `terminal.notifications` | `true`, `false` | `true` |
 | `terminal.scrollback` | 0 to 200000 | `5000` |
 | `terminal.shell` | A shell's path; empty uses `$SHELL` | empty |
 | `input.altIsMeta` | `true`, `false` | `true` |
 | `input.confirmPaste` | `true`, `false` | `true` |
-| `keys.commandPalette` | A chord such as `Alt+X` or `Shortcut+Shift+P` | `Alt+X` |
+| `input.copyOnSelect` | `true`, `false` | `false` |
+| `terminal.clipboardWrite` | `true`, `false` | `true` |
+| `terminal.typeAhead` | `true`, `false` | `true` |
+| `keys.<command>` | A chord such as `Ctrl+Shift+Y` or `Shortcut+Shift+P`, or `none` | no line (the default) |
 | `ui.hideTabBarWhenSingle` | `true`, `false` | `true` |
 | `ui.showMenuBar` | `true`, `false` | `true` |
 | `window.menuBarInTitleBar` | `true`, `false` | `false` |
@@ -116,10 +138,17 @@ The keys most worth knowing:
 | `ui.language` | `en`, `it`, `es`, `fr`, `pt`, `de`; empty follows the system | empty |
 | `links.openCommand` | A command with `{file}`, `{line}`, `{column}`; empty uses the desktop | empty |
 | `updates.check` | `true`, `false` | `true` |
+| `sync.repository` | A Git repository's URL, without a password or token | empty |
+| `sync.branch` | A branch name | `main` |
+| `sync.auto` | `true`, `false` | `true` |
+| `sync.intervalMinutes` | 5 to 1440 | `15` |
 
-A `keys.commandPalette` line that does not parse, or names a chord another command has, falls back
-to `Alt+X`, so the palette always has a way in. The profiles are the `profile.*` keys with
-`profiles.default` and `profiles.hidden`; their format is on
+The `keys.*` lines are described under
+[In the settings file](/docs/keyboard#in-the-settings-file) on the Keyboard page; the palette's is
+`keys.commandPalette`, as it was in 0.10.0. The `sync.*` keys are set by the Sync page, which
+refuses a URL with a password or token in it. The profiles are the `profile.*` keys with
+`profiles.default` and `profiles.hidden`, and a profile's own font, size and theme the
+`profileStyle.<id>.*` keys; their format is on
 [Shell profiles](/docs/shell-profiles). The `window.*` size and position keys and the
 `updates.*` timestamps are bookkeeping that Termina maintains itself.
 

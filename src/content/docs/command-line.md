@@ -21,7 +21,7 @@ The option names follow the terminals people already have: `-e` is xterm's and G
 ## The options
 
 - **`-h`, `--help`** prints the usage and exits.
-- **`-v`, `-V`, `--version`** prints `Termina 0.10.0` and exits.
+- **`-v`, `-V`, `--version`** prints `Termina 0.11.0` and exits.
 - **`-d DIR`, `--working-directory DIR`** (or `--working-directory=DIR`) starts the shell in `DIR`.
   It wins over a profile's own starting directory. A directory that does not exist falls back to
   your home directory rather than failing, since the argument usually comes from another program.

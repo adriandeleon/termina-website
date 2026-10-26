@@ -1,6 +1,6 @@
 ---
 title: Links
-description: Opening URLs and file paths from terminal output, the modifier key, what counts as a link, file:line:column positions, which URL schemes open, Open Link and Copy Link Address, opening files in your editor with {file} and {line}, and the Windows limitation.
+description: Opening URLs and file paths from terminal output, the modifier key, what counts as a link, file:line:column positions, which URL schemes open, links a program declares with OSC 8 and the target shown on hover, Open Link and Copy Link Address, opening files in your editor with {file} and {line}, and Windows.
 category: Using Termina
 order: 6
 ---
@@ -42,6 +42,25 @@ screen of prose from underlining itself. It runs once per hover, for the word un
 Sentence punctuation after a link is not part of it, and a closing bracket is kept only when the
 link opened it, so `(see https://example.com)` and Wikipedia's `…/Foo_(bar)` both come out right.
 
+## Links a program declares
+
+A program can also mark text as a link to somewhere else, with the OSC 8 escape sequence:
+`ls --hyperlink`, compilers and `gh` do. The text can be anything, so a declared link is a link
+whatever it looks like, and the same gesture opens it.
+
+- **Its target is shown before the click.** Hold the modifier over one and every cell it covers
+  underlines, a link wrapped onto a second row included, and a line at the bottom of the pane says
+  where it really goes.
+- **The same six schemes**, and no others. OSC 8 is exactly where a program can show one thing and
+  point at another, so a `javascript:` target behind innocent text is not a link at all.
+- **A `file://` link naming this machine**, which is how `ls --hyperlink` writes them, opens the
+  file. One naming another host is not looked for here; it goes to the desktop's handler like any
+  other URL.
+- **A declared link outranks the text under it.** Where a program has declared one, the words are
+  not also read as a URL or a path.
+
+See [What programs can ask for](/docs/programs) for the other requests a program can make.
+
 ## Open Link and Copy Link Address
 
 Right-click a link for **Open Link** and **Copy Link Address**, with no modifier needed. Copy Link
@@ -79,9 +98,12 @@ to.
 
 ## Windows
 
-Windows cannot report a shell's working directory yet, so relative paths are never links there.
-Absolute paths and URLs still work. A file opens through the shell's file handler rather than
-`cmd /c start`, so `&`, `^` and `%` in a name are not interpreted.
+Relative paths need the tab's directory, and on Windows Termina reads it from the shell process,
+or takes it from the shell when the shell reports one (OSC 7). A tab whose directory is known
+resolves relative paths as on the other platforms. A WSL tab's process is `wsl.exe`, which says
+nothing about where the Linux shell inside it is, so there relative paths are links only once the
+shell reports its directory. The same holds for a program started as `bash.exe`, which is how Git
+Bash runs. See [What programs can ask for](/docs/programs#the-directory-osc-7).
 
-A link a program declares with OSC 8, such as `ls --hyperlink`, is not honored yet; it is
-clickable only when its visible text is itself the URL or path.
+A file opens through the shell's file handler rather than `cmd /c start`, so `&`, `^` and `%` in a
+name are not interpreted.

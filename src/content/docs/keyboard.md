@@ -1,6 +1,6 @@
 ---
 title: Keyboard
-description: Why Termina's chords leave the shell its keys, the command palette and its Emacs keys, the Keyboard Shortcuts reference, Alt as Meta, AltGr, the keys the terminal handles itself, and jumping to a tab.
+description: Why Termina's chords leave the shell its keys, changing any shortcut on Settings → Keyboard and the keys.* lines in the settings file, the command palette and its Emacs keys, the Keyboard Shortcuts reference, Alt as Meta, AltGr, the keys the terminal handles itself, and jumping to a tab.
 category: Customization
 order: 8
 ---
@@ -8,8 +8,8 @@ order: 8
 A terminal's keyboard belongs to the program running in it. Termina keeps its own commands to
 chords a shell does not use, and handles a few keys itself where every terminal does.
 
-The full list of commands and their chords is on the [Keybindings](/keybindings) page. This
-page covers the rules behind them.
+The full list of commands and their default chords is on the [Keybindings](/keybindings) page.
+This page covers the rules behind them, and how to change any of them.
 
 ## Chords that leave the shell its keys
 
@@ -26,8 +26,9 @@ page covers the rules behind them.
 - **The chords work with the menu bar hidden.** They are handled by the window, ahead of the
   terminal, not by the menus.
 
-Every chord is declared once, with its menu item, so the menu, the palette and the reference can
-never advertise a chord that does nothing.
+Every default chord is declared once, with its menu item, and the menu, the palette and the
+reference all read the chord a command is on now, so none of them can advertise a chord that does
+nothing.
 
 ## The command palette
 
@@ -55,29 +56,72 @@ The keys in it are the arrows and Emacs's:
 The query field takes the Emacs editing keys: `Ctrl+A`, `Ctrl+E`, `Ctrl+F`, `Ctrl+B`, `Alt+F`,
 `Alt+B`, `Ctrl+D`, `Ctrl+K`, `Alt+D`, `Ctrl+W`, `Alt+W`, `Ctrl+Y` and `Ctrl+/`.
 
-### Changing the palette's chord
+### The palette's own chord
 
-**Settings → Terminal → Keyboard → Command palette shortcut**: click the field and press the
-new chord. It applies at once, and the View menu and the palette show whichever is in force.
-**Reset** puts `Alt+X` back.
+`Alt+X` is the palette's default, and like every other chord it can be changed: it is the
+**Command Palette…** row under View on **Settings → Keyboard** (below). It used to have a row of
+its own on the Terminal page; a chord chosen there is kept. If you use `M-x` inside the terminal,
+in Emacs for instance, move the palette to another chord: while `Alt+X` opens the palette, it never
+reaches the program.
 
-Two kinds of chord are refused, with the reason on the row:
+## Changing a shortcut
 
-- **A bare key.** A function key works on its own; any other key needs `Ctrl`, `Alt` or `Cmd`, or
-  the shell would lose it. Shift alone does not count, since `Shift+X` is a capital letter.
-- **A chord another command already has.** Only the first command on a chord would ever run, so the
-  row names the command that has it.
+**Settings → Keyboard** lists every command under the menu it lives in, each with the shortcut it
+is on now. The settings search finds them by name, such as "close tab".
 
-If you use `M-x` inside the terminal, in Emacs for instance, move the palette to another chord:
-while `Alt+X` opens the palette, it never reaches the program.
+- **Click a shortcut and press the new one.** It applies at once, in every window.
+- **A shortcut another command has is not taken on the first press.** The row names the command
+  that has it. Press it again to move it, and that command is left with none.
+- **`Backspace` or `Delete` removes a shortcut**, leaving the command on no key.
+- **Reset** puts one command back on its default. If another command has that chord now, it asks
+  first, because that command is left with none. **Reset All Shortcuts** asks, then puts every
+  command back.
+- **Commands with no shortcut of their own can be given one**: Rename Tab, Duplicate Tab, Move
+  Pane to New Tab and Sync Settings Now among them.
+- **`Tab` and `Shift+Tab` leave the field**, as they do everywhere; `Ctrl+Tab` is a chord.
 
-This is the only chord 0.10.0 can change. Rebinding other commands is not there yet.
+Two rules come from the shell's side of the keyboard:
+
+- **A bare key is refused.** A function key works on its own; any other key needs `Ctrl`, `Alt`
+  or `Cmd`, or the shell would lose it. Shift alone does not count, since `Shift+X` is a capital
+  letter.
+- **On Linux and Windows, `Ctrl` with a letter is allowed, with a note** that the shell no longer
+  receives it. Bound to a command, `Ctrl+R` is no longer readline's history search. None of the
+  defaults are `Ctrl+letter` for that reason.
+
+Everything that shows a chord shows the one in force: the menus, the palette's rows and its
+opener, the [Keyboard Shortcuts reference](#the-keyboard-shortcuts-reference), and the tooltips
+on the tab strip's `+` and close buttons. A command with no shortcut shows none. The
+[Keybindings](/keybindings) page on this site lists the defaults.
+
+The shortcuts you change can follow you to your other computers: see
+[Settings sync](/docs/sync).
+
+### In the settings file
+
+Each changed command is one line in `settings.properties`, keyed by the command:
+
+```properties
+keys.newTab=Ctrl+Shift+Y
+keys.closeTab=none
+```
+
+- **A command with no line is on its default**, unless another command has been given that
+  chord. `none` leaves a command on no key.
+- **The name is the command's id**, usually its menu name run together (`newTab`, `closeTab`,
+  `splitRight`, `commandPalette`), though not always: Sync Settings Now is `syncNow`. The tab chords are `goToTab1` to `goToTab9` (`goToTab9` is the last tab), and
+  the profile chords `newTabProfile1` to `newTabProfile9`.
+- **A chord is written with `Ctrl`, `Alt`, `Shift`, `Meta` (Cmd) and `Shortcut`**, which is Cmd on
+  macOS and Ctrl elsewhere, then the key: `Shortcut+Shift+T`, `Alt+X`, `F9`.
+- **A line that does not parse, or takes a chord another line already took, is ignored**, as if
+  it were not there. A line naming a command this version does not have is left in the file.
 
 ## The Keyboard Shortcuts reference
 
 **Help → Keyboard Shortcuts…** (`Ctrl+Shift+/`, `Cmd+/` on macOS) lists every chord the window
 answers to, grouped by menu, with a search box. It is built from the window's own binding table,
-so it cannot list a chord that does not work. It also lists the keys and gestures the terminal
+with the chords in force, so it cannot list a chord that does not work and shows a changed
+shortcut as you changed it. It also lists the keys and gestures the terminal
 handles itself (below). `Esc` closes it.
 
 ## Alt, Option and AltGr
@@ -116,6 +160,8 @@ The mouse gestures, such as `Shift`+drag to select inside a program that has the
 [Selection and the mouse](/docs/selection-and-mouse).
 
 ## Tabs from the keyboard
+
+These are the defaults; each can be changed on Settings → Keyboard.
 
 | Key | Does |
 | --- | --- |

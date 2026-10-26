@@ -16,11 +16,11 @@ page.
 
 | Platform | File |
 | --- | --- |
-| macOS, Apple Silicon | `Termina-0.10.0-macos-arm64.dmg` |
-| macOS, Intel | `Termina-0.10.0-macos-x64.dmg` |
-| Windows x64 | `Termina-0.10.0-windows-x64.msi` |
-| Debian, Ubuntu (x64 / ARM64) | `Termina-0.10.0-linux-x64.deb` / `Termina-0.10.0-linux-arm64.deb` |
-| Fedora, RHEL, openSUSE (x64 / ARM64) | `Termina-0.10.0-linux-x64.rpm` / `Termina-0.10.0-linux-arm64.rpm` |
+| macOS, Apple Silicon | `Termina-0.11.0-macos-arm64.dmg` |
+| macOS, Intel | `Termina-0.11.0-macos-x64.dmg` |
+| Windows x64 | `Termina-0.11.0-windows-x64.msi` |
+| Debian, Ubuntu (x64 / ARM64) | `Termina-0.11.0-linux-x64.deb` / `Termina-0.11.0-linux-arm64.deb` |
+| Fedora, RHEL, openSUSE (x64 / ARM64) | `Termina-0.11.0-linux-x64.rpm` / `Termina-0.11.0-linux-arm64.rpm` |
 
 Homebrew and winget packages are planned but not published yet; releases are on GitHub only.
 
@@ -73,7 +73,9 @@ to the shell: `Ctrl+C` is still SIGINT and `Ctrl+W` still deletes a word. On mac
 | `Alt+X` (`Option+X` on macOS) | The command palette: every command, found by typing part of its name |
 | `Ctrl+Shift+T` (`Cmd+T`) | New tab |
 | `Ctrl+Shift+W` (`Cmd+W`) | Close tab (asks first if something is running in it) |
+| `Ctrl+Shift+E` / `Ctrl+Shift+O` (`Cmd+D` / `Cmd+Shift+D`) | Split the pane right / down |
 | `Ctrl+Shift+C` / `Ctrl+Shift+V` (`Cmd+C` / `Cmd+V`) | Copy / paste |
+| `Ctrl+Shift+F` (`Cmd+F`) | Find in the scrollback |
 | `Ctrl`+click (`Cmd`+click) | Open the URL or file path under the pointer |
 | `Alt+1`…`Alt+9` (`Cmd+1`…`Cmd+9`) | Go to a tab; `9` is always the last one |
 | `Ctrl+,` (`Cmd+,`) | Settings |
@@ -81,7 +83,8 @@ to the shell: `Ctrl+C` is still SIGINT and `Ctrl+W` still deletes a word. On mac
 
 You do not need to memorize more. The palette shows each command's chord beside its name, and
 **Help → Keyboard Shortcuts** lists the rest, including the keys the terminal handles itself. The
-full table is on the [Keybindings](/keybindings) page.
+full table is on the [Keybindings](/keybindings) page. Any of them can be changed under
+**Settings → Keyboard**.
 
 ## Where settings live
 

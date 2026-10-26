@@ -13,4 +13,6 @@ The usual way a terminal learns its shell's directory is an escape sequence the 
 - **Hover a tab** for its directory in full, even when a program has set the title.
 - **A new tab inherits the directory** of the current one, and relative paths in output resolve against it when [clicked](/features/links).
 
-The directory is read on Linux and macOS. On Windows it is not available yet, so tabs there start at home and show no directory.
+- **Windows too.** The directory is read out of the shell process there as well. A WSL tab's process is `wsl.exe`, which cannot say where the Linux shell inside it is, so there a directory the shell reports (OSC 7) wins, as long as it is on this machine and exists.
+
+See [Tabs and windows](/docs/tabs-and-windows) and [What programs can ask for](/docs/programs#the-directory-osc-7).

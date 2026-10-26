@@ -32,6 +32,7 @@ static LinkedHashMap<String, List<String>> groups() {
                     "closeTab",
                     "closeWindow",
                     "reopenClosedTab",
+                    "syncNow",
                     "settings"));
     GROUPS.put(
             "Edit",
@@ -61,7 +62,9 @@ static LinkedHashMap<String, List<String>> groups() {
                     "duplicateTab",
                     "splitRight",
                     "splitDown",
-                    "focusPane"));
+                    "focusPane",
+                    "maximizePane",
+                    "movePaneToNewTab"));
     GROUPS.put("Help", List.of("keyboardShortcuts", "about", "checkForUpdates"));
     return GROUPS;
 }
@@ -387,6 +390,7 @@ static String keyName(String code) {
         case "INSERT" -> "Insert";
         case "HOME" -> "Home";
         case "END" -> "End";
+        case "ENTER" -> "Enter";
         default -> code.startsWith("DIGIT") ? code.substring(5) : code;
     };
 }

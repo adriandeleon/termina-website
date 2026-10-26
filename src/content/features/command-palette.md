@@ -12,6 +12,6 @@ The palette is Editora's, ported: the same card, the same matcher and ranking, a
 - **More than the menus.** Every open tab is listed by its title, with the chord that reaches it; every shell profile as "New Tab: zsh"; every theme as "Theme: Clear Light".
 - **Greyed, not hidden.** A command that cannot run right now, such as Reopen Closed Tab with nothing closed, stays in the list with the reason as its tooltip, and the cursor steps over it.
 - **Emacs keys.** `Ctrl+N` and `Ctrl+P` move, `Ctrl+V` and `Alt+V` page, `Ctrl+G` cancels, and the query field takes `Ctrl+A`, `Ctrl+E`, `Ctrl+K` and the rest. The arrows, `Enter` and `Esc` work too.
-- **Your chord.** Settings → Terminal → Keyboard takes another one: click the field and press it. A bare key is refused, since the shell owns it, and so is a chord another command already has.
+- **Your chord.** The palette's chord is a shortcut like any other: Settings → Keyboard, under View, takes another one. Click it and press the new chord.
 
 The commands are the menu bar's own actions, not a separate list, so the palette and the menus cannot disagree. See [Keyboard](/docs/keyboard#the-command-palette).

@@ -1,6 +1,6 @@
 ---
 title: Troubleshooting
-description: Why the title shows the directory, icons that draw the wrong glyph, full screen misplaced under GNOME on Wayland, opening an unsigned build on macOS and Windows, the debug log, diagnosing a freeze, and reporting a bug.
+description: Why the title shows the directory, icons that draw the wrong glyph, middle-click pasting the clipboard instead of the selection, notifications that never reach the desktop, full screen misplaced under GNOME on Wayland, opening an unsigned build on macOS and Windows, the debug log, diagnosing a freeze, and reporting a bug.
 category: Help
 order: 11
 ---
@@ -22,23 +22,58 @@ So Termina reads the shell's directory from the operating system instead:
   exit), the directory comes back.
 - **A name you give a tab** (double-click its header) outranks all of these.
 
-If you want the prompt's title, make your prompt emit OSC 0. On Windows Termina cannot read the
-shell's directory yet, so there the title is only what the shell sets.
+If you want the prompt's title, make your prompt emit OSC 0. On Windows the directory is read from
+the shell process too, except in a WSL tab, whose process is `wsl.exe`, and in Git Bash, which runs
+as `bash.exe` as WSL's old launcher does; there it comes from the shell's own report (OSC 7), if it
+sends one. See
+[What programs can ask for](/docs/programs#the-directory-osc-7).
 
 ## Icons show the wrong glyph
 
 File-type icons from `eza --icons`, `lsd` or a prompt theme are Nerd Font characters, in Unicode's
-private-use area. Termina 0.10.0 does not bundle a Nerd Font, so:
+private-use area. Since 0.11.0 Termina bundles **Symbols Nerd Font Mono** and draws them in a Nerd
+Font whether or not one is installed, so the stray `¯` or `ÿ` some Linux machines showed beside
+`eza`'s symlink icons is gone. Before, each icon went to the system's fallback fonts, and the first
+face with *something* at that code point won: Arial (from msttcorefonts) and MathJax place glyphs
+of their own there, ahead of a Nerd Font.
 
-- **Install a Nerd Font**, a monospace font patched with the icons such as JetBrainsMono Nerd
-  Font, and choose it under **Settings →
-  Appearance → Font → Font family**. When the terminal's own face has the icons, nothing has to be
-  looked up elsewhere.
-- **If you keep a font without icons**, each icon is looked up in the system's fallback fonts, and
-  the first face that has *something* at that code point wins. On Linux, fonts such as Arial
-  (from msttcorefonts) and MathJax place glyphs of their own in that area ahead of a Nerd Font,
-  so a few icons draw as a stray `¯` or `ÿ` while the rest are right. Choosing the Nerd Font as the
-  terminal font avoids the lookup.
+If an icon still looks wrong:
+
+- **When the terminal font is a Nerd Font**, its own icons are drawn, so an icon that is wrong
+  there is that font's. Choose another under **Settings → Appearance → Font → Font family** to
+  compare.
+- **Icons spill into the next cell.** The bundled face's icons are drawn a cell and a half wide,
+  the size the Nerd Font builds draw theirs, so they lean into the space after them. That is
+  intended.
+
+See [Appearance](/docs/appearance#icons) for which face draws an icon.
+
+## Middle-click pastes the clipboard, not the selection
+
+On Linux, selecting sets the PRIMARY selection and middle-click pastes it, but JavaFX cannot reach
+PRIMARY, so Termina uses a tool: `wl-paste` and `wl-copy` under Wayland, `xclip` or `xsel` under
+X11. With none of them installed, middle-click pastes the clipboard. Install one, such as
+`wl-clipboard` on a Wayland desktop or `xclip` on X11, and start Termina again. On macOS and
+Windows, which have no PRIMARY, middle-click always pastes the clipboard.
+
+## Notifications never reach the desktop
+
+A program's notification (OSC 9 or 777) marks its tab whenever the tab is in the background, but
+reaches the desktop only when:
+
+- **Settings → Terminal → Display → Desktop notifications** is on (the default);
+- **you are not looking at that pane**: a notification from the pane you are typing in, in the
+  window in front, is not posted;
+- **it is the first from that pane in two seconds.** The rest only mark the tab.
+
+On Linux it is posted with `notify-send`, or with `gdbus` straight to the session bus where
+`notify-send` is not installed. To see whether one was sent, watch the bus from another terminal:
+
+```bash
+dbus-monitor --session "interface='org.freedesktop.Notifications'"
+```
+
+On macOS it goes through `osascript`, and on Windows it is a PowerShell toast. See [What programs can ask for](/docs/programs#notifications-osc-9-osc-777).
 
 ## Full screen is misplaced or clipped on GNOME (Wayland)
 

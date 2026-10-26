@@ -14,6 +14,7 @@ const MAC_GLYPH: Record<string, string> = {
   Right: "→",
   Up: "↑",
   Down: "↓",
+  Enter: "↩",
 };
 
 export function chordText(chord: Chord, mac = false): string {

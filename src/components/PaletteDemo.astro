@@ -42,17 +42,17 @@ const entry = (perms: string, size: string, date: string, name: Run): Run[] => [
 ];
 const lines: Run[][] = [
   prompt("ls -l"),
-  entry("drwxr-xr-x", "-", "23 Oct 23:09", ["a12 ab", "branding"]),
-  entry("drwxr-xr-x", "-", "23 Oct 23:09", ["a12 ab", "docs"]),
-  entry("drwxr-xr-x", "-", "23 Oct 23:09", ["a12 ab", "src"]),
-  entry(".rw-r--r--", "31k", "23 Oct 23:09", ["", "CHANGELOG.md"]),
-  entry(".rwxr-xr-x", "11k", "23 Oct 23:09", ["a2 ab", "mvnw"]),
-  entry(".rw-r--r--", "24k", "23 Oct 23:09", ["a3 au", "pom.xml"]),
-  entry(".rw-r--r--", "42k", "23 Oct 23:09", ["a3 au", "README.md"]),
+  entry("drwxr-xr-x", "-", "25 Oct 22:23", ["a12 ab", "branding"]),
+  entry("drwxr-xr-x", "-", "25 Oct 22:23", ["a12 ab", "docs"]),
+  entry("drwxr-xr-x", "-", "25 Oct 22:23", ["a12 ab", "src"]),
+  entry(".rw-r--r--", "63k", "25 Oct 22:23", ["", "CHANGELOG.md"]),
+  entry(".rwxr-xr-x", "11k", "25 Oct 22:23", ["a2 ab", "mvnw"]),
+  entry(".rw-r--r--", "42k", "25 Oct 22:23", ["a3 au", "pom.xml"]),
+  entry(".rw-r--r--", "61k", "25 Oct 22:23", ["a3 au", "README.md"]),
   prompt("git log --oneline -3"),
-  [["a3", "89783dd "], ["a6", "("], ["a6 ab", "HEAD -> "], ["a2 ab", "master"], ["a6", ", "], ["a3 ab", "tag: v0.10.0"], ["a6", ")"], ["", " release: 0.10.0"]],
-  [["a3", "dee8a8a "], ["", "Merge pull request #23 from feature/settings-sidebar-icons"]],
-  [["a3", "a21a5ab "], ["", "an icon beside each page in the settings sidebar"]],
+  [["a3", "fa105d0 "], ["a6", "("], ["a6 ab", "HEAD -> "], ["a2 ab", "master"], ["a6", ", "], ["a3 ab", "tag: v0.11.0"], ["a6", ")"], ["", " release: 0.11.0"]],
+  [["a3", "3ee69de "], ["", "Merge pull request #32 from feat/selection-themes-panes"]],
+  [["a3", "e94fccd "], ["", "spell fake tool paths the way the platform spells a path"]],
   prompt(""),
 ];
 ---

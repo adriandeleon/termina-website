@@ -1,6 +1,6 @@
 ---
 title: Shell profiles
-description: What a profile is, which shells are discovered on each platform, the profile dropdown, New Tab With and the number chords, choosing the default, hiding and adding profiles, and the profile keys in settings.properties.
+description: What a profile is, which shells are discovered on each platform, the profile dropdown, New Tab With and the number chords, choosing the default, hiding and adding profiles, a profile's own font, size and theme, and the profile keys in settings.properties.
 category: Using Termina
 order: 4
 ---
@@ -94,6 +94,21 @@ Discovered profiles cannot be edited, since they are re-detected at every launch
 differently, add a profile of your own: a shell with other arguments, `ssh build.example.com`, or a
 shell in a directory you keep coming back to.
 
+## A profile's own font and theme
+
+Every profile, the Default Shell and the discovered ones included, can have its own **Font**,
+**Font size** and **Theme**, under **Settings → Profiles**. Each is **Default** until set, which
+follows the global setting under Appearance. A server you reach with `ssh` can have a theme of its
+own, so its tab never looks like a local one.
+
+- **The font list** is the same monospace faces as the global one, and the theme list has the
+  built-in themes and any you have [imported](/docs/appearance#importing-a-theme).
+- **The pane keeps it.** Splitting a pane, duplicating or reopening its tab, and moving it to
+  another tab keep the profile it was opened as, and with it the profile's look.
+- **The size goes through zoom**, like the global size.
+- **With several themes in one window**, the window's own colors (behind the panes, the window
+  buttons, the tab marks) follow the pane being typed in.
+
 ## In settings.properties
 
 The whole list lives in `~/.termina/settings.properties`, which you can edit by hand while Termina
@@ -124,7 +139,22 @@ profile.2.directory=/home/me/notes
 - **Discovered ids** are `system` for the Default Shell, `shell-zsh`, `shell-bash` and so on for
   Unix shells, and `pwsh`, `powershell`, `cmd`, `git-bash` and `wsl-<name>` on Windows.
 
-**Reset to Defaults** in Settings keeps your profiles, the default profile and the hidden list.
+A profile's font, size and theme are kept apart from the numbered block, keyed by the profile's
+id, because the Default Shell and the discovered profiles have no block of their own:
+
+```properties
+profileStyle.user-build.theme=clear-light
+profileStyle.system.font=Fira Code
+profileStyle.system.fontSize=15
+```
+
+A missing key means Default. The size is clamped to 7 to 40 when read, like the global one. A
+built-in theme's id is `editora-dark`, `editora-light`, `clear-dark` or `clear-light`, and an
+imported one's is `user-` and the name of its file in `~/.termina/themes`, without `.properties`
+(`user-solarized-dark`).
+
+**Reset to Defaults** in Settings keeps your profiles, their fonts and themes, the default profile
+and the hidden list.
 
 A command given on the command line with `-e` still replaces the shell, and `-d` still wins over a
 profile's own directory. See [Command line](/docs/command-line).
