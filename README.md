@@ -55,6 +55,15 @@ section only renders when it exists. Termina's capture harness makes them:
 options. Capture from a build of the release tag, run with a scratch `--config-dir`, and in a
 directory with nothing private in it.
 
+The captures can run headless, with no window on anyone's desktop: JavaFX 27's own headless
+platform, `-Dglass.platform=Headless -Dprism.order=sw`, with `DISPLAY` unset. Three things differ
+from a desktop run. Its screen is a fixed 1000×1000 and Termina clamps the window to the screen, so
+a larger shot needs the stage resized after it opens. A popup (a context menu, the profile list)
+is photographed on its own, and its transparent margin comes out white unless its root is
+snapshotted on a transparent fill; composite it onto the window at the position it reports. And
+the platform cannot draw a title bar, so Settings → Appearance says so on the title-bar row: take
+that page on a desktop, or show another.
+
 ## Themes
 
 The site's palettes are the app's four themes (`com.termina.ui.Theme`), so the picker in the header
