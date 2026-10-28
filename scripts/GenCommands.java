@@ -13,6 +13,7 @@ static final Path OUT = Path.of("src/lib");
 
 static final String WINDOW = "src/main/java/com/termina/ui/TerminalWindow.java";
 static final String CATALOGUE = "src/main/resources/com/termina/i18n/messages.properties";
+static final String MENU_ACTION = "src/main/java/com/termina/ui/MenuAction.java";
 
 // Which group of the Keybindings page each command sits in, in the page's order: the menu it lives
 // in. The source builds the View menu's actions before the menu and registers some from loops, so
@@ -102,12 +103,24 @@ void main(String[] args) throws IOException, InterruptedException {
     int end = source.indexOf("bar.getMenus().addAll(", start);
     if (start < 0 || end < 0) throw new IllegalStateException("buildMenuBar() not found in " + WINDOW + " at " + ref);
     String body = source.substring(start, end);
+    paletteDefault = paletteDefault(show(repo, ref, MENU_ACTION));
+
+    // Since 0.13.0 the actions the palette and the constructor ask after are final fields made by
+    // item() in their initializers, and buildMenuBar only registers them. Their calls are read too.
+    StringBuilder scan = new StringBuilder(body);
+    Matcher field = Pattern.compile("MenuAction\\s+\\w+\\s*=\\s*item\\(").matcher(source);
+    while (field.find()) {
+        scan.append("\nitem(")
+                .append(String.join(", ", arguments(source, field.end())))
+                .append(");");
+    }
+    String calls = scan.toString();
 
     Map<String, Cmd> byId = new LinkedHashMap<>();
-    for (int at = body.indexOf("item("); at >= 0; at = body.indexOf("item(", at + 1)) {
+    for (int at = calls.indexOf("item("); at >= 0; at = calls.indexOf("item(", at + 1)) {
         // item( must be a call of its own, not the tail of another name (toMenuItem, MenuItem).
-        if (at > 0 && Character.isJavaIdentifierPart(body.charAt(at - 1))) continue;
-        List<String> a = arguments(body, at + "item(".length());
+        if (at > 0 && Character.isJavaIdentifierPart(calls.charAt(at - 1))) continue;
+        List<String> a = arguments(calls, at + "item(".length());
         String key = unquote(a.get(0));
         if (key == null || !key.startsWith("menu.")) continue;
         String id = key.substring("menu.".length());
@@ -132,7 +145,17 @@ void main(String[] args) throws IOException, InterruptedException {
     }
 
     // Chords registered from loops, as one row each: a profile by number, a tab by number.
-    if (body.contains("menu.newTabProfileNumber") && body.contains("shiftChord(digitKey(")) {
+    // MenuAction.profileChord (0.13.0): Option+Cmd on macOS, whose Cmd+Shift+3, 4 and 5 are
+    // screenshots. shiftChord before it: Shift+Cmd.
+    if (body.contains("menu.newTabProfileNumber") && body.contains("profileChord(digitKey(")) {
+        byId.put(
+                "newTabProfileNumber",
+                new Cmd(
+                        "newTabProfileNumber",
+                        label(messages, "menu.newTabProfileNumber").replace("Termina", "1–9"),
+                        List.of("Ctrl", "Shift", "1…9"),
+                        List.of("Option", "Cmd", "1…9")));
+    } else if (body.contains("menu.newTabProfileNumber") && body.contains("shiftChord(digitKey(")) {
         byId.put(
                 "newTabProfileNumber",
                 new Cmd(
@@ -305,7 +328,7 @@ static String label(Properties messages, String key) {
 // --- chords ---
 
 static final Pattern TERNARY = Pattern.compile("^MAC\\s*\\?(.+?):(.+)$", Pattern.DOTALL);
-static final Pattern HELPER = Pattern.compile("^MenuAction\\.(appChord|shiftChord)\\(KeyCode\\.(\\w+)\\)$");
+static final Pattern HELPER = Pattern.compile("^(?:MenuAction\\.)?(appChord|shiftChord)\\(KeyCode\\.(\\w+)\\)$");
 static final Pattern COMBINATION =
         Pattern.compile("^new KeyCodeCombination\\(\\s*KeyCode\\.(\\w+)((?:\\s*,\\s*KeyCombination\\.\\w+)*)\\s*\\)$");
 
@@ -337,9 +360,9 @@ static Pair chord(String expr) {
         case "fullScreenChord()" -> {
             return new Pair(List.of("F11"), keys("F", "Ctrl", "Cmd"));
         }
-        // Emacs's M-x; Alt is Option on a Mac.
+        // Whatever MenuAction defines it as at this ref: Alt+X until 0.13.0, Ctrl+Shift+P since.
         case "MenuAction.DEFAULT_PALETTE_CHORD" -> {
-            return new Pair(keys("X", "Alt"), keys("X", "Option"));
+            return chord(paletteDefault);
         }
         default -> {}
     }
@@ -367,6 +390,15 @@ static Pair chord(String expr) {
         return new Pair(meta && !shortcut ? null : pc, mac);
     }
     throw new IllegalStateException("cannot read the chord in: " + expr);
+}
+
+/** The palette's default chord expression, read from MenuAction at the ref being generated. */
+static String paletteDefault = "null";
+
+static String paletteDefault(String menuAction) {
+    Matcher m = Pattern.compile("DEFAULT_PALETTE_CHORD\\s*=\\s*([^;]+);").matcher(menuAction);
+    if (!m.find()) throw new IllegalStateException("DEFAULT_PALETTE_CHORD not found in " + MENU_ACTION);
+    return m.group(1);
 }
 
 static List<String> keys(String code, String... mods) {

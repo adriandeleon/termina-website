@@ -135,4 +135,5 @@ mouse, unless `Shift` is held.
 - **Zoom**: the row of `−`, the percentage, `+` and full screen. See [Zoom](/features/zoom).
 - **Show Menu Bar**, a checkbox, on Linux and Windows. It is how the menu bar comes back once
   hidden.
-- **Settings…**
+- **Command Palette…**, **Settings…** and **About Termina**, so none of them needs the menu bar or a
+  chord to reach.

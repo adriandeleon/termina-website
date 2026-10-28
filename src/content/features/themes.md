@@ -12,6 +12,6 @@ summary: "Editora Dark and Light, and macOS Terminal's Clear Dark and Clear Ligh
 - **A theme per profile.** Settings → Profiles gives any profile its own theme, font and size, so an `ssh` to a server can look different from a local shell, and the pane keeps it through splits and moves.
 - **Switched live**, from Settings → Appearance or the palette ("theme"), in every window at once.
 - **Bundled fonts**: JetBrains Mono (the default), Cascadia Code, Fira Code, IBM Plex Mono and Source Code Pro, then every monospace face the machine has, and Symbols Nerd Font Mono for icons.
-- **Zoom** by `Ctrl+=` and `Ctrl+-` (`Cmd` on macOS), from 30% to 300% of the size you chose, which is kept. Also: cursor shape, a visual bell, window opacity, and a scrollbar that takes its own column.
+- **Zoom** by `Ctrl+=` and `Ctrl+-` (`Cmd` on macOS), from 30% to 300% of the size you chose, which is kept. Also: cursor shape, padding, a visual bell, window opacity, and a scrollbar that takes its own column.
 
 See [Appearance](/docs/appearance).

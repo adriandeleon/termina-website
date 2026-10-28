@@ -54,8 +54,9 @@ whatever it looks like, and the same gesture opens it.
 - **The same six schemes**, and no others. OSC 8 is exactly where a program can show one thing and
   point at another, so a `javascript:` target behind innocent text is not a link at all.
 - **A `file://` link naming this machine**, which is how `ls --hyperlink` writes them, opens the
-  file. One naming another host is not looked for here; it goes to the desktop's handler like any
-  other URL.
+  file. One naming another host is never opened or looked up, and neither is a Windows network path
+  (`\\host\share`), in a link or in plain text. On Windows, even asking whether such a file
+  exists connects to that machine and hands it a hash of your password.
 - **A declared link outranks the text under it.** Where a program has declared one, the words are
   not also read as a URL or a path.
 

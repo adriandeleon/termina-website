@@ -13,7 +13,7 @@ xterm compatibility is a long tail of cursor modes, character sets, scroll regio
 - **Keys are encoded by the emulator**, so Up is `ESC O A` in application-cursor mode and `ESC [ A` otherwise, whichever the program asked for. Dead keys, AltGr and input methods work, and Alt can act as Meta for readline's `M-b` and `M-f` (Settings → Terminal → Input).
 - **The kitty keyboard protocol**, all of it, for a program that asks: Neovim, Vim, Helix, fish and nushell get Escape on its own, `Ctrl+I` apart from Tab and `Shift+Enter` as a key. A program that does not ask gets the usual bytes.
 - **Requests a program makes**: declared links (OSC 8), the clipboard (OSC 52, write only), desktop notifications (OSC 9 and 777) and shell integration marks (OSC 133). See [What programs can ask for](/docs/programs).
-- **Color**: the 16 ANSI colors from the theme, the 256-color palette and 24-bit color.
+- **Color**: the 16 ANSI colors from the theme, the 256-color palette and 24-bit color, written with semicolons or with the colons newer programs use.
 - **Double-width characters** such as CJK and emoji take two cells, and Nerd Font icons stay on the grid, drawn by the bundled Symbols Nerd Font Mono when no Nerd Font is installed, so `eza --icons` columns line up.
 - **An idle terminal lets the machine idle.** A tab repaints only while there is something to draw, and a tab that is not selected paints its output when you switch to it rather than every frame.
 

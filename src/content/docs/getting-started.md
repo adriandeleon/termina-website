@@ -16,11 +16,11 @@ page.
 
 | Platform | File |
 | --- | --- |
-| macOS, Apple Silicon | `Termina-0.12.0-macos-arm64.dmg` |
-| macOS, Intel | `Termina-0.12.0-macos-x64.dmg` |
-| Windows x64 | `Termina-0.12.0-windows-x64.msi` |
-| Debian, Ubuntu (x64 / ARM64) | `Termina-0.12.0-linux-x64.deb` / `Termina-0.12.0-linux-arm64.deb` |
-| Fedora, RHEL, openSUSE (x64 / ARM64) | `Termina-0.12.0-linux-x64.rpm` / `Termina-0.12.0-linux-arm64.rpm` |
+| macOS, Apple Silicon | `Termina-0.13.0-macos-arm64.dmg` |
+| macOS, Intel | `Termina-0.13.0-macos-x64.dmg` |
+| Windows x64 | `Termina-0.13.0-windows-x64.msi` |
+| Debian, Ubuntu (x64 / ARM64) | `Termina-0.13.0-linux-x64.deb` / `Termina-0.13.0-linux-arm64.deb` |
+| Fedora, RHEL, openSUSE (x64 / ARM64) | `Termina-0.13.0-linux-x64.rpm` / `Termina-0.13.0-linux-arm64.rpm` |
 
 Homebrew and winget packages are planned but not published yet; releases are on GitHub only.
 
@@ -34,9 +34,14 @@ sudo apt install ./Termina-*.deb
 sudo dnf install ./Termina-*.rpm
 ```
 
+The `.deb` installs on Debian 12 and Ubuntu 22.04 and anything newer. The packages bring in the
+libraries the interface needs (GTK 3, OpenGL, fontconfig and the rest), so a minimal system works
+too.
+
 The packages add a launcher entry in the `TerminalEmulator` category, so Termina appears in the
-application menu and desktops can offer it where a terminal is wanted. See
-[Command line](/docs/command-line#the-linux-desktop-entry).
+application menu and desktops can offer it where a terminal is wanted. They also put `termina` on
+your `PATH`, and the `.deb` adds Termina to the `x-terminal-emulator` choices without making it the
+default. See [Command line](/docs/command-line#what-the-linux-packages-install).
 
 ### macOS
 
@@ -58,8 +63,9 @@ The window opens with one tab running your login shell, started with `-l` so you
 - **The tab strip is hidden while there is only one tab.** Open a second and it appears; the row is
   given back to the terminal when you are down to one again.
 - **The menu bar** is in the window on Linux and Windows, and in the screen menu bar on macOS.
-- **Right-click** gives Copy, Paste, Select All, Clear Scrollback, zoom and Settings, unless a
-  program running in the terminal has taken the mouse. Hold `Shift` to get the menu anyway.
+- **Right-click** gives Copy and Paste, New Tab and New Window, Select All, Clear Scrollback, zoom,
+  the command palette, Settings and About, unless a program running in the terminal has taken the
+  mouse. Hold `Shift` to get the menu anyway.
 - **An update check** asks GitHub for the newest release at most once a day.
   **Settings → Advanced → Updates** turns it off.
 
@@ -70,7 +76,7 @@ to the shell: `Ctrl+C` is still SIGINT and `Ctrl+W` still deletes a word. On mac
 
 | Key | Does |
 | --- | --- |
-| `Alt+X` (`Option+X` on macOS) | The command palette: every command, found by typing part of its name |
+| `Ctrl+Shift+P` (`Cmd+Shift+P` on macOS) | The command palette: every command, found by typing part of its name |
 | `Ctrl+Shift+T` (`Cmd+T`) | New tab |
 | `Ctrl+Shift+W` (`Cmd+W`) | Close tab (asks first if something is running in it) |
 | `Ctrl+Shift+E` / `Ctrl+Shift+O` (`Cmd+D` / `Cmd+Shift+D`) | Split the pane right / down |
@@ -92,6 +98,9 @@ Settings are one plain properties file, `~/.termina/settings.properties`, on eve
 (`%USERPROFILE%\.termina` on Windows). The Settings window writes it as you change things — there
 is no OK button — and the file is meant to be readable and editable by hand while Termina is closed.
 A value that does not parse falls back to its default, and numbers are clamped when they are read.
+The file is UTF-8, and a backslash is just a backslash, so a Windows path can be typed as it is. A
+file that cannot be read at all opens on defaults and is first copied aside as
+`settings.properties.bad-<time>`.
 
 - **Settings → Advanced → Files** shows the path, and **Help → About** names it too.
 - **Another folder**: start Termina with `--config-dir DIR`, or set `TERMINA_CONFIG_DIR`.

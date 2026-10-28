@@ -64,8 +64,13 @@ can reach them.
 - **Reopen Closed Tab** brings back the last tab you closed in this window: the same shell or
   profile, the directory it was in when it closed, its name and its old place in the strip. A split
   tab comes back with every pane, arranged as it was. Its scrollback is gone with the process. The
-  last ten are kept. A shell that exited by itself is not among them, since nobody closed it, and
-  neither is a single pane closed on its own.
+  last ten are kept. A shell that exited by itself is not among them, since nobody closed it.
+  - **A pane closed on its own** comes back too, as a tab of its own beside the one it left.
+  - **A closed window** comes back as a window, with each of its tabs where it was and the same one
+    selected. The last five are kept.
+  - **Reopen undoes the most recent close**, wherever it happened: if a window closed after the
+    last tab, the window comes back first. Tabs closed together, by Close Other Tabs or Close Tabs to
+    the Right, come back in their old order.
 - **Duplicate Tab** opens another tab running the same shell or profile, in the directory this one
   is in now, right beside it. In a split tab it duplicates the active pane, as one pane.
 

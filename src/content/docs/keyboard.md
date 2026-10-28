@@ -32,7 +32,7 @@ nothing.
 
 ## The command palette
 
-`Alt+X` (`Option+X` on macOS) opens it. It is Emacs's `M-x`, and the chord Editora's palette uses.
+`Ctrl+Shift+P` (`Cmd+Shift+P` on macOS) opens it, as in Windows Terminal and VS Code.
 
 - **Type part of a name.** "nw" finds New Window, "tab close" finds Close Tab with the words in
   either order, and "file new" reaches New Tab through the menu it lives in. The matched letters are
@@ -58,11 +58,12 @@ The query field takes the Emacs editing keys: `Ctrl+A`, `Ctrl+E`, `Ctrl+F`, `Ctr
 
 ### The palette's own chord
 
-`Alt+X` is the palette's default, and like every other chord it can be changed: it is the
+`Ctrl+Shift+P` is the palette's default, and like every other chord it can be changed: it is the
 **Command Palette…** row under View on **Settings → Keyboard** (below). It used to have a row of
-its own on the Terminal page; a chord chosen there is kept. If you use `M-x` inside the terminal,
-in Emacs for instance, move the palette to another chord: while `Alt+X` opens the palette, it never
-reaches the program.
+its own on the Terminal page; a chord chosen there is kept.
+
+Until 0.13.0 the default was `Alt+X`, Emacs's `M-x`. That took `M-x` from Emacs and zsh running in
+the terminal, so it moved. If you had chosen a chord yourself, Alt+X included, you keep it.
 
 ## Changing a shortcut
 
@@ -169,7 +170,7 @@ These are the defaults; each can be changed on Settings → Keyboard.
 | `Alt+9` (`Cmd+9`) | Go to the last tab, however many are open |
 | `Ctrl+Shift+]` / `Ctrl+Shift+[` (`Cmd+Shift+]` / `Cmd+Shift+[`) | Next / previous tab |
 | `Ctrl+Shift+←` / `Ctrl+Shift+→` (`Cmd+Shift+←` / `Cmd+Shift+→`) | Move the tab left / right |
-| `Ctrl+Shift+1` … `Ctrl+Shift+9` (`Cmd+Shift+1` … `Cmd+Shift+9`) | New tab with profile 1 to 9 |
+| `Ctrl+Shift+1` … `Ctrl+Shift+9` (`Cmd+Option+1` … `Cmd+Option+9`) | New tab with profile 1 to 9 |
 
 A number past the last tab selects nothing, so that you do not land on the wrong tab. See
 [Tabs and windows](/docs/tabs-and-windows) and [Shell profiles](/docs/shell-profiles).

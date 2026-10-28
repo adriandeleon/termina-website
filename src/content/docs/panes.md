@@ -91,4 +91,4 @@ modifiers: every smaller set already means something. `Alt` (`Option`) alone sel
 brings a split tab back as it was: every pane, each in its last directory and with its name,
 arranged the same, with the same one active. The shells are new ones, so the scrollback is gone.
 
-A pane closed on its own is not kept, only a closed tab is.
+A pane closed on its own comes back as a tab of its own, beside the tab it left.

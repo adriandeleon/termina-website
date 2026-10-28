@@ -48,7 +48,7 @@ tabs** on the next tab.
 
 **Terminal**:
 
-- **Display**: cursor shape, visual bell, and **Desktop notifications** (on by default), which
+- **Display**: cursor shape, **Padding** (4 pixels by default, up to 32), visual bell, and **Desktop notifications** (on by default), which
   lets a program's notification (OSC 9, OSC 777) reach the desktop. Its tab is marked either way.
 - **Session**: **Ask before closing a running tab** (on by default; asks only when the shell has
   something running in it), **Scrollback lines** (5,000 by default, 0 to 200,000, held in memory),
@@ -104,11 +104,16 @@ its copy of the repository and its backups in `sync/` there.
 - **Hand-editing is fine while Termina is closed.** Termina reads the file at startup and writes
   the whole file on every change, so an edit made while it runs can be overwritten.
 - **A bad line costs only that key.** A value that does not parse falls back to its default, and
-  the rest of the file is read as usual.
+  the rest of the file is read as usual. A file that cannot be read at all opens on defaults, and is
+  first copied aside as `settings.properties.bad-<time>` so nothing in it is lost.
+- **Backslashes are literal, and the file is UTF-8.** `terminal.shell=C:\Windows\System32\wsl.exe`
+  means what it says. `\\` is one backslash and `\uXXXX` a character, so files written by earlier
+  versions read the same.
+- **Two Termina processes share the file safely.** Each writes only the settings it changed, merged
+  into what is on disk under a lock, so one never undoes the other's changes.
 - **Values are clamped on read as well as on write**, so a hand-edited two-million-line scrollback
   becomes 200,000 rather than exhausting memory at the next launch.
-- **Writes are atomic.** Termina writes `settings.properties.tmp` beside the file and moves it into
-  place, so a crash or a power cut mid-write leaves either the old file or the new one, never an
+- **Writes are atomic.** Termina writes a temporary file beside it and moves it into place, so a crash or a power cut mid-write leaves either the old file or the new one, never an
   empty one.
 
 The keys most worth knowing:
@@ -120,6 +125,7 @@ The keys most worth knowing:
 | `font.size` | 7 to 40 | `13` |
 | `font.zoom` | 0.3 to 3.0, multiplies the size | `1.0` |
 | `terminal.cursorShape` | `BLOCK`, `UNDERLINE`, `BAR` | `BLOCK` |
+| `terminal.padding` | 0 to 32 pixels | `4` |
 | `terminal.bell` | `true`, `false` | `true` |
 | `terminal.notifications` | `true`, `false` | `true` |
 | `terminal.scrollback` | 0 to 200000 | `5000` |

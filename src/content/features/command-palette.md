@@ -3,7 +3,7 @@ title: "Command palette"
 group: "Keyboard"
 order: 1
 beta: false
-summary: "Every command, open tab, shell profile and theme, found by typing part of its name: <kbd>Alt+X</kbd>, as Emacs's <code>M-x</code>. Each row shows its chord, so the palette teaches the keys as you use it."
+summary: "Every command, open tab, shell profile and theme, found by typing part of its name: <kbd>Ctrl+Shift+P</kbd>, or <kbd>Cmd+Shift+P</kbd> on a Mac. Each row shows its chord, so the palette teaches the keys as you use it."
 ---
 
 The palette is Editora's, ported: the same card, the same matcher and ranking, and the same Emacs keys.

@@ -76,7 +76,8 @@ and all of the protocol's further flags. Desktop notifications from programs (OS
 links they declare (OSC 8), yes. See [What programs can ask for](/docs/programs).
 
 Ligatures and images, no: ligatures are not drawn (Fira Code is bundled, without them), and there
-is no image protocol (sixel or kitty graphics).
+is no image protocol (sixel or kitty graphics). An image a program sends with the kitty graphics
+protocol is discarded, as xterm does, rather than printed as a line of text.
 
 ## Does it use the CPU when nothing is happening?
 
@@ -94,7 +95,7 @@ Editora is a text editor by the same author, and Termina takes several things fr
 - **The Editora Dark and Light themes**, "Caret & Ink", with the terminal's ANSI colors derived
   from Editora's syntax colors.
 - **The command palette**: the same card, the same matcher and ranking, and the same Emacs keys,
-  ported as they are, so the two palettes rank alike. Both open on `Alt+X`.
+  ported as they are, so the two palettes rank alike.
 - **The bundled fonts**: the same five monospace families and Inter.
 - **The Settings window's shape**: a grouped sidebar, search, and no OK button.
 - **Settings sync**, ported from Editora's: in Termina it carries the key bindings between

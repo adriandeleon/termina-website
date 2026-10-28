@@ -1,6 +1,6 @@
 ---
 title: Appearance
-description: The four built-in themes and how their ANSI colors are chosen, importing a theme from iTerm2, Terminal, Windows Terminal, Ghostty, kitty or Alacritty, fonts, size and zoom, Nerd Font icons and the bundled symbols font, a profile's own font and theme, the cursor and the visual bell, window opacity, the scrollbar, hiding the tab strip and the menu bar, the menu bar in the title bar, the interface language, and the settings sidebar.
+description: The four built-in themes and how their ANSI colors are chosen, importing a theme from iTerm2, Terminal, Windows Terminal, Ghostty, kitty or Alacritty, fonts, size and zoom, Nerd Font icons and the bundled symbols font, a profile's own font and theme, the cursor, padding and the visual bell, window opacity, the scrollbar, hiding the tab strip and the menu bar, the menu bar in the title bar, the interface language, and the settings sidebar.
 category: Customization
 order: 9
 ---
@@ -121,13 +121,18 @@ the global setting.
 
 See [Shell profiles](/docs/shell-profiles#a-profiles-own-font-and-theme).
 
-## Cursor and bell
+## Cursor, padding and bell
 
 **Settings → Terminal → Display**:
 
 - **Cursor shape**: Block (the default), Underline or Bar. A program can still ask for its own
   shape while it runs (vim does); when it resets the terminal, your choice comes back. A block
   cursor shows the character under it.
+- **Only the pane that takes your keys has a solid cursor.** In the other panes, and in a window
+  that is not focused, a block cursor is drawn as an outline and a bar or underline is dimmed, so
+  you can see where your typing will go before you type.
+- **Padding**, 4 pixels by default and up to 32: the space between the text and the edges of the
+  pane. It applies at once, to every pane.
 - **Visual bell** (on by default) flashes the screen when a program rings the bell. There is no
   audible bell. A bell in a background tab also marks that tab, whether or not the flash is on.
 - **Desktop notifications** (on by default) let a program's notification reach the desktop when
@@ -145,7 +150,8 @@ See [Shell profiles](/docs/shell-profiles#a-profiles-own-font-and-theme).
   window title in the middle and the window buttons at the right, and the terminal gains the row
   the system title bar took. The platform keeps its own window buttons, and the empty part of the
   row and the title drag the window. It applies to windows opened after the change. It is not
-  offered on macOS, nor on a platform that cannot draw its own title bar.
+  offered on macOS, nor on a platform that cannot draw its own title bar. In full screen the title
+  and the window buttons go away, and the menus, if shown, stay as an ordinary row.
 - **Show a scrollbar** (on by default). It takes a column of width so that it never covers text,
   uses the terminal palette's colors, and hides itself on the alternate screen, where a
   full-screen program owns the view. The wheel scrolls the scrollback either way.

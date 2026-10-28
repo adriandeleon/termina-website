@@ -63,7 +63,7 @@ PowerShell, then Command Prompt, whichever is found first.
 - **The chevron** beside the `+` drops the list. Each entry has its shell's mark, the default has a
   tick, and **Configure Profiles…** at the bottom opens Settings.
 - **File → New Tab With**, and **New Tab With** in a tab's right-click menu, carry the same list.
-- **`Ctrl+Shift+1`…`Ctrl+Shift+9`** (`Cmd+Shift+1`…`Cmd+Shift+9` on macOS) open the first nine
+- **`Ctrl+Shift+1`…`Ctrl+Shift+9`** (`Cmd+Option+1`…`Cmd+Option+9` on macOS) open the first nine
   profiles in the list. A number past the end does nothing.
 - **The command palette** lists every profile as **New Tab: *name***.
 

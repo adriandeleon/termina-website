@@ -42,17 +42,17 @@ const entry = (perms: string, size: string, date: string, name: Run): Run[] => [
 ];
 const lines: Run[][] = [
   prompt("ls -l"),
-  entry("drwxr-xr-x", "-", "25 Oct 23:32", ["a12 ab", "branding"]),
-  entry("drwxr-xr-x", "-", "25 Oct 23:32", ["a12 ab", "docs"]),
-  entry("drwxr-xr-x", "-", "25 Oct 23:32", ["a12 ab", "src"]),
-  entry(".rw-r--r--", "63k", "25 Oct 23:32", ["", "CHANGELOG.md"]),
-  entry(".rwxr-xr-x", "11k", "25 Oct 23:32", ["a2 ab", "mvnw"]),
-  entry(".rw-r--r--", "42k", "25 Oct 23:32", ["a3 au", "pom.xml"]),
-  entry(".rw-r--r--", "61k", "25 Oct 23:32", ["a3 au", "README.md"]),
+  entry("drwxr-xr-x", "-", "27 Oct 18:39", ["a12 ab", "branding"]),
+  entry("drwxr-xr-x", "-", "27 Oct 18:39", ["a12 ab", "docs"]),
+  entry("drwxr-xr-x", "-", "27 Oct 18:39", ["a12 ab", "src"]),
+  entry(".rw-r--r--", "71k", "27 Oct 18:39", ["", "CHANGELOG.md"]),
+  entry(".rwxr-xr-x", "11k", "27 Oct 18:39", ["a2 ab", "mvnw"]),
+  entry(".rw-r--r--", "52k", "27 Oct 18:39", ["a3 au", "pom.xml"]),
+  entry(".rw-r--r--", "66k", "27 Oct 18:39", ["a3 au", "README.md"]),
   prompt("git log --oneline -3"),
-  [["a3", "2796648 "], ["a6", "("], ["a6 ab", "HEAD -> "], ["a2 ab", "master"], ["a6", ", "], ["a3 ab", "tag: v0.12.0"], ["a6", ")"], ["", " release: 0.12.0"]],
-  [["a3", "ca7d803 "], ["", "Merge pull request #34 from fix/middle-click-label-sync-themes"]],
-  [["a3", "faf2f51 "], ["", "Merge pull request #33 from feat/sync-create-github-repo"]],
+  [["a3", "cccb6bf "], ["a6", "("], ["a6 ab", "HEAD -> "], ["a2 ab", "master"], ["a6", ", "], ["a3 ab", "tag: v0.13.0"], ["a6", ")"], ["", " release: 0.13.0"]],
+  [["a3", "3521bd7 "], ["", "Merge pull request #40 from review/fixes-2026-10-27"]],
+  [["a3", "9880db3 "], ["", "Merge pull request #39 from fix/emulator-sequence-gaps"]],
   prompt(""),
 ];
 ---
