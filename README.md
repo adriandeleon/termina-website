@@ -2,15 +2,20 @@
 
 The marketing + documentation site for [Termina](https://github.com/adriandeleon/Termina), a
 cross-platform terminal emulator. Served at
-**[adriandeleon.github.io/termina-website](https://adriandeleon.github.io/termina-website/)**.
+**[termina-project.dev](https://termina-project.dev)**.
 
-Because GitHub Pages serves a project site under `/termina-website/`, the site has an Astro
-`base` (`src/lib/site.ts`). Templates build every internal link and asset with `href()` from that
-file; Markdown is written with plain root-relative links (`/docs/links`) and a rehype plugin in
-`astro.config.mjs` puts them under the base. A bare `href="/…"` in a template is a broken link.
-Moving to a domain: `site` to the domain and `base` to `"/"` in `src/lib/site.ts`, the host in a
-new `public/CNAME` and in `public/robots.txt` and the social cards (`scripts/gen-images.mjs`, then
-`--force`), and the custom domain under the repository's Settings → Pages.
+The domain is GitHub Pages' custom domain for this repository (`public/CNAME`, and Settings →
+Pages). Its DNS is on Cloudflare, as Editora's is: the apex and `www` are CNAMEs to
+`adriandeleon.github.io`, **DNS only** — proxied, Cloudflare would answer GitHub's certificate
+check itself and Pages could not issue or renew the HTTPS certificate.
+
+The site still routes everything through an Astro `base` (`src/lib/site.ts`), now `"/"`, from when
+it was served under `/termina-website/`. Templates build every internal link and asset with
+`href()` from that file; Markdown is written with plain root-relative links (`/docs/links`) and a
+rehype plugin in `astro.config.mjs` puts them under the base. Keep doing so: it is what makes
+moving the host or the path a one-file change. Changing the host: `site` in `src/lib/site.ts`,
+`public/CNAME`, `public/robots.txt`, the social cards (`scripts/gen-images.mjs`, then `--force`),
+and the custom domain under Settings → Pages.
 
 Built with [Astro](https://astro.build) and deployed to GitHub Pages via
 `.github/workflows/pages.yml` on every push to `master`. The stack, the layout and the look are
@@ -25,7 +30,7 @@ Termina is built with the help of AI coding tools.
 
 ```bash
 npm install
-npm run dev       # http://localhost:4321/termina-website/
+npm run dev       # http://localhost:4321/
 npm run build     # production build to dist/
 npm run preview   # serve the build (site search only works here, after a build)
 ```

@@ -83,7 +83,7 @@ const card = ({ kicker, title }) => {
   <text x="80" y="196" fill="${C.accent}" font-size="21" font-weight="700" letter-spacing="2.5">${esc(kicker.toUpperCase())}</text>
   <text fill="${C.text}" font-size="58" font-weight="700">${tspans}</text>
   <rect x="80" y="536" width="132" height="4" rx="2" fill="${C.accent}"/>
-  <text x="80" y="590" fill="${C.faint}" font-size="23">adriandeleon.github.io/termina-website</text>
+  <text x="80" y="590" fill="${C.faint}" font-size="23">termina-project.dev</text>
 </svg>`;
 };
 

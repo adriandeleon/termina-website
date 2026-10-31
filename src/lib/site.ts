@@ -1,9 +1,9 @@
-// Where the site is served: GitHub Pages' project address,
-// https://adriandeleon.github.io/termina-website/, so every page lives under `base`.
-// Moving to a domain: set `site` to it, `base` to "/", put the host in public/CNAME and in
-// public/robots.txt, and set the custom domain under the repository's Settings → Pages.
-export const site = "https://adriandeleon.github.io";
-export const base = "/termina-website";
+// Where the site is served: https://termina-project.dev, GitHub Pages under a custom domain, at
+// the root. Changing the host: `site` here, public/CNAME, public/robots.txt, the social cards'
+// footer (scripts/gen-images.mjs, then --force), and the repository's Settings → Pages. `base`
+// stays for the day the site moves under a path again; at "/" every href() is the path itself.
+export const site = "https://termina-project.dev";
+export const base = "/";
 
 /**
  * A root-relative path ("/docs/links", "/#features", "og/docs.png") as it is served under
