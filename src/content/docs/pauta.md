@@ -13,7 +13,7 @@ required, a **SHOULD** is expected unless there is a stated reason.
 
 Termina is built to **[Pauta 6.0.1](https://pauta-project.dev/6.0.1/)**.
 
-**Pauta conformance: Core.** Termina meets every MUST of this edition; 2 SHOULDs are pending.
+**Pauta conformance: Core.** Termina meets every MUST of this edition; 1 SHOULD is pending.
 
 | Conformance | Means |
 |---|---|
@@ -29,9 +29,16 @@ and the conformance.
 
 ## Pending
 
-Rules Termina does not meet yet. Each one links the issue that tracks it. 2 rules: 0 MUST, 2 SHOULD.
+Rules Termina does not meet yet. Each one links the issue that tracks it. 1 rule: 0 MUST, 1 SHOULD.
 
 | Rule | Level | What is different | Link |
 |---|---|---|---|
-| <a href="https://pauta-project.dev/6.0.1/keyboard/#kbd-04" style="white-space: nowrap"><code>KBD-04</code></a> | SHOULD | On macOS a greyed row in the menu bar at the top of the screen does not say why it cannot run; every menu Termina draws itself does. | [#92](https://github.com/adriandeleon/Termina/issues/92) |
 | <a href="https://pauta-project.dev/6.0.1/release/#rel-17" style="white-space: nowrap"><code>REL-17</code></a> | SHOULD | The Windows installer is not signed. | [#92](https://github.com/adriandeleon/Termina/issues/92) |
+
+## Deviations
+
+Recommendations Termina follows differently on purpose. Each one links the decision record that says why. 1 rule: 0 MUST, 1 SHOULD.
+
+| Rule | Level | What is different | Link |
+|---|---|---|---|
+| <a href="https://pauta-project.dev/6.0.1/keyboard/#kbd-04" style="white-space: nowrap"><code>KBD-04</code></a> | SHOULD | On macOS the menu bar at the top of the screen is drawn by the system, which gives Termina no way to say why a greyed row cannot run; the Command Palette and every menu Termina draws do. | [Decision 0014](https://github.com/adriandeleon/Termina/blob/master/docs/decisions/0014-no-reason-on-a-greyed-row-of-the-macos-menu-bar.md) |

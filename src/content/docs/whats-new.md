@@ -176,10 +176,12 @@ done.
 
 ### Changed
 
-- **Termina is built to Pauta 6.0.1 at Core conformance**: every MUST of the edition is met, and
-  two SHOULDs are pending. About and Help ▸ Pauta Conformance say "Built to Pauta 6.0.1" where
-  they said "Working toward". The last three MUSTs were the user guide on the website: its
-  pictures of the real window, its Installing page and its conformance page.
+- **Termina is built to Pauta 6.0.1 at Core conformance**: every MUST of the edition is met. One
+  SHOULD is pending, the Windows installer's signature, and one is a recorded deviation: on macOS a
+  greyed row in the screen's menu bar does not say why it cannot run, because the system draws
+  that bar; the Command Palette does. About and Help ▸ Pauta Conformance say "Built to Pauta
+  6.0.1" where they said "Working toward". The last three MUSTs were the user guide on the
+  website: its pictures of the real window, its Installing page and its conformance page.
 - **An imported colour scheme is stored as JSON.** A theme is `themes/<name>.json` in the settings
   folder, where it was `<name>.properties`. Each theme you have is rewritten the first time
   Termina starts, under the same name, and the file it was is kept beside it as

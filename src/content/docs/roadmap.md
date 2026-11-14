@@ -27,8 +27,11 @@ None: every MUST of the edition is met, which makes the conformance Core.
 
 ### SHOULD
 
-- [ ] **[KBD-04](https://pauta-project.dev/6.0.1/keyboard/#kbd-04)** On macOS a greyed row in the menu bar at the top of the screen does not say why it cannot run; every menu Termina draws itself does.
 - [ ] **[REL-17](https://pauta-project.dev/6.0.1/release/#rel-17)** The Windows installer is not signed.
+
+One SHOULD is a recorded deviation and not open work:
+[KBD-04](https://pauta-project.dev/6.0.1/keyboard/#kbd-04), on macOS's screen menu bar, in
+[decision 0014](https://github.com/adriandeleon/Termina/blob/master/docs/decisions/0014-no-reason-on-a-greyed-row-of-the-macos-menu-bar.md).
 
 Every optional rule (MAY) that applies is met.
 
