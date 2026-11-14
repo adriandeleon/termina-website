@@ -9,51 +9,21 @@ Install Termina, open a tab, and learn the few keys that do most of the work.
 
 ## Install
 
-Download the package for your platform from the
-[releases page](https://github.com/adriandeleon/Termina/releases). Each one bundles its own Java
-runtime, so you need nothing else. Verify a download against `checksums_sha256.txt` on the same
-page.
+Download the installer for your system from the
+[releases page](https://github.com/adriandeleon/Termina/releases), or use a package manager. Each
+download carries its own Java runtime, so you need nothing else.
 
-| Platform | File |
+| System | Quickest way |
 | --- | --- |
-| macOS, Apple Silicon | `Termina-0.13.0-macos-arm64.dmg` |
-| macOS, Intel | `Termina-0.13.0-macos-x64.dmg` |
-| Windows x64 | `Termina-0.13.0-windows-x64.msi` |
-| Debian, Ubuntu (x64 / ARM64) | `Termina-0.13.0-linux-x64.deb` / `Termina-0.13.0-linux-arm64.deb` |
-| Fedora, RHEL, openSUSE (x64 / ARM64) | `Termina-0.13.0-linux-x64.rpm` / `Termina-0.13.0-linux-arm64.rpm` |
+| macOS, Apple Silicon | `brew install --cask adriandeleon/tap/termina`, or the `macos-arm64` `.dmg` |
+| macOS, Intel | The `macos-x64` `.dmg`: open it and drag Termina to Applications |
+| Windows | `winget install AdrianDeLeon.Termina`, or run the `.msi` |
+| Debian, Ubuntu | `sudo apt install ./Termina-*.deb` |
+| Fedora, RHEL, openSUSE | `sudo dnf install ./Termina-*.rpm` |
+| Any other Linux | The `AppImage`, or the `tar.gz` if you have no root |
 
-Homebrew and winget packages are planned but not published yet; releases are on GitHub only.
-
-### Linux
-
-```bash
-# Debian / Ubuntu
-sudo apt install ./Termina-*.deb
-
-# Fedora
-sudo dnf install ./Termina-*.rpm
-```
-
-The `.deb` installs on Debian 12 and Ubuntu 22.04 and anything newer. The packages bring in the
-libraries the interface needs (GTK 3, OpenGL, fontconfig and the rest), so a minimal system works
-too.
-
-The packages add a launcher entry in the `TerminalEmulator` category, so Termina appears in the
-application menu and desktops can offer it where a terminal is wanted. They also put `termina` on
-your `PATH`, and the `.deb` adds Termina to the `x-terminal-emulator` choices without making it the
-default. See [Command line](/docs/command-line#what-the-linux-packages-install).
-
-### macOS
-
-Open the `.dmg` and drag Termina to Applications.
-
-The app is not yet signed with an Apple Developer ID or notarized, so macOS refuses to open it the
-first time. Allow it once under **System Settings → Privacy & Security → Open Anyway**.
-
-### Windows
-
-Run the `.msi`. It installs for the current user and adds a Start menu entry. The installer is
-unsigned, so SmartScreen may warn on the first run: choose **More info → Run anyway**.
+[Installing](/docs/installing) has every download, how to check one against its signature, and
+what the installers put on your computer.
 
 ## First launch
 
