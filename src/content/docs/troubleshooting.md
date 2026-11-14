@@ -5,6 +5,20 @@ category: Help
 order: 11
 ---
 
+## Start with the Doctor and the Message Log
+
+**Help → Doctor** checks what Termina relies on: the shell it starts, its settings folder, Git and
+the GitHub CLI for settings sync, and on Linux the tools for the selection clipboard, notifications
+and opening links. A row that is not OK says what to install. **Copy as text** gives you the rows
+for a bug report.
+
+![The Doctor window: one row for each thing Termina relies on, each marked OK or Missing, with what was found](/screenshots/docs/doctor.png "Help → Doctor. Here the selection clipboard's tool is missing, and the row says which package to install.")
+
+The status bar at the bottom of the window shows the last thing Termina reported. Click it, or
+choose **Help → Message Log**, to see everything it has said since it started, newest first.
+
+![The Message Log, a card over the terminal just above the status bar, with a filter field and Copy and Clear buttons](/screenshots/docs/message-log.png "The Message Log opens over the terminal. Escape closes it.")
+
 ## The title shows the directory, not what my prompt sets
 
 That is intended. A shell names its window with an escape sequence (OSC 0 or OSC 2), and sending

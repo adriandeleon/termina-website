@@ -10,6 +10,8 @@ tab does; splitting never shares a session.
 
 ## Splitting
 
+![One tab split into three panes: a listing on the left, and two shells one above the other on the right](/screenshots/docs/panes.png "One tab, three shells. The outlined pane is the one the keyboard is in.")
+
 | Key | Does |
 | --- | --- |
 | `Ctrl+Shift+E` (`Cmd+D`) | Split Right: a new pane beside this one |

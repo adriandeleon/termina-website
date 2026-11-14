@@ -32,6 +32,8 @@ nothing.
 
 ## The command palette
 
+![The Command Palette over the terminal with the query "tab", listing the commands that match and their shortcuts](/screenshots/docs/palette.png "The palette lists every command; the letters you typed are marked in each title.")
+
 `Ctrl+Shift+P` (`Cmd+Shift+P` on macOS) opens it, as in Windows Terminal and VS Code.
 
 - **Type part of a name.** "nw" finds New Window, "tab close" finds Close Tab with the words in
@@ -66,6 +68,8 @@ Until 0.13.0 the default was `Alt+X`, Emacs's `M-x`. That took `M-x` from Emacs 
 the terminal, so it moved. If you had chosen a chord yourself, Alt+X included, you keep it.
 
 ## Changing a shortcut
+
+![The Keyboard page of Settings, searched for "new tab": the commands that match, each with the shortcut it is on and a Reset button](/screenshots/docs/settings-keyboard.png "Settings → Keyboard, narrowed here by a search for new tab.")
 
 **Settings → Keyboard** lists every command under the menu it lives in, each with the shortcut it
 is on now. The settings search finds them by name, such as "close tab".
@@ -118,6 +122,8 @@ keys.closeTab=none
   it were not there. A line naming a command this version does not have is left in the file.
 
 ## The Keyboard Shortcuts reference
+
+![The Keyboard Shortcuts window, a searchable list of shortcuts grouped by menu](/screenshots/docs/shortcuts.png "Help → Keyboard Shortcuts shows the shortcuts in force, your own changes included.")
 
 **Help → Keyboard Shortcuts…** (`Ctrl+Shift+/`, `Cmd+/` on macOS) lists every chord the window
 answers to, grouped by menu, with a search box. It is built from the window's own binding table,

@@ -16,6 +16,8 @@ installers bundle their own Java runtime, so there is nothing else to install.
 Version 0.13.0, released on 2026-10-27, is the latest release. Downloads are on the
 [releases page](https://github.com/adriandeleon/Termina/releases).
 
+![The Termina window: a menu bar, two tabs, and a shell showing a directory listing with file-type icons and colour](/screenshots/docs/window.png "Termina, with two tabs open.")
+
 ## How it is built
 
 A terminal does three jobs, and Termina writes only one of them.

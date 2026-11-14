@@ -69,6 +69,21 @@ snapshotted on a transparent fill; composite it onto the window at the position 
 the platform cannot draw a title bar, so Settings → Appearance says so on the title-bar row: take
 that page on a desktop, or show another.
 
+**The user guide's own pictures** are `public/screenshots/docs/<name>.png`, taken in the app's
+light theme, each with a `<name>.dark.png` twin taken in the dark one, both at 2×.
+`scripts/screenshots.sh` retakes all of them, headless, from a Termina checkout
+(`TERMINA_REPO`, else `../Termina`): it writes its own shell start-up file, home folder and demo
+project, so the same Termina gives the same pictures on any machine. `scripts/screenshots.sh panes
+tabs` retakes only those. A docs page shows one with an image on a line of its own:
+
+```md
+![What the picture shows](/screenshots/docs/panes.png "The caption under it")
+```
+
+`src/lib/rehype-doc-figures.mjs` turns that into a figure, reads its size from the file, links the
+full-size picture, and lets the site's theme pick the light or the dark one. Alt text is required;
+a missing file fails the build. Retake them after any change to how the window looks (DOCS-18).
+
 ## Themes
 
 The site's palettes are the app's four themes (`com.termina.ui.Theme`), so the picker in the header

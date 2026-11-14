@@ -11,6 +11,8 @@ session. Windows share the settings, the theme and the Settings window, and noth
 
 ## Tabs
 
+![A Termina window with four tabs, one of them renamed "server", and a directory listing in the tab in front](/screenshots/docs/tabs.png "Four tabs; the one named server was renamed by hand, and a dot marks a tab with output you have not seen.")
+
 | Key | Does |
 | --- | --- |
 | `Ctrl+Shift+T` (`Cmd+T`) | New Tab, running the default profile |

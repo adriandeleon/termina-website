@@ -25,9 +25,11 @@ The conformance is worked out from the list below, never typed in, so it cannot 
 shows. The same list is in the app: **Help → Pauta Conformance** opens it, and **About** names the edition
 and the conformance.
 
+![The Pauta Conformance window: the edition, the conformance, and the list of rules not met with the reason for each](/screenshots/docs/pauta.png "Help → Pauta Conformance, in the app.")
+
 ## Pending
 
-Rules Termina does not meet yet. Each one links the issue that tracks it. 13 rules: 3 MUST, 10 SHOULD.
+Rules Termina does not meet yet. Each one links the issue that tracks it. 12 rules: 3 MUST, 9 SHOULD.
 
 | Rule | Level | What is different | Link |
 |---|---|---|---|
@@ -38,7 +40,6 @@ Rules Termina does not meet yet. Each one links the issue that tracks it. 13 rul
 | <a href="https://pauta-project.dev/6.0.1/documentation/#docs-04" style="white-space: nowrap"><code>DOCS-04</code></a> | SHOULD | The website's What's New page is written by hand, and nothing checks the command names and shortcuts the guide quotes. | [#92](https://github.com/adriandeleon/Termina/issues/92) |
 | <a href="https://pauta-project.dev/6.0.1/documentation/#docs-18" style="white-space: nowrap"><code>DOCS-18</code></a> | SHOULD | The website's screenshots are from version 0.13.0 and were taken at normal size, not at double size like the README's. | [#92](https://github.com/adriandeleon/Termina/issues/92) |
 | <a href="https://pauta-project.dev/6.0.1/keyboard/#kbd-04" style="white-space: nowrap"><code>KBD-04</code></a> | SHOULD | On macOS a greyed row in the menu bar at the top of the screen does not say why it cannot run; every menu Termina draws itself does. | [#92](https://github.com/adriandeleon/Termina/issues/92) |
-| <a href="https://pauta-project.dev/6.0.1/templates/command-palette/#pal-06" style="white-space: nowrap"><code>PAL-06</code></a> | SHOULD | The Command Palette's movement keys are fixed and do not follow the key bindings. | [#92](https://github.com/adriandeleon/Termina/issues/92) |
 | <a href="https://pauta-project.dev/6.0.1/templates/command-palette/#pal-08" style="white-space: nowrap"><code>PAL-08</code></a> | SHOULD | The Command Palette has no key that opens the documentation for the highlighted command. | [#92](https://github.com/adriandeleon/Termina/issues/92) |
 | <a href="https://pauta-project.dev/6.0.1/conformance/#pauta-14" style="white-space: nowrap"><code>PAUTA-14</code></a> | SHOULD | The website cannot build its conformance page from this list yet. | [#92](https://github.com/adriandeleon/Termina/issues/92) |
 | <a href="https://pauta-project.dev/6.0.1/platform/#plat-14" style="white-space: nowrap"><code>PLAT-14</code></a> | SHOULD | The settings file is read and written by hand-written code and not by the JSON library the guidelines name. | [#92](https://github.com/adriandeleon/Termina/issues/92) |

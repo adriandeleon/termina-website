@@ -7,6 +7,8 @@ order: 6.5
 
 ## The find bar
 
+![The find bar at the top right of the terminal with the query "warning", and both matches marked in the text](/screenshots/docs/search.png "Every match is marked as you type; the framed one is where Enter last stopped.")
+
 **Edit → Find…**, `Ctrl+Shift+F` (`Cmd+F`), opens a bar at the top right of the pane. It searches
 the whole scrollback and the screen as you type, highlights every match in the theme's yellow, and
 outlines the current one. In a split tab each pane has a bar of its own, and the chord opens the

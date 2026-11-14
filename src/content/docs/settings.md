@@ -7,6 +7,8 @@ order: 10
 
 ## The Settings window
 
+![The Settings window on its Appearance page: a search field, the pages on the left, and the theme, font and window rows](/screenshots/docs/settings.png "Settings. Every change applies as you make it; there is no OK button.")
+
 `Ctrl+,` (`Cmd+,` on macOS) opens it, as does **File → Settings…** or **Settings…** on the
 right-click menu, which is the way in when the menu bar is hidden. There is one Settings window,
 shared by every terminal window.

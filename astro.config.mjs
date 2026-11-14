@@ -3,6 +3,7 @@ import { defineConfig } from "astro/config";
 import sitemap from "@astrojs/sitemap";
 import pagefind from "astro-pagefind";
 import { site, base, href } from "./src/lib/site.ts";
+import rehypeDocFigures from "./src/lib/rehype-doc-figures.mjs";
 
 // Served at the root of termina-project.dev (src/lib/site.ts), so `base` is "/" and this is a
 // pass-through; it is kept so moving under a path again stays a one-file change. Templates build links with href(); Markdown is authored with plain root-relative links
@@ -31,7 +32,8 @@ export default defineConfig({
   site,
   base,
   markdown: {
-    rehypePlugins: [rehypeBaseLinks],
+    // Figures first: it reads each picture's size from public/ by the path the Markdown gives.
+    rehypePlugins: [rehypeDocFigures, rehypeBaseLinks],
   },
   // pagefind() runs the Pagefind indexer inside `astro build` (so it works however CI invokes the
   // build) and serves the index in `astro dev`.

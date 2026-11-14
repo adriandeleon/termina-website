@@ -12,6 +12,8 @@ and nothing else.
 
 ## Setting it up
 
+![The Sync page of Settings, searched for "interval": the switch that syncs automatically, the interval in minutes, and the note on what is synced](/screenshots/docs/settings-sync.png "Settings → Sync, narrowed here by a search for interval.")
+
 1. **Make a private repository** on GitHub, GitLab or any other Git host, empty or already used by
    another of your computers.
 2. **Settings → Sync → Repository**: its URL, such as `git@github.com:you/termina-sync.git` or an

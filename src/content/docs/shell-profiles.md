@@ -82,6 +82,8 @@ opens in its place so the window is never left empty.
 
 ## Hiding and adding profiles
 
+![The Profiles page of Settings, listing the shells found on this computer and the default profile](/screenshots/docs/settings-profiles.png "Settings → Profiles: the shells Termina found, and your own.")
+
 **Settings → Profiles** lists every profile, hidden ones included:
 
 - **Show in the profile menu** hides or shows a discovered profile or one of yours.

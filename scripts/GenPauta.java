@@ -260,6 +260,8 @@ String page(String edition, List<Entry> exceptions) {
     md.append("The conformance is worked out from the list below, never typed in, so it cannot claim more than the list\n")
         .append("shows. The same list is in the app: **Help → Pauta Conformance** opens it, and **About** names the edition\n")
         .append("and the conformance.\n");
+    md.append("\n![The Pauta Conformance window: the edition, the conformance, and the list of rules not met with the reason for each]")
+        .append("(/screenshots/docs/pauta.png \"Help → Pauta Conformance, in the app.\")\n");
 
     if (exceptions.isEmpty()) {
         md.append("\n## Exceptions\n\nNone: Termina meets every MUST and SHOULD of Pauta ").append(edition).append(".\n");

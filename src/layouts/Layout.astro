@@ -333,6 +333,46 @@ const isActive = (href: string) => {
       Helvetica, Arial, sans-serif;
   }
 
+  /* Screenshot figures in docs Markdown (src/lib/rehype-doc-figures.mjs). A
+     capture with a .dark sibling ships both; the light site themes (Editora
+     Light, Clear Light) show the light one, the dark ones the dark one. */
+  .doc-figure {
+    margin: 1.5rem 0 1.75rem;
+  }
+  .doc-figure-link {
+    display: block;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+    background: var(--bg-soft);
+    line-height: 0;
+  }
+  .doc-figure-link:hover,
+  .doc-figure-link:focus-visible {
+    border-color: var(--accent);
+  }
+  .doc-figure img {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+  .doc-figure .doc-figure-link.doc-figure-light,
+  [data-theme="editora-light"] .doc-figure .doc-figure-link.doc-figure-dark,
+  [data-theme="clear-light"] .doc-figure .doc-figure-link.doc-figure-dark {
+    display: none;
+  }
+  [data-theme="editora-light"] .doc-figure .doc-figure-link.doc-figure-light,
+  [data-theme="clear-light"] .doc-figure .doc-figure-link.doc-figure-light {
+    display: block;
+  }
+  .doc-figure figcaption {
+    margin-top: 0.55rem;
+    color: var(--faint);
+    font-size: 0.86rem;
+    line-height: 1.45;
+    text-align: center;
+  }
+
   /* Theme overrides — each mirrors a Termina theme (com.termina.ui.Theme).
      :root above is Editora Dark, so only the others need a block. */
   [data-theme="editora-light"] {
