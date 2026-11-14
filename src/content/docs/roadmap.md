@@ -23,22 +23,15 @@ A test fails when this list and that file disagree.
 
 ### MUST
 
-- [ ] **[PAUTA-13](https://pauta-project.dev/6.0.1/conformance/#pauta-13)** The website's page that lists the Pauta edition, the conformance and these exceptions is written but not published yet.
-- [ ] **[DOCS-01](https://pauta-project.dev/6.0.1/documentation/#docs-01)** The user guide's screenshots are taken but not on the website yet.
-- [ ] **[DOCS-02](https://pauta-project.dev/6.0.1/documentation/#docs-02)** The user guide's page on installing a download and checking its signature is written but not on the website yet.
+None: every MUST of the edition is met, which makes the conformance Core.
 
 ### SHOULD
 
-- [ ] **[PAUTA-14](https://pauta-project.dev/6.0.1/conformance/#pauta-14)** The website builds its conformance page from this list, in a version of the site that is not published yet.
-- [ ] **[DOCS-03](https://pauta-project.dev/6.0.1/documentation/#docs-03)** The app opens the user guide for its own version, which the website does not serve yet.
-- [ ] **[DOCS-04](https://pauta-project.dev/6.0.1/documentation/#docs-04)** The website's What's New, command and roadmap pages are built from the app, in a version of the site that is not published yet.
-- [ ] **[DOCS-18](https://pauta-project.dev/6.0.1/documentation/#docs-18)** The website's screenshots are retaken at double size but not published yet.
+- [ ] **[DOCS-04](https://pauta-project.dev/6.0.1/documentation/#docs-04)** The website checks the commands and keys its guide quotes on pull requests, and not yet in the build that deploys the site.
 - [ ] **[KBD-04](https://pauta-project.dev/6.0.1/keyboard/#kbd-04)** On macOS a greyed row in the menu bar at the top of the screen does not say why it cannot run; every menu Termina draws itself does.
-- [ ] **[PAL-08](https://pauta-project.dev/6.0.1/templates/command-palette/#pal-08)** The Command Palette's help key opens a command's page of the user guide, which the website does not serve yet.
 - [ ] **[REL-17](https://pauta-project.dev/6.0.1/release/#rel-17)** The Windows installer is not signed.
 
-One optional rule is not met and has no entry there: window modes that hide chrome
-([WIN-10](https://pauta-project.dev/6.0.1/window-shell/#win-10)).
+Every optional rule (MAY) that applies is met.
 
 ## Never run
 
