@@ -1,0 +1,118 @@
+---
+import { href } from "../../../../lib/site";
+import Layout from "../../../../layouts/Layout.astro";
+import { commandGroups } from "../../../../lib/commands";
+import { chordText } from "../../../../lib/keys";
+import { version, docsBase, docsVersion } from "../../../../lib/termina";
+
+// One page for each command: what the app's palette opens for the highlighted row (PAL-08,
+// Pauta 6.0.1), at /docs/v-<version>/commands/<id>/. Generated data only, so a command that is
+// renamed or rebound in the app is right here after the next run of scripts/GenCommands.java.
+export function getStaticPaths() {
+  return commandGroups.flatMap((group) =>
+    group.commands.map((command) => ({
+      params: { version: docsVersion, id: command.id },
+      props: { command, group: group.title },
+    })),
+  );
+}
+
+const { command, group } = Astro.props;
+const area = command.id.slice(0, command.id.indexOf("."));
+---
+
+<Layout title={`${command.title} — Termina commands`} description={command.desc}>
+  <main class="page" data-pagefind-body data-pagefind-meta="kind:Command">
+    <p class="back"><a href={href(`${docsBase}/commands`)}>← All commands</a></p>
+    <h1>{command.title}</h1>
+    <p class="lead">{command.desc}</p>
+
+    <table>
+      <tbody>
+        <tr>
+          <th>Id</th>
+          <td><code>{command.id}</code></td>
+        </tr>
+        <tr>
+          <th>Group</th>
+          <td>{group}</td>
+        </tr>
+        <tr>
+          <th>Linux and Windows</th>
+          <td>{command.pc ? <kbd>{chordText(command.pc)}</kbd> : <span class="none">No key by default</span>}</td>
+        </tr>
+        <tr>
+          <th>macOS</th>
+          <td>{command.mac ? <kbd>{chordText(command.mac, true)}</kbd> : <span class="none">No key by default</span>}</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2>Running it</h2>
+    <p>
+      Open the <strong>command palette</strong> with <kbd data-mac="⇧⌘P">Ctrl+Shift+P</kbd>, type a
+      few letters of <em>{command.title}</em>, and press <kbd>Enter</kbd>.
+      {area === "nav" && " In a list such as the palette's, its key moves the selection; with the terminal in front, that key goes to the shell."}
+    </p>
+
+    <h2>Changing its key</h2>
+    <p>
+      <strong>Settings → Keyboard</strong> lists every command with its key. Click the key to record
+      another, or reset it. In <code>settings.json</code> the binding is
+      <code>keys.{command.id}</code>, and settings sync carries it to your other computers. See
+      <a href={href(`${docsBase}/keyboard`)}>Keyboard</a>.
+    </p>
+    <p class="note">Termina {version}.</p>
+  </main>
+</Layout>
+
+<style>
+  .page {
+    max-width: 46rem;
+    margin: 0 auto;
+    padding: 3rem 1.25rem 2rem;
+  }
+  .back {
+    margin: 0 0 1rem;
+    font-size: 0.9rem;
+  }
+  h1 {
+    font-size: 2.2rem;
+    margin: 0 0 0.5rem;
+    letter-spacing: -0.02em;
+  }
+  h2 {
+    font-size: 1.15rem;
+    margin: 2rem 0 0.5rem;
+  }
+  .lead {
+    color: var(--muted);
+    font-size: 1.08rem;
+    margin: 0 0 1.5rem;
+  }
+  table {
+    border-collapse: collapse;
+    font-size: 0.95rem;
+    width: 100%;
+  }
+  th,
+  td {
+    text-align: left;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid var(--border-soft);
+    vertical-align: top;
+  }
+  th {
+    width: 12rem;
+    color: var(--faint);
+    font-weight: 500;
+  }
+  .none {
+    color: var(--faint);
+  }
+  .note {
+    color: var(--faint);
+    font-size: 0.85rem;
+    margin-top: 2rem;
+  }
+</style>

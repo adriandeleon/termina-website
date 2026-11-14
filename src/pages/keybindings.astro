@@ -3,11 +3,11 @@ import { href } from "../lib/site";
 import Layout from "../layouts/Layout.astro";
 import { commandGroups } from "../lib/commands";
 import { keysOf } from "../lib/keys";
-import { version } from "../lib/termina";
+import { version, docsBase } from "../lib/termina";
 
-// Every command in the menus, grouped as the menus are, with its keys on each platform. Generated
-// from the app's own menu table at the release tag (scripts/GenCommands.java), so it cannot drift
-// from the menus.
+// Every command, grouped by the menu or the area it belongs to, with its keys on each platform.
+// Generated from the app's own catalogue and key maps at the release tag
+// (scripts/GenCommands.java), so it cannot drift from the app.
 const groups = commandGroups.map((g) => ({
   title: g.title,
   commands: g.commands.map((c) => ({ title: c.title, id: c.id, keys: keysOf(c) })),
@@ -24,7 +24,7 @@ const bound = groups.reduce((n, g) => n + g.commands.filter((c) => c.keys).lengt
   <main class="page" data-pagefind-body data-pagefind-meta="kind:Reference">
     <h1>Keybindings</h1>
     <p class="lead">
-      All {total} commands in Termina {version}'s menus, {bound} of them with a key.
+      All {total} commands in Termina {version}, {bound} of them with a key.
       Every one is also in the <strong>command palette</strong>
       (<kbd data-mac="⇧⌘P">Ctrl+Shift+P</kbd>), any of these keys can be changed under
       <strong>Settings → Keyboard</strong>, and
@@ -45,7 +45,7 @@ const bound = groups.reduce((n, g) => n + g.commands.filter((c) => c.keys).lengt
               <tbody>
                 {g.commands.map((c) => (
                   <tr id={c.id}>
-                    <td class="title">{c.title}</td>
+                    <td class="title"><a href={href(`${docsBase}/commands/${c.id}`)}>{c.title}</a></td>
                     <td class="keys">
                       {c.keys ? <kbd data-mac={c.keys.mac}>{c.keys.pc}</kbd> : <span class="none">palette</span>}
                     </td>

@@ -1,0 +1,142 @@
+---
+import { href } from "../../../../lib/site";
+import Layout from "../../../../layouts/Layout.astro";
+import { commandGroups, commandCount } from "../../../../lib/commands";
+import { keysOf } from "../../../../lib/keys";
+import { version, docsBase, docsVersion } from "../../../../lib/termina";
+
+// Every command Termina has, by the menu or the area it belongs to, with what it does. Generated
+// from the app's own catalogue and key maps (scripts/GenCommands.java, DOCS-04), so it cannot
+// name a command the app does not have.
+export function getStaticPaths() {
+  return [{ params: { version: docsVersion } }];
+}
+---
+
+<Layout
+  title="Commands — Termina"
+  description="Every command in Termina, with what it does, the name the key bindings and settings sync know it by, and its keys on Linux, Windows and macOS."
+>
+  <main class="page" data-pagefind-body data-pagefind-meta="kind:Reference">
+    <p class="back"><a href={href(`${docsBase}/`)}>← Documentation</a></p>
+    <h1>Commands</h1>
+    <p class="lead">
+      All {commandCount} commands in Termina {version}. Each is in the
+      <strong>command palette</strong> (<kbd data-mac="⇧⌘P">Ctrl+Shift+P</kbd>), and any of them can
+      be given a key, or a different one, under <strong>Settings → Keyboard</strong>. The name in
+      grey is the command's id: what <code>settings.json</code> and settings sync call it.
+    </p>
+    {
+      commandGroups.map((g) => (
+        <section class="group">
+          <h2>{g.title}</h2>
+          <table>
+            <tbody>
+              {g.commands.map((c) => {
+                const keys = keysOf(c);
+                return (
+                  <tr id={c.id}>
+                    <td class="title">
+                      <a href={href(`${docsBase}/commands/${c.id}`)}>{c.title}</a>
+                      <code class="id">{c.id}</code>
+                    </td>
+                    <td class="desc">{c.desc}</td>
+                    <td class="keys">
+                      {keys ? <kbd data-mac={keys.mac}>{keys.pc}</kbd> : <span class="none">palette</span>}
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </section>
+      ))
+    }
+    <p class="note">
+      <a href={href("/keybindings")}>Keybindings</a> has the same commands as a list of keys alone.
+    </p>
+  </main>
+</Layout>
+
+<style>
+  .page {
+    max-width: var(--maxw);
+    margin: 0 auto;
+    padding: 3rem 1.25rem 2rem;
+  }
+  .back {
+    margin: 0 0 1rem;
+    font-size: 0.9rem;
+  }
+  h1 {
+    font-size: 2.4rem;
+    margin: 0 0 0.5rem;
+    letter-spacing: -0.02em;
+  }
+  .lead {
+    color: var(--muted);
+    font-size: 1.05rem;
+    margin: 0 0 2rem;
+    max-width: 48rem;
+  }
+  .lead strong {
+    color: var(--text);
+  }
+  .group {
+    margin: 0 0 2.25rem;
+  }
+  .group h2 {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--faint);
+    margin: 0 0 0.4rem;
+    padding-bottom: 0.4rem;
+    border-bottom: 1px solid var(--border);
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.93rem;
+  }
+  td {
+    padding: 0.5rem 0;
+    border-bottom: 1px solid var(--border-soft);
+    vertical-align: top;
+  }
+  tr:target td {
+    background: var(--accent-soft);
+  }
+  .title {
+    width: 16rem;
+    padding-right: 1rem;
+  }
+  .id {
+    display: block;
+    color: var(--faint);
+    font-size: 0.78rem;
+    background: none;
+    padding: 0;
+  }
+  .desc {
+    color: var(--muted);
+    padding-right: 1rem;
+  }
+  .keys {
+    text-align: right;
+    white-space: nowrap;
+  }
+  .none {
+    color: var(--faint);
+    font-size: 0.8rem;
+  }
+  .note {
+    color: var(--muted);
+    font-size: 0.9rem;
+  }
+  @media (max-width: 44rem) {
+    .desc {
+      display: none;
+    }
+  }
+</style>

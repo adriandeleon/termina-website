@@ -1,0 +1,32 @@
+name: Check
+
+# What a pull request has to pass (DOCS-04, Pauta 6.0.1): the guide names no command the app does
+# not have and no key the app gives to another command, and the site builds, which also fails on a
+# docs picture that is missing or has no alt text. The generators are not run here: they read the
+# Termina repository, which is not checked out, and their output is committed.
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    name: Docs and build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - name: Install
+        run: npm ci
+      - name: Check the commands and keys the guide quotes
+        run: npm run check:docs
+      - name: Build
+        run: npm run build

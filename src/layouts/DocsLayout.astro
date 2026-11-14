@@ -2,12 +2,13 @@
 import { href } from "../lib/site";
 import { getCollection, render, type CollectionEntry } from "astro:content";
 import Layout from "./Layout.astro";
+import { docsBase } from "../lib/termina";
 
 interface Props {
   entry: CollectionEntry<"docs">;
 }
 const { entry } = Astro.props;
-const base = href("/docs");
+const base = href(docsBase);
 
 // Build the ordered sidebar: categories in a fixed order, docs by `order`.
 const CATEGORY_ORDER = [
@@ -35,8 +36,8 @@ const prev = idx > 0 ? flat[idx - 1] : null;
 const next = idx >= 0 && idx < flat.length - 1 ? flat[idx + 1] : null;
 
 const reference = [
+  { href: href(`${docsBase}/commands`), label: "Commands" },
   { href: href("/keybindings"), label: "Keybindings" },
-  { href: "https://github.com/adriandeleon/Termina/blob/master/CHANGELOG.md", label: "Changelog" },
   { href: "https://github.com/adriandeleon/Termina/releases", label: "Releases" },
 ];
 

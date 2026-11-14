@@ -67,18 +67,18 @@ const featureGroups = await groupedFeatures();
 
 // The keys a newcomer reaches for first, read from the generated command data.
 const keyIds = [
-  "commandPalette",
-  "newTab",
-  "closeTab",
-  "reopenClosedTab",
-  "copy",
-  "paste",
-  "nextTab",
-  "goToTab",
-  "zoomIn",
-  "fullScreen",
-  "settings",
-  "keyboardShortcuts",
+  "palette.show",
+  "file.newTab",
+  "file.closeTab",
+  "file.reopenClosedTab",
+  "edit.copy",
+  "edit.paste",
+  "tab.next",
+  "tab.goTo1",
+  "view.zoomIn",
+  "view.fullScreen",
+  "settings.show",
+  "help.keyboardShortcuts",
 ];
 const keyRows = keyIds.flatMap((id) => {
   const c = allCommands.find((x) => x.id === id);

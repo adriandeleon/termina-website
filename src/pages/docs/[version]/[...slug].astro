@@ -1,0 +1,16 @@
+---
+import { getCollection } from "astro:content";
+import DocsLayout from "../../../layouts/DocsLayout.astro";
+import { docsVersion } from "../../../lib/termina";
+
+// Every docs page but the introduction, which is /docs/v-<version>/ itself.
+export async function getStaticPaths() {
+  return (await getCollection("docs"))
+    .filter((entry) => entry.id !== "introduction")
+    .map((entry) => ({ params: { version: docsVersion, slug: entry.id }, props: { entry } }));
+}
+
+const { entry } = Astro.props;
+---
+
+<DocsLayout entry={entry} />

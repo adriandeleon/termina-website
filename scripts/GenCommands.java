@@ -1,260 +1,197 @@
-// Generates src/lib/commands.ts (the Keybindings page, the home page's keys, the palette demo) and
-// src/lib/version.ts from a Termina checkout: the menu actions in TerminalWindow.buildMenuBar(),
-// their labels in messages.properties and their chords, for both platform branches.
+// Generates src/lib/commands.ts (the Commands and Keybindings pages, each command's own page, the
+// home page's keys, the palette demo) and src/lib/version.ts from a Termina checkout: every
+// command's id, title and description from messages.properties, and its default chord on each
+// system from the key maps (DOCS-04, Pauta 6.0.1).
 //
-//   java scripts/GenCommands.java [/path/to/Termina] [--ref=v0.10.0]
+//   java scripts/GenCommands.java [/path/to/Termina] [--ref=v0.15.0] [--as=0.15.0]
 //
 // The checkout is the argument, else $TERMINA_REPO, else ../Termina. Run it from the site's root.
 // The files are read at a git ref, not from the working tree, so the site describes a release
 // whatever branch the checkout is on: the newest vX.Y.Z tag by default, or --ref=<tag|branch|HEAD>.
+// --as names the version when the site is being made ready ahead of a release, from a branch
+// whose pom still says -SNAPSHOT; without it such a ref gives the newest released version.
+//
+// Termina 0.15.0 and later: before that a command's id had no area in front of it and its chord
+// was written in the Java source, which the generator this one replaced read.
 // A JDK 25 compact source file (JEP 512): no build step, nothing outside java.base.
 
 static final Path OUT = Path.of("src/lib");
 
-static final String WINDOW = "src/main/java/com/termina/ui/TerminalWindow.java";
 static final String CATALOGUE = "src/main/resources/com/termina/i18n/messages.properties";
-static final String MENU_ACTION = "src/main/java/com/termina/ui/MenuAction.java";
+static final String KEYMAPS = "src/main/resources/com/termina/keymaps/";
 
-// Which group of the Keybindings page each command sits in, in the page's order: the menu it lives
-// in. The source builds the View menu's actions before the menu and registers some from loops, so
-// position cannot answer this reliably. An id missing here lands in "Other" and is reported; ids
-// listed here but absent at the ref (commands of a later release) are skipped quietly.
+/** The pages' groups, in order, and the areas of command ids each takes. */
 static final LinkedHashMap<String, List<String>> GROUPS = groups();
 
-// A compact source file has no static initialiser blocks, hence the method.
 static LinkedHashMap<String, List<String>> groups() {
-    var GROUPS = new LinkedHashMap<String, List<String>>();
-    GROUPS.put(
-            "File",
-            List.of(
-                    "newTab",
-                    "newTabProfileNumber",
-                    "newWindow",
-                    "closeTab",
-                    "closeWindow",
-                    "reopenClosedTab",
-                    "syncNow",
-                    "settings"));
-    GROUPS.put(
-            "Edit",
-            List.of(
-                    "copy",
-                    "paste",
-                    "selectAll",
-                    "clearScrollback",
-                    "find",
-                    "findNext",
-                    "findPrevious",
-                    "previousPrompt",
-                    "nextPrompt",
-                    "selectLastOutput"));
-    GROUPS.put(
-            "View",
-            List.of("zoomIn", "zoomOut", "actualSize", "fullScreen", "hideMenuBar", "commandPalette"));
-    GROUPS.put(
-            "Window",
-            List.of(
-                    "nextTab",
-                    "previousTab",
-                    "goToTab",
-                    "moveTabLeft",
-                    "moveTabRight",
-                    "renameTab",
-                    "duplicateTab",
-                    "splitRight",
-                    "splitDown",
-                    "focusPane",
-                    "maximizePane",
-                    "movePaneToNewTab"));
-    GROUPS.put("Help", List.of("keyboardShortcuts", "about", "checkForUpdates"));
-    return GROUPS;
+    var groups = new LinkedHashMap<String, List<String>>();
+    groups.put("File", List.of("file", "app"));
+    groups.put("Edit", List.of("edit", "find", "link"));
+    groups.put("View", List.of("view", "palette"));
+    groups.put("Tabs and panes", List.of("tab", "pane"));
+    groups.put("Lists", List.of("nav"));
+    groups.put("Settings and sync", List.of("settings", "sync"));
+    groups.put("Help", List.of("help", "debugLog", "messageLog", "report"));
+    return groups;
 }
 
-/** One command: what the menu calls it, and its chord off macOS and on it (null for none). */
-record Cmd(String id, String title, List<String> pc, List<String> mac) {}
-
-/** A chord expression evaluated for both platform branches. */
-record Pair(List<String> pc, List<String> mac) {
-    static final Pair NONE = new Pair(null, null);
-}
+record Cmd(String id, String title, String desc, List<String> pc, List<String> mac) {}
 
 void main(String[] args) throws IOException, InterruptedException {
-    String repoArg = null;
     String ref = null;
+    String as = null;
+    String path = null;
     for (String a : args) {
         if (a.startsWith("--ref=")) ref = a.substring("--ref=".length());
-        else repoArg = a;
+        else if (a.startsWith("--as=")) as = a.substring("--as=".length());
+        else path = a;
     }
-    Path repo = Path.of(repoArg != null
-                    ? repoArg
-                    : Objects.requireNonNullElse(System.getenv("TERMINA_REPO"), "../Termina"))
+    Path repo = Path.of(path != null ? path : Objects.requireNonNullElse(System.getenv("TERMINA_REPO"), "../Termina"))
             .toAbsolutePath()
             .normalize();
     if (!Files.exists(repo.resolve(".git"))) {
         System.err.println("No Termina checkout at " + repo + " (pass its path, or set TERMINA_REPO)");
-        System.exit(1);
+        System.exit(2);
     }
     if (ref == null) ref = newestTag(repo);
 
-    Properties messages = new Properties();
-    messages.load(new StringReader(show(repo, ref, CATALOGUE)));
-    String source = show(repo, ref, WINDOW);
-    int start = source.indexOf("private MenuBar buildMenuBar()");
-    int end = source.indexOf("bar.getMenus().addAll(", start);
-    if (start < 0 || end < 0) throw new IllegalStateException("buildMenuBar() not found in " + WINDOW + " at " + ref);
-    String body = source.substring(start, end);
-    paletteDefault = paletteDefault(show(repo, ref, MENU_ACTION));
-
-    // Since 0.13.0 the actions the palette and the constructor ask after are final fields made by
-    // item() in their initializers, and buildMenuBar only registers them. Their calls are read too.
-    StringBuilder scan = new StringBuilder(body);
-    Matcher field = Pattern.compile("MenuAction\\s+\\w+\\s*=\\s*item\\(").matcher(source);
-    while (field.find()) {
-        scan.append("\nitem(")
-                .append(String.join(", ", arguments(source, field.end())))
-                .append(");");
-    }
-    String calls = scan.toString();
-
-    Map<String, Cmd> byId = new LinkedHashMap<>();
-    for (int at = calls.indexOf("item("); at >= 0; at = calls.indexOf("item(", at + 1)) {
-        // item( must be a call of its own, not the tail of another name (toMenuItem, MenuItem).
-        if (at > 0 && Character.isJavaIdentifierPart(calls.charAt(at - 1))) continue;
-        List<String> a = arguments(calls, at + "item(".length());
-        String key = unquote(a.get(0));
-        if (key == null || !key.startsWith("menu.")) continue;
-        String id = key.substring("menu.".length());
-        Pair chord = a.size() >= 3 ? chord(a.get(1)) : Pair.NONE;
-        byId.putIfAbsent(id, new Cmd(id, label(messages, key), chord.pc(), chord.mac()));
+    Properties catalogue = new Properties();
+    catalogue.load(new StringReader(show(repo, ref, CATALOGUE)));
+    Map<String, String> pc = bindings(show(repo, ref, KEYMAPS + "keymap.json"));
+    Map<String, String> mac = bindings(show(repo, ref, KEYMAPS + "keymap.mac.json"));
+    // The chords that move a list's selection: one file for every system, where there is one.
+    String lists = showOrNull(repo, ref, KEYMAPS + "lists.json");
+    if (lists != null) {
+        Map<String, String> both = bindings(lists);
+        pc.putAll(both);
+        mac.putAll(both);
     }
 
-    // About is built with MenuAction.of and the application's name rather than item().
-    if (body.contains("\"menu.about\"")) byId.put("about", new Cmd("about", label(messages, "menu.about"), null, null));
-
-    // The palette's chord is the user's choice, bound last; until one is chosen it is the default.
-    Cmd palette = byId.get("commandPalette");
-    if (palette != null && palette.pc() == null) {
-        Pair d = chord("MenuAction.DEFAULT_PALETTE_CHORD");
-        byId.put("commandPalette", new Cmd(palette.id(), palette.title(), d.pc(), d.mac()));
+    // Every command: the catalogue's command.<id> keys that have a .desc beside them.
+    TreeMap<String, Cmd> byId = new TreeMap<>();
+    for (String key : catalogue.stringPropertyNames()) {
+        if (!key.startsWith("command.") || key.endsWith(".desc")) continue;
+        String id = key.substring("command.".length());
+        String desc = catalogue.getProperty(key + ".desc");
+        if (desc == null || !id.contains(".")) continue; // a label that is not a command's title
+        String title = catalogue.getProperty(key).replace("{0}", "Termina");
+        byId.put(id, new Cmd(id, title, desc, chord(pc.get(id), false), chord(mac.get(id), true)));
+    }
+    if (byId.size() < 40) {
+        throw new IllegalStateException("only " + byId.size() + " commands at " + ref
+                + ": this generator reads Termina 0.15.0 and later, where ids are area.name");
+    }
+    for (String id : pc.keySet()) {
+        if (!byId.containsKey(id)) throw new IllegalStateException("keymap.json binds " + id + ", which is no command");
     }
 
-    // Hide Menu Bar is not offered on macOS, where the menus are in the screen menu bar.
-    Cmd hide = byId.get("hideMenuBar");
-    if (hide != null && body.contains("offersMenuBarToggle(")) {
-        byId.put("hideMenuBar", new Cmd(hide.id(), hide.title(), hide.pc(), null));
-    }
-
-    // Chords registered from loops, as one row each: a profile by number, a tab by number.
-    // MenuAction.profileChord (0.13.0): Option+Cmd on macOS, whose Cmd+Shift+3, 4 and 5 are
-    // screenshots. shiftChord before it: Shift+Cmd.
-    if (body.contains("menu.newTabProfileNumber") && body.contains("profileChord(digitKey(")) {
-        byId.put(
-                "newTabProfileNumber",
-                new Cmd(
-                        "newTabProfileNumber",
-                        label(messages, "menu.newTabProfileNumber").replace("Termina", "1–9"),
-                        List.of("Ctrl", "Shift", "1…9"),
-                        List.of("Option", "Cmd", "1…9")));
-    } else if (body.contains("menu.newTabProfileNumber") && body.contains("shiftChord(digitKey(")) {
-        byId.put(
-                "newTabProfileNumber",
-                new Cmd(
-                        "newTabProfileNumber",
-                        label(messages, "menu.newTabProfileNumber").replace("Termina", "1–9"),
-                        List.of("Ctrl", "Shift", "1…9"),
-                        List.of("Shift", "Cmd", "1…9")));
-    }
-    if (body.contains("MenuAction.tabChord(")) {
-        byId.put(
-                "goToTab",
-                new Cmd(
-                        "goToTab",
-                        label(messages, "menu.goToTab").replace("Termina", "1–9") + " (9 is the last)",
-                        List.of("Alt", "1…9"),
-                        List.of("Cmd", "1…9")));
-    }
-
-    List<String> warnings = new ArrayList<>();
-    Set<String> grouped = new HashSet<>();
     StringBuilder ts = new StringBuilder();
-    ts.append("// AUTO-GENERATED by scripts/GenCommands.java — do not edit by hand.\n")
-            .append("// Source: TerminalWindow.buildMenuBar() and messages.properties in the Termina repository, at ")
-            .append(ref)
-            .append(".\n")
-            .append("// Re-run the script after a release, or after a command or a chord changes.\n\n")
-            .append("// A chord is its keys in order, given separately for Linux and Windows (pc) and for macOS\n")
-            .append("// (mac), because Termina's application chords are Ctrl+Shift+key off macOS and Cmd+key on it.\n")
-            .append("// Modifiers are Ctrl, Shift and Alt on pc; Ctrl, Option, Shift and Cmd on mac. null: none.\n")
-            .append("export type Chord = string[];\n")
-            .append("export type Cmd = { id: string; title: string; pc: Chord | null; mac: Chord | null };\n")
-            .append("export type CmdGroup = { title: string; commands: Cmd[] };\n\n")
-            .append("export const commandGroups: CmdGroup[] = [\n");
+    ts.append("// AUTO-GENERATED by scripts/GenCommands.java — do not edit by hand.\n");
+    ts.append("// Source: messages.properties and the key maps in the Termina repository, at ").append(ref).append(".\n");
+    ts.append("// Re-run the script after a release, or after a command or a chord changes.\n\n");
+    ts.append("// A chord is its keys in order, given separately for Linux and Windows (pc) and for macOS\n");
+    ts.append("// (mac), because Termina's application chords are Ctrl+Shift+key off macOS and Cmd+key on it.\n");
+    ts.append("// Modifiers are Ctrl, Alt and Shift on pc; Ctrl, Option, Shift and Cmd on mac. null: none.\n");
+    ts.append("export type Chord = string[];\n");
+    ts.append("export type Cmd = { id: string; title: string; desc: string; pc: Chord | null; mac: Chord | null };\n");
+    ts.append("export type CmdGroup = { title: string; commands: Cmd[] };\n\n");
+    ts.append("export const commandGroups: CmdGroup[] = [\n");
+    Set<String> placed = new HashSet<>();
     for (var group : GROUPS.entrySet()) {
-        List<Cmd> cmds = new ArrayList<>();
-        for (String id : group.getValue()) {
-            Cmd c = byId.get(id);
-            if (c == null) continue;
-            cmds.add(c);
-            grouped.add(id);
+        List<Cmd> commands = new ArrayList<>();
+        for (String area : group.getValue()) {
+            for (Cmd c : byId.values()) {
+                if (c.id().startsWith(area + ".") && placed.add(c.id())) commands.add(c);
+            }
         }
-        appendGroup(ts, group.getKey(), cmds);
-    }
-    List<Cmd> other =
-            byId.values().stream().filter(c -> !grouped.contains(c.id())).toList();
-    for (Cmd c : other) warnings.add("not in any group, listed under Other: " + c.id());
-    if (!other.isEmpty()) appendGroup(ts, "Other", other);
-    ts.append("];\n");
-
-    // Two commands on one chord: the window's filter runs the first and never reaches the second.
-    for (boolean mac : new boolean[] {false, true}) {
-        Map<List<String>, List<String>> owners = new LinkedHashMap<>();
-        for (Cmd c : byId.values()) {
-            List<String> k = mac ? c.mac() : c.pc();
-            if (k != null) owners.computeIfAbsent(k, x -> new ArrayList<>()).add(c.id());
+        if (commands.isEmpty()) continue;
+        ts.append("  {\n    title: ").append(quote(group.getKey())).append(",\n    commands: [\n");
+        for (Cmd c : commands) {
+            ts.append("      { id: ").append(quote(c.id())).append(", title: ").append(quote(c.title()))
+                    .append(", desc: ").append(quote(c.desc()))
+                    .append(", pc: ").append(keys(c.pc())).append(", mac: ").append(keys(c.mac())).append(" },\n");
         }
-        owners.forEach((k, ids) -> {
-            if (ids.size() > 1)
-                warnings.add((mac ? "macOS" : "pc") + " chord " + String.join("+", k) + " is on " + String.join(", ", ids));
-        });
+        ts.append("    ],\n  },\n");
     }
-
-    Files.createDirectories(OUT);
+    ts.append("];\n\n");
+    ts.append("export const commandCount = ").append(byId.size()).append(";\n");
+    List<String> unplaced = byId.keySet().stream().filter(id -> !placed.contains(id)).toList();
+    if (!unplaced.isEmpty()) {
+        throw new IllegalStateException("commands whose area no group takes (add it to GROUPS): " + unplaced);
+    }
     Files.writeString(OUT.resolve("commands.ts"), ts.toString());
-    String version = version(repo, ref);
+
+    String version = as != null ? as : version(repo, ref);
     Files.writeString(
             OUT.resolve("version.ts"),
             "// AUTO-GENERATED by scripts/GenCommands.java — do not edit by hand.\n"
                     + "// Source: Termina's pom.xml <version> at " + ref + ", or the newest released CHANGELOG.md\n"
-                    + "// section while the pom is on a -SNAPSHOT between releases.\n\n"
+                    + "// section while the pom is on a -SNAPSHOT between releases"
+                    + (as != null ? "; here given with --as, ahead of the release" : "") + ".\n\n"
                     + "export const version = \"" + version + "\";\n");
-
     System.out.println("commands.ts: " + byId.size() + " commands; version.ts: " + version + " (from " + repo + " at "
             + ref + ")");
-    for (String w : warnings) System.err.println("warning: " + w);
 }
 
-static void appendGroup(StringBuilder ts, String title, List<Cmd> cmds) {
-    if (cmds.isEmpty()) return;
-    ts.append("  {\n    title: ").append(js(title)).append(",\n    commands: [\n");
-    for (Cmd c : cmds) {
-        ts.append("      { id: ")
-                .append(js(c.id()))
-                .append(", title: ")
-                .append(js(c.title()))
-                .append(", pc: ")
-                .append(chordJs(c.pc()))
-                .append(", mac: ")
-                .append(chordJs(c.mac()))
-                .append(" },\n");
-    }
-    ts.append("    ],\n  },\n");
+/** The {@code bindings} object of a key map file: command id to chord, as JavaFX names it. */
+static Map<String, String> bindings(String json) {
+    Map<String, String> out = new LinkedHashMap<>();
+    int at = json.indexOf("\"bindings\"");
+    if (at < 0) throw new IllegalStateException("a key map with no bindings");
+    Matcher m = Pattern.compile("\"([^\"]+)\"\\s*:\\s*\"([^\"]*)\"").matcher(json.substring(json.indexOf('{', at)));
+    while (m.find()) out.put(m.group(1), m.group(2));
+    return out;
 }
 
-static String chordJs(List<String> chord) {
-    return chord == null ? "null" : "[" + String.join(", ", chord.stream().map(x -> js(x)).toList()) + "]";
+/**
+ * A chord as the pages show it: its modifiers in the system's order, then its key. Shortcut is
+ * Ctrl off macOS and Cmd on it; Alt is Option on a Mac; Meta is Cmd there.
+ */
+static List<String> chord(String javafx, boolean mac) {
+    if (javafx == null || javafx.isBlank()) return null;
+    String[] parts = javafx.split("\\+");
+    Set<String> mods = new HashSet<>();
+    for (int i = 0; i < parts.length - 1; i++) mods.add(parts[i].strip());
+    boolean shortcut = mods.contains("Shortcut");
+    boolean ctrl = mods.contains("Ctrl") || (shortcut && !mac);
+    boolean cmd = mac && (shortcut || mods.contains("Meta"));
+    List<String> out = new ArrayList<>();
+    if (ctrl) out.add("Ctrl");
+    if (mods.contains("Alt")) out.add(mac ? "Option" : "Alt");
+    if (mods.contains("Shift")) out.add("Shift");
+    if (cmd) out.add("Cmd");
+    out.add(key(parts[parts.length - 1].strip()));
+    return out;
 }
 
-// --- reading the source at a ref ---
+/** A key as it is printed on the keyboard, from JavaFX's name for it. */
+static String key(String name) {
+    return switch (name) {
+        case "Comma" -> ",";
+        case "Period" -> ".";
+        case "Slash" -> "/";
+        case "Back Slash" -> "\\";
+        case "Equals" -> "=";
+        case "Minus" -> "-";
+        case "Open Bracket" -> "[";
+        case "Close Bracket" -> "]";
+        case "Semicolon" -> ";";
+        case "Quote" -> "'";
+        case "Back Quote" -> "`";
+        case "Page Up" -> "PageUp";
+        case "Page Down" -> "PageDown";
+        default -> name;
+    };
+}
+
+static String keys(List<String> chord) {
+    if (chord == null) return "null";
+    return chord.stream().map(k -> quote(k)).collect(java.util.stream.Collectors.joining(", ", "[", "]"));
+}
+
+static String quote(String s) {
+    return "\"" + s.replace("\\", "\\\\").replace("\"", "\\\"") + "\"";
+}
 
 static String show(Path repo, String ref, String path) throws IOException, InterruptedException {
     Process p = new ProcessBuilder("git", "-C", repo.toString(), "show", ref + ":" + path).start();
@@ -262,6 +199,15 @@ static String show(Path repo, String ref, String path) throws IOException, Inter
     String err = new String(p.getErrorStream().readAllBytes(), StandardCharsets.UTF_8);
     if (p.waitFor() != 0) throw new IllegalStateException("git show " + ref + ":" + path + " failed: " + err.strip());
     return out;
+}
+
+/** As {@link #show}, or null for a file the ref does not have. */
+static String showOrNull(Path repo, String ref, String path) throws IOException, InterruptedException {
+    Process p = new ProcessBuilder("git", "-C", repo.toString(), "show", ref + ":" + path)
+            .redirectError(ProcessBuilder.Redirect.DISCARD)
+            .start();
+    String out = new String(p.getInputStream().readAllBytes(), StandardCharsets.UTF_8);
+    return p.waitFor() == 0 ? out : null;
 }
 
 /** The newest vX.Y.Z tag, by version rather than by name ("v0.10.0" after "v0.9.0"). */
@@ -275,176 +221,16 @@ static String newestTag(Path repo) throws IOException, InterruptedException {
             .orElseThrow(() -> new IllegalStateException("no release tag in " + repo));
 }
 
-/** The top-level arguments of the call whose argument list starts at {@code from}. */
-static List<String> arguments(String s, int from) {
-    List<String> out = new ArrayList<>();
-    int depth = 0;
-    boolean inString = false;
-    StringBuilder cur = new StringBuilder();
-    for (int i = from; i < s.length(); i++) {
-        char ch = s.charAt(i);
-        if (inString) {
-            cur.append(ch);
-            if (ch == '\\') cur.append(s.charAt(++i));
-            else if (ch == '"') inString = false;
-            continue;
-        }
-        switch (ch) {
-            case '"' -> {
-                inString = true;
-                cur.append(ch);
-            }
-            case '(', '{', '[' -> {
-                depth++;
-                cur.append(ch);
-            }
-            case ')', '}', ']' -> {
-                if (depth == 0) {
-                    out.add(cur.toString().strip());
-                    return out;
-                }
-                depth--;
-                cur.append(ch);
-            }
-            case ',' -> {
-                if (depth == 0) {
-                    out.add(cur.toString().strip());
-                    cur.setLength(0);
-                } else cur.append(ch);
-            }
-            default -> cur.append(ch);
-        }
-    }
-    throw new IllegalStateException("unbalanced call at " + from);
-}
-
-static String label(Properties messages, String key) {
-    String text = messages.getProperty(key);
-    if (text == null) throw new IllegalStateException("no message for " + key);
-    // The one argument a fixed label takes is the application's name (About {0}).
-    return text.replace("{0}", "Termina");
-}
-
-// --- chords ---
-
-static final Pattern TERNARY = Pattern.compile("^MAC\\s*\\?(.+?):(.+)$", Pattern.DOTALL);
-static final Pattern HELPER = Pattern.compile("^(?:MenuAction\\.)?(appChord|shiftChord)\\(KeyCode\\.(\\w+)\\)$");
-static final Pattern COMBINATION =
-        Pattern.compile("^new KeyCodeCombination\\(\\s*KeyCode\\.(\\w+)((?:\\s*,\\s*KeyCombination\\.\\w+)*)\\s*\\)$");
-
 /**
- * A chord expression from the menu table, for both platforms. Only the forms the table uses are
- * understood, and anything else stops the script: a chord guessed wrong would be published.
- * macOS modifiers are listed in its own order, ⌃⌥⇧⌘, which is how its menus draw them.
+ * The version the site describes: the pom's own, or, while that is a -SNAPSHOT between releases,
+ * the newest released section of CHANGELOG.md.
  */
-static Pair chord(String expr) {
-    String e = expr.replaceAll("\\s+", " ").strip();
-    if (e.equals("null")) return Pair.NONE;
-    Matcher m = TERNARY.matcher(e);
-    if (m.matches()) return new Pair(chord(m.group(2)).pc(), chord(m.group(1)).mac());
-    m = HELPER.matcher(e);
-    if (m.matches()) {
-        String key = m.group(2);
-        // MenuAction.appChord: Cmd+key on macOS, Ctrl+Shift+key elsewhere (Ctrl+key is the shell's).
-        // MenuAction.shiftChord: Shift on both.
-        return m.group(1).equals("appChord")
-                ? new Pair(keys(key, "Ctrl", "Shift"), keys(key, "Cmd"))
-                : new Pair(keys(key, "Ctrl", "Shift"), keys(key, "Shift", "Cmd"));
-    }
-    switch (e) {
-        // MenuAction.closeWindowChord: Cmd+Shift+W on macOS, Ctrl+Shift+Q (GNOME Terminal's) elsewhere.
-        case "MenuAction.closeWindowChord()" -> {
-            return new Pair(keys("Q", "Ctrl", "Shift"), keys("W", "Shift", "Cmd"));
-        }
-        // TerminalWindow.fullScreenChord: F11, or Ctrl+Cmd+F on macOS, which gives F11 to the desktop.
-        case "fullScreenChord()" -> {
-            return new Pair(List.of("F11"), keys("F", "Ctrl", "Cmd"));
-        }
-        // Whatever MenuAction defines it as at this ref: Alt+X until 0.13.0, Ctrl+Shift+P since.
-        case "MenuAction.DEFAULT_PALETTE_CHORD" -> {
-            return chord(paletteDefault);
-        }
-        default -> {}
-    }
-    m = COMBINATION.matcher(e);
-    if (m.matches()) {
-        String key = m.group(1);
-        String mods = m.group(2);
-        boolean shortcut = mods.contains("SHORTCUT_DOWN");
-        boolean control = mods.contains("CONTROL_DOWN");
-        boolean alt = mods.contains("ALT_DOWN");
-        boolean shift = mods.contains("SHIFT_DOWN");
-        boolean meta = mods.contains("META_DOWN");
-        List<String> pc = new ArrayList<>();
-        if (shortcut || control) pc.add("Ctrl");
-        if (alt) pc.add("Alt");
-        if (shift) pc.add("Shift");
-        pc.add(keyName(key));
-        List<String> mac = new ArrayList<>();
-        if (control) mac.add("Ctrl");
-        if (alt) mac.add("Option");
-        if (shift) mac.add("Shift");
-        if (shortcut || meta) mac.add("Cmd");
-        mac.add(keyName(key));
-        // META_DOWN alone is a Mac-only chord (the Windows key is the desktop's elsewhere).
-        return new Pair(meta && !shortcut ? null : pc, mac);
-    }
-    throw new IllegalStateException("cannot read the chord in: " + expr);
-}
-
-/** The palette's default chord expression, read from MenuAction at the ref being generated. */
-static String paletteDefault = "null";
-
-static String paletteDefault(String menuAction) {
-    Matcher m = Pattern.compile("DEFAULT_PALETTE_CHORD\\s*=\\s*([^;]+);").matcher(menuAction);
-    if (!m.find()) throw new IllegalStateException("DEFAULT_PALETTE_CHORD not found in " + MENU_ACTION);
-    return m.group(1);
-}
-
-static List<String> keys(String code, String... mods) {
-    List<String> k = new ArrayList<>(List.of(mods));
-    k.add(keyName(code));
-    return k;
-}
-
-static String keyName(String code) {
-    return switch (code) {
-        case "COMMA" -> ",";
-        case "EQUALS" -> "=";
-        case "MINUS" -> "-";
-        case "SLASH" -> "/";
-        case "OPEN_BRACKET" -> "[";
-        case "CLOSE_BRACKET" -> "]";
-        case "UP" -> "Up";
-        case "DOWN" -> "Down";
-        case "LEFT" -> "Left";
-        case "RIGHT" -> "Right";
-        case "INSERT" -> "Insert";
-        case "HOME" -> "Home";
-        case "END" -> "End";
-        case "ENTER" -> "Enter";
-        default -> code.startsWith("DIGIT") ? code.substring(5) : code;
-    };
-}
-
-static String unquote(String expr) {
-    return expr.length() >= 2 && expr.startsWith("\"") && expr.endsWith("\"")
-            ? expr.substring(1, expr.length() - 1)
-            : null;
-}
-
 static String version(Path repo, String ref) throws IOException, InterruptedException {
     String pom = show(repo, ref, "pom.xml");
     // The project's own <version> is the first one, ahead of the dependency list.
     Matcher m = Pattern.compile("<version>([^<]+)</version>").matcher(pom);
-    String v = m.find() ? m.group(1).strip() : "";
-    if (!v.isEmpty() && !v.endsWith("-SNAPSHOT")) return v;
-    Matcher released = Pattern.compile("(?m)^## (\\d+\\.\\d+\\.\\d+)\\b")
-            .matcher(show(repo, ref, "CHANGELOG.md"));
+    if (m.find() && !m.group(1).endsWith("-SNAPSHOT")) return m.group(1).strip();
+    Matcher released = Pattern.compile("(?m)^## \\[?(\\d+\\.\\d+\\.\\d+)\\]?").matcher(show(repo, ref, "CHANGELOG.md"));
     if (released.find()) return released.group(1);
     throw new IllegalStateException("no released version in pom.xml or CHANGELOG.md at " + ref);
-}
-
-static String js(String s) {
-    return "\"" + s.replace("\\", "\\\\").replace("\"", "\\\"") + "\"";
 }
