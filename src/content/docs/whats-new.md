@@ -176,6 +176,10 @@ done.
 
 ### Changed
 
+- **Termina is built to Pauta 6.0.1 at Core conformance**: every MUST of the edition is met, and
+  three SHOULDs are pending. About and Help ▸ Pauta Conformance say "Built to Pauta 6.0.1" where
+  they said "Working toward". The last three MUSTs were the user guide on the website: its
+  pictures of the real window, its Installing page and its conformance page.
 - **An imported colour scheme is stored as JSON.** A theme is `themes/<name>.json` in the settings
   folder, where it was `<name>.properties`. Each theme you have is rewritten the first time
   Termina starts, under the same name, and the file it was is kept beside it as
@@ -477,6 +481,10 @@ done.
 
 ### Fixed
 
+- **A profile's folder could be undone by the edit before it.** In Settings ▸ Profiles, changing
+  the command and then the folder a moment later could leave the folder as it was: each edit
+  checks its paths on its own thread, and the first edit's answer sometimes arrived last and was
+  written over the second. Only the newest edit of a profile is applied now.
 - **Settings sync's `gh` is given the login shell's `PATH`,** as `git` already was: started from a
   desktop launcher, a `gh` installed by Homebrew could be found and then fail to find `git`. The
   link opener and the desktop's own tools (`xclip`, `notify-send`) get it too once it is known.

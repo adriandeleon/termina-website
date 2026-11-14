@@ -26,7 +26,6 @@ jobs:
           cache: npm
       - name: Install
         run: npm ci
-      - name: Check the commands and keys the guide quotes
-        run: npm run check:docs
-      - name: Build
+      # The build runs the check of the commands and keys the guide quotes first, and fails on it.
+      - name: Check the guide and build
         run: npm run build

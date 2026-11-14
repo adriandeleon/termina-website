@@ -105,7 +105,9 @@ and the palette demo. After a release, run all four from the tag and commit the 
 
 `npm run check:docs` then checks what the hand-written pages quote: a backticked command id must
 be a real command, and a key in a table beside a command's title must not be another command's
-key. The **Check** workflow runs it, and the build, on every pull request.
+key. `npm run build` runs it first and stops there if it fails (DOCS-04), so the workflow that
+deploys the site cannot publish a guide that names a command the app does not have. The **Check**
+workflow runs the build on every pull request.
 
 ## The guide is served under its version
 
@@ -133,7 +135,7 @@ Apple's and are kept.
 
 ## Generated data
 
-`npm run build` first runs `scripts/gen-images.mjs`: the favicon and touch icons from
+`npm run build` runs the docs check, then `scripts/gen-images.mjs`: the favicon and touch icons from
 `public/termina-icon.svg` (a copy of the app's `branding/termina-icon.svg`), a social card per
 key page in `public/og/`, and a WebP beside every PNG screenshot. Outputs are kept unless their
 source is newer; `--force` rebuilds them.
