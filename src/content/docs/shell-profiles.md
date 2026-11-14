@@ -1,6 +1,6 @@
 ---
 title: Shell profiles
-description: What a profile is, which shells are discovered on each platform, the profile dropdown, New Tab With and the number chords, choosing the default, hiding and adding profiles, a profile's own font, size and theme, and the profile keys in settings.properties.
+description: What a profile is, which shells are discovered on each platform, the profile dropdown, New Tab With and the number chords, choosing the default, hiding and adding profiles, a profile's own font, size and theme, and the profile keys in settings.json.
 category: Using Termina
 order: 4
 ---
@@ -62,7 +62,8 @@ PowerShell, then Command Prompt, whichever is found first.
 
 - **The chevron** beside the `+` drops the list. Each entry has its shell's mark, the default has a
   tick, and **Configure Profiles…** at the bottom opens Settings.
-- **File → New Tab With**, and **New Tab With** in a tab's right-click menu, carry the same list.
+- **File → New Tab With** lists the first nine profiles, the ones with a shortcut. **New Tab
+  With** in a tab's right-click menu carries the whole list, as the chevron does.
 - **`Ctrl+Shift+1`…`Ctrl+Shift+9`** (`Cmd+Option+1`…`Cmd+Option+9` on macOS) open the first nine
   profiles in the list. A number past the end does nothing.
 - **The command palette** lists every profile as **New Tab: *name***.
@@ -89,8 +90,12 @@ opens in its place so the window is never left empty.
 - **Show in the profile menu** hides or shows a discovered profile or one of yours.
 - **Add** creates a profile of your own with a **Name**, a **Command** and a **Starting
   directory** (leave it empty to follow the current tab). The fields check as you type and say
-  **Not found**, **Not executable** or **Not a directory**.
-- **Remove** deletes one of yours.
+  **Not found**, **Not executable** or **Not a directory**; a command or a directory that fails is
+  marked and not saved.
+- **Remove** deletes one of yours. It asks first, since it cannot be undone. Tabs already open
+  with the profile keep running.
+- **Right-click the list** for Add and Remove. Both are also commands, Add Profile and Remove
+  Profile…, in the palette.
 
 Discovered profiles cannot be edited, since they are re-detected at every launch. To run one
 differently, add a profile of your own: a shell with other arguments, `ssh build.example.com`, or a
@@ -103,35 +108,38 @@ Every profile, the Default Shell and the discovered ones included, can have its 
 follows the global setting under Appearance. A server you reach with `ssh` can have a theme of its
 own, so its tab never looks like a local one.
 
-- **The font list** is the same monospace faces as the global one, and the theme list has the
-  built-in themes and any you have [imported](/docs/appearance#importing-a-theme).
+- **The font list** is the same monospace faces as the global one, and the theme list has Follow
+  the System, the built-in themes and any you have [imported](/docs/appearance#importing-a-theme).
 - **The pane keeps it.** Splitting a pane, duplicating or reopening its tab, and moving it to
   another tab keep the profile it was opened as, and with it the profile's look.
 - **The size goes through zoom**, like the global size.
 - **With several themes in one window**, the window's own colors (behind the panes, the window
   buttons, the tab marks) follow the pane being typed in.
 
-## In settings.properties
+## In settings.json
 
-The whole list lives in `~/.termina/settings.properties`, which you can edit by hand while Termina
-is closed:
+The whole list lives in `~/.termina/settings.json`, which you can edit by hand while Termina is
+closed. These are the profile keys, among the file's other settings:
 
-```properties
-# The default profile, by id. Empty means the first profile.
-profiles.default=shell-fish
-
-# Discovered or user profiles to leave out of the menus, by id.
-profiles.hidden=shell-tcsh,wsl-ubuntu
-
-# Your own profiles, numbered from 1.
-profile.1.id=user-build
-profile.1.name=Build server
-profile.1.command=ssh build.example.com
-profile.2.name=Notes
-profile.2.command=/bin/zsh -l
-profile.2.directory=/home/me/notes
+```json
+{
+  "schemaVersion": 3,
+  "settings": {
+    "profile.1.command": "ssh build.example.com",
+    "profile.1.id": "user-build",
+    "profile.1.name": "Build server",
+    "profile.2.command": "/bin/zsh -l",
+    "profile.2.directory": "/home/me/notes",
+    "profile.2.name": "Notes",
+    "profiles.default": "shell-fish",
+    "profiles.hidden": "shell-tcsh,wsl-ubuntu"
+  }
+}
 ```
 
+- **`profiles.default`** is the default profile, by id. Empty means the first profile.
+- **`profiles.hidden`** lists the discovered or user profiles to leave out of the menus, by id,
+  with commas between them.
 - **User profiles are numbered from 1**, up to 64. A gap is skipped rather than ending the list, so
   deleting one block removes one profile.
 - **`name` and `command` are required.** `command` is split as a shell would split it, honoring
@@ -144,16 +152,19 @@ profile.2.directory=/home/me/notes
 A profile's font, size and theme are kept apart from the numbered block, keyed by the profile's
 id, because the Default Shell and the discovered profiles have no block of their own:
 
-```properties
-profileStyle.user-build.theme=clear-light
-profileStyle.system.font=Fira Code
-profileStyle.system.fontSize=15
+```json
+    "profileStyle.system.font": "Fira Code",
+    "profileStyle.system.fontSize": 15,
+    "profileStyle.user-build.theme": "clear-light"
 ```
 
 A missing key means Default. The size is clamped to 7 to 40 when read, like the global one. A
-built-in theme's id is `editora-dark`, `editora-light`, `clear-dark` or `clear-light`, and an
-imported one's is `user-` and the name of its file in `~/.termina/themes`, without `.properties`
-(`user-solarized-dark`).
+built-in theme's id is `editora-dark`, `editora-light`, `clear-dark`, `clear-light` or
+`high-contrast`, `system` follows the system, and an imported theme's id is `user-` and the name
+of its file in `~/.termina/themes`, without `.properties` (`user-solarized-dark`).
+
+A Windows path in a command or a directory has its backslashes doubled, as JSON asks:
+`"C:\\Tools\\nu.exe"`.
 
 **Reset to Defaults** in Settings keeps your profiles, their fonts and themes, the default profile
 and the hidden list.

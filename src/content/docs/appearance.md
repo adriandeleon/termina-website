@@ -1,6 +1,6 @@
 ---
 title: Appearance
-description: The four built-in themes and how their ANSI colors are chosen, importing a theme from iTerm2, Terminal, Windows Terminal, Ghostty, kitty or Alacritty, fonts, size and zoom, Nerd Font icons and the bundled symbols font, a profile's own font and theme, the cursor, padding and the visual bell, window opacity, the scrollbar, hiding the tab strip and the menu bar, the menu bar in the title bar, the interface language, and the settings sidebar.
+description: The built-in themes and how their ANSI colors are chosen, High Contrast and the theme that follows the system, importing a theme from iTerm2, Terminal, Windows Terminal, Ghostty, kitty or Alacritty, fonts, size and zoom, the interface zoom, Nerd Font icons and the bundled symbols font, a profile's own font and theme, the cursor, padding and the visual bell, window opacity, the scrollbar, the status bar, hiding the tab strip and the menu bar, the menu bar in the title bar, the interface language, and the settings sidebar.
 category: Customization
 order: 9
 ---
@@ -14,15 +14,23 @@ font, so you can see a theme or a font before you look back at the terminal.
 **Settings → Appearance → Theme → Color theme**, or type "theme" in the
 [command palette](/docs/keyboard#the-command-palette). The theme applies to every window, the
 terminal palette and Termina's own dialogs. A [profile](#a-profiles-own-font-and-theme) can have a
-theme of its own, which then wins in its panes. Four themes are built in, and any number can be
-[imported](#importing-a-theme).
+theme of its own, which then wins in its panes. Five themes are built in, one more choice follows
+the system, and any number can be [imported](#importing-a-theme).
 
 | Theme | From |
 | --- | --- |
+| **Follow the System** | Editora Light while the desktop is light, Editora Dark while it is dark |
 | **Editora Dark** (the default) | Editora's "Caret & Ink": Caret teal on Ink navy |
 | **Editora Light** | Editora's light counterpart |
 | **Clear Dark** | macOS Terminal's Clear Dark profile |
 | **Clear Light** | macOS Terminal's Clear Light profile |
+| **High Contrast** | White on black, with a single cyan accent |
+
+- **Follow the System switches when the desktop does**, between Editora Light and Editora Dark.
+  It is in Settings, in a profile's theme picker and in the palette.
+- **High Contrast keeps every color at 7:1 or better on its black**, the terminal's colors and
+  the windows' alike. Choose it like any theme. On Windows, Termina switches to it while the
+  system's high-contrast mode is on, and back to your own theme when that ends.
 
 - **The Editora themes' ANSI colors come from Editora's editor themes.** Each color takes a role
   from the matching syntax palette: red is a keyword, green an escape, yellow a type, magenta a
@@ -61,11 +69,11 @@ key bindings are ignored.
 - **Colors are taken exactly as the file has them**, the cursor and selection colors included
   where the file names them. Nothing is adjusted for contrast. The Settings window and the dialogs
   take the Editora styling that matches the theme's background.
-- **The new theme is selected**, and listed after the built-in four, in Settings and in the
+- **The new theme is selected**, and listed after the built-in ones, in Settings and in the
   palette. The row says what was imported, or why a file was not.
 - **Importing a file again replaces** the theme of that name rather than adding a second copy.
-- **Remove** deletes the imported theme chosen above it, and the color theme goes back to Editora
-  Dark. The built-in four cannot be removed.
+- **Remove** asks first, then deletes the imported theme chosen above it, and the color theme goes
+  back to Editora Dark. The built-in themes cannot be removed.
 - **Each is a plain file** in `~/.termina/themes`, named after the theme in lower case with
   hyphens between the words (`solarized-dark.properties`), that you can read and edit.
 
@@ -81,10 +89,12 @@ key bindings are ignored.
 
 Zoom is separate from the size. **Zoom In** `Ctrl+=` (`Cmd+=`), **Zoom Out** `Ctrl+-` (`Cmd+-`)
 and **Actual Size** `Ctrl+0` (`Cmd+0`) step through a browser's ladder from 30% to 300% of the
-size you set, which stays as it is. On Linux and Windows the View menu shows zoom as one row,
-`Zoom − 100% + ⤢`, which stays open while you press it; the percentage resets it, and the last
-button is Full Screen. The right-click menu has the same row on every platform. On macOS the
-View menu lists Zoom In, Zoom Out, Actual Size and Full Screen as ordinary items.
+size you set, which stays as it is. The View menu lists Zoom In, Zoom Out, Actual Size and Full
+Screen as ordinary rows. The right-click menu shows zoom as one row, `Zoom − 100% + ⤢`, which
+stays open while you press it; the percentage resets it, and the last button is Full Screen.
+
+This zoom is the terminal text's. The menus, the tabs and the other windows have a zoom of their
+own: see [Interface zoom](#interface-zoom).
 
 Wide characters (CJK, emoji) take two cells. Fira Code is bundled, but ligatures are not drawn.
 
@@ -135,6 +145,7 @@ See [Shell profiles](/docs/shell-profiles#a-profiles-own-font-and-theme).
   pane. It applies at once, to every pane.
 - **Visual bell** (on by default) flashes the screen when a program rings the bell. There is no
   audible bell. A bell in a background tab also marks that tab, whether or not the flash is on.
+  While the system asks for reduced motion, the screen does not flash; the tab is still marked.
 - **Desktop notifications** (on by default) let a program's notification reach the desktop when
   you are not looking at its pane. Its tab is marked either way. See
   [What programs can ask for](/docs/programs#notifications-osc-9-osc-777).
@@ -145,22 +156,46 @@ See [Shell profiles](/docs/shell-profiles#a-profiles-own-font-and-theme).
 
 - **Show the menu bar** (on by default). Hiding it keeps every command on its chord, and the
   right-click menu has **Show Menu Bar** to bring it back. **View → Hide Menu Bar** is
-  `Ctrl+Shift+M`. Not offered on macOS, where the menus are in the screen menu bar.
-- **Put the menu bar in the title bar** (off by default). One row holds the menus at the left, the
-  window title in the middle and the window buttons at the right, and the terminal gains the row
-  the system title bar took. The platform keeps its own window buttons, and the empty part of the
-  row and the title drag the window. It applies to windows opened after the change. It is not
-  offered on macOS, nor on a platform that cannot draw its own title bar. In full screen the title
-  and the window buttons go away, and the menus, if shown, stay as an ordinary row.
+  `Ctrl+Shift+M`. On macOS, where the menus are in the screen menu bar, the row and the command
+  are greyed and say why.
+- **Put the menu bar in the title bar** (on by default on Windows and Linux). One row holds the
+  menus at the left, the window title in the middle and the window buttons at the right, and the
+  terminal gains the row the system title bar took. The platform keeps its own window buttons, and
+  the empty part of the row and the title drag the window. It applies to windows opened after the
+  change. It is greyed on macOS, and on a platform that cannot draw its own title bar, with the
+  reason on the row. In full screen the title and the window buttons go away, and the menus, if
+  shown, stay as an ordinary row.
+- **Interface zoom**, 80% to 200%. See [below](#interface-zoom).
 - **Show a scrollbar** (on by default). It takes a column of width so that it never covers text,
   uses the terminal palette's colors, and hides itself on the alternate screen, where a
   full-screen program owns the view. The wheel scrolls the scrollback either way.
+- **Show status bar** (on by default). A row under the terminal that says what the last command
+  reported, red for an error and amber for a warning, with a count of the errors you have not
+  seen. Click it for the Message Log. With it off, those messages appear as a dialog and in the
+  log. **View → Hide Status Bar** is the same switch.
 - **Window opacity**, 60% to 100%. Plain transparency, with no blur, so the text fades along with
   the background. It applies to terminal windows only, and stops at 60% so that a window never
   becomes too faint to undo it.
 
-**Settings → Appearance → Tabs → Hide the tab bar with a single tab** (on by default). The row is
-given to the terminal, and the shell gains a line. The strip comes back with the second tab.
+**Settings → Appearance → Tabs**:
+
+- **Hide the tab bar with a single tab** (on by default). The row is given to the terminal, and
+  the shell gains a line. The strip comes back with the second tab.
+- **Show the tab bar** (on by default). Off, the row of tabs is hidden however many are open.
+  **View → Hide Tab Bar** is the same switch. The tabs are still reached by their shortcuts, the
+  tab menu and the palette.
+
+If you came from a version before 0.15 and never changed them, the status bar and the menu bar in
+the title bar are new to you: both used to start off. A choice you had already made is kept.
+
+### Interface zoom
+
+**Settings → Appearance → Window → Interface zoom**, from 80% to 200%, makes the menus, the tab
+strip, the status bar, the palette and every other window larger or smaller, at once. The
+terminal's text is not touched: Zoom In, Zoom Out and Actual Size are still its own.
+
+**Zoom Interface In**, **Zoom Interface Out** and **Reset Interface Zoom** are in the palette.
+They have no shortcut by default; Settings → Keyboard can give them one.
 
 Window size and position are remembered, and pulled back onto a screen that still exists.
 

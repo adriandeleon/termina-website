@@ -3,13 +3,14 @@ title: "Settings sync"
 group: "Make it yours"
 order: 2.5
 beta: false
-summary: "Your shortcuts on every computer, through a private Git repository you own: changed on one, picked up by the others. Macs share one list, Windows and Linux another."
+summary: "Your shortcuts on every computer, through a private Git repository you own: changed on one, picked up by the others, whether they are Macs, Windows or Linux computers."
 ---
 
 - **A repository of yours.** Settings → Sync takes its URL, and git does the rest with your credential helper or SSH key. There is no Termina account and no server of Termina's.
 - **Or one made for you.** With the GitHub CLI signed in, Create on GitHub… makes a private repository and connects to it, without a trip to the browser.
 - **It runs on its own.** After startup, half a minute after you change a shortcut, and every 15 minutes while a Termina window is in front. File → Sync Settings Now, also in the palette, syncs from anywhere.
-- **One list per platform family.** A chord means a different key on a Mac than on Linux, so Macs share `keybindings/macos.properties` and Windows and Linux share `keybindings/windows-linux.properties`, in one repository.
+- **One file for every system.** The shortcuts are in `keybindings/keybindings.properties`, so one you change on a Mac changes on your Linux and Windows computers, and the other way. A Mac's Command is `Ctrl+Shift` in the file: `Cmd+K` on a Mac is `Ctrl+Shift+K` elsewhere.
+- **Update every computer.** A Termina older than 0.15 stops syncing with a repository a newer one has written, and says so, until it is updated.
 - **Merged per command.** Two computers that changed different shortcuts both keep them. A shortcut changed on both keeps the version of the computer that syncs, and the other stays in the repository's history.
 - **Hard to lose work.** Bindings a sync replaces are copied to `sync/backups` first, and a sync that would remove most of them stops and asks.
 - **No secrets in the file.** A URL with a password or token in it is refused, and an automatic sync never prompts. With several GitHub CLI accounts, sync remembers the one that can read the repository and keeps signing in as it, whichever is active.

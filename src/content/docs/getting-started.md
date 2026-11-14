@@ -1,6 +1,6 @@
 ---
 title: Getting Started
-description: Install Termina, open it for the first time, learn the keys worth knowing first, find the settings file, and build it from source.
+description: Install Termina, open it for the first time, learn the keys worth knowing first, what the Help menu has, find the settings files, and build it from source.
 category: Getting started
 order: 2
 ---
@@ -32,10 +32,16 @@ The window opens with one tab running your login shell, started with `-l` so you
 
 - **The tab strip is hidden while there is only one tab.** Open a second and it appears; the row is
   given back to the terminal when you are down to one again.
-- **The menu bar** is in the window on Linux and Windows, and in the screen menu bar on macOS.
-- **Right-click** gives Copy and Paste, New Tab and New Window, Select All, Clear Scrollback, zoom,
-  the command palette, Settings and About, unless a program running in the terminal has taken the
-  mouse. Hold `Shift` to get the menu anyway.
+- **The menu bar** is in the title bar on Linux and Windows, in one row with the window title and
+  the window buttons, and in the screen menu bar on macOS.
+- **The status bar** under the terminal says what the last command reported. Click it for the
+  Message Log. **View → Hide Status Bar** takes it away.
+- **Right-click** gives New Tab and New Window, Copy and Paste, Select All, Open Link and Copy
+  Link Address, Clear Scrollback, zoom, the command palette, Settings and About, unless a program
+  running in the terminal has taken the mouse. Hold `Shift` to get the menu anyway.
+- **Your tabs come back.** The tabs and panes open when Termina ends reopen at the next launch,
+  each as a new shell in the folder it was in. See
+  [Tabs and windows](/docs/tabs-and-windows#the-last-session-comes-back).
 - **An update check** asks GitHub for the newest release at most once a day.
   **Settings → Advanced → Updates** turns it off.
 
@@ -62,21 +68,51 @@ You do not need to memorize more. The palette shows each command's chord beside 
 full table is on the [Keybindings](/keybindings) page. Any of them can be changed under
 **Settings → Keyboard**.
 
+## The Help menu
+
+When something is unclear, the Help menu is where to look:
+
+- **Command Palette…** finds any command by name.
+- **Documentation** opens this guide, and **What's New** the release notes for your version.
+- **Keyboard Shortcuts…** lists every shortcut, searchable.
+- **Check for Updates…** asks GitHub whether a newer release exists.
+- **Message Log** lists what Termina has reported this session, and **Debug Log** everything it
+  logged.
+- **Report a Problem…** builds a bug report for you to read and send as a GitHub issue.
+- **Doctor** checks the programs and folders Termina relies on.
+- **Pauta Conformance** says which edition of the [Pauta](https://pauta-project.dev/) guidelines
+  Termina follows, and which rules it does not meet yet.
+- **About Termina** shows the version, with **Copy details** for a bug report.
+
+See [Troubleshooting](/docs/troubleshooting).
+
 ## Where settings live
 
-Settings are one plain properties file, `~/.termina/settings.properties`, on every platform
-(`%USERPROFILE%\.termina` on Windows). The Settings window writes it as you change things — there
-is no OK button — and the file is meant to be readable and editable by hand while Termina is closed.
-A value that does not parse falls back to its default, and numbers are clamped when they are read.
-The file is UTF-8, and a backslash is just a backslash, so a Windows path can be typed as it is. A
-file that cannot be read at all opens on defaults and is first copied aside as
-`settings.properties.bad-<time>`.
+Settings are two JSON files in the folder `~/.termina`, on every platform
+(`%USERPROFILE%\.termina` on Windows):
+
+- **`settings.json`** holds your preferences, key bindings and shell profiles.
+- **`workspace-state.json`** holds what Termina remembers by itself: the window's place and size,
+  the tabs of the last session, and when it last checked for an update.
+
+The Settings window writes them as you change things — there is no OK button — and `settings.json`
+is meant to be readable and editable by hand while Termina is closed. A value that does not parse
+falls back to its default, and numbers are clamped when they are read. A file that is not valid
+JSON is copied aside with `.corrupt.bak` added to its name, and Termina opens on defaults.
+
+A `settings.properties` from a version before 0.15 is imported the first time 0.15 starts, and
+kept beside the new files with `.migrated` added to its name.
 
 - **Settings → Advanced → Files** shows the path, and **Help → About** names it too.
 - **Another folder**: start Termina with `--config-dir DIR`, or set `TERMINA_CONFIG_DIR`.
-- **The debug log** (Settings → Advanced → Diagnostics) keeps this session's warnings and errors
-  and mirrors them to `termina-session.log` beside the settings file.
+- **Export and Import**, on the same page, save the whole configuration as a `.zip` and restore
+  from one. See [Settings](/docs/settings#export-and-import-configuration).
+- **The debug log** (**Help → Debug Log**) keeps everything Termina logged this session and
+  mirrors it to `termina-session.log` beside the settings files.
 - **Reset to Defaults** asks first, and keeps your shell profiles.
+
+[Settings](/docs/settings#the-settings-files) has the shape of the files and the keys worth
+knowing.
 
 ## Build from source
 

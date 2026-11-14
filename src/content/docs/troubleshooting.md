@@ -1,6 +1,6 @@
 ---
 title: Troubleshooting
-description: Why the title shows the directory, icons that draw the wrong glyph, middle-click pasting the clipboard instead of the selection, notifications that never reach the desktop, full screen misplaced under GNOME on Wayland, opening an unsigned build on macOS and Windows, the debug log, diagnosing a freeze, and reporting a bug.
+description: The Doctor and the Message Log, why the title shows the directory, icons that draw the wrong glyph, middle-click pasting the clipboard instead of the selection, notifications that never reach the desktop, full screen misplaced under GNOME on Wayland, the Windows installer's SmartScreen warning, settings that came up as defaults, the debug log, diagnosing a freeze, and reporting a bug with Report a Problem.
 category: Help
 order: 11
 ---
@@ -38,8 +38,8 @@ So Termina reads the shell's directory from the operating system instead:
 
 If you want the prompt's title, make your prompt emit OSC 0. On Windows the directory is read from
 the shell process too, except in a WSL tab, whose process is `wsl.exe`, and in Git Bash, which runs
-as `bash.exe` as WSL's old launcher does; there it comes from the shell's own report (OSC 7), if it
-sends one. See
+as `bash.exe` as WSL's old launcher does; there it comes from the shell's own report (OSC 7 or
+OSC 9;9), if it sends one. See
 [What programs can ask for](/docs/programs#the-directory-osc-7).
 
 ## Icons show the wrong glyph
@@ -67,8 +67,9 @@ See [Appearance](/docs/appearance#icons) for which face draws an icon.
 On Linux, selecting sets the PRIMARY selection and middle-click pastes it, but JavaFX cannot reach
 PRIMARY, so Termina uses a tool: `wl-paste` and `wl-copy` under Wayland, `xclip` or `xsel` under
 X11. With none of them installed, middle-click pastes the clipboard. Install one, such as
-`wl-clipboard` on a Wayland desktop or `xclip` on X11, and start Termina again. On macOS and
-Windows, which have no PRIMARY, middle-click always pastes the clipboard.
+`wl-clipboard` on a Wayland desktop or `xclip` on X11, and start Termina again. **Help → Doctor**
+has a row for it, Selection clipboard, that says which package is missing. On macOS and Windows,
+which have no PRIMARY, middle-click pastes nothing.
 
 ## Notifications never reach the desktop
 
@@ -89,6 +90,10 @@ dbus-monitor --session "interface='org.freedesktop.Notifications'"
 
 On macOS it goes through `osascript`, and on Windows it is a PowerShell toast. See [What programs can ask for](/docs/programs#notifications-osc-9-osc-777).
 
+A notification that could not be shown says why in the [debug log](#the-debug-log): no
+`notify-send` or `gdbus` to post it with, a tool that did not answer in five seconds, or one that
+exited with an error. **Help → Doctor** has a Notifications row too.
+
 ## Full screen is misplaced or clipped on GNOME (Wayland)
 
 Under GNOME on Wayland with fractional scaling, and more so with mutter's experimental
@@ -102,24 +107,40 @@ throughout, which is why nothing inside Termina can detect it.
   set: `gsettings get org.gnome.mutter experimental-features`.
 - **To compare sizes**, `xrandr` shows the size the panel really has.
 
-## macOS refuses to open Termina
-
-The macOS build is not signed with an Apple Developer ID and is not notarized, so the first launch
-of a downloaded copy is refused. Allow it once under **System Settings → Privacy & Security →
-Open Anyway**. Later launches open normally.
-
 ## Windows SmartScreen warns about the installer
 
 The Windows installer is not signed, so SmartScreen may warn on the first run. Choose
 **More info**, then **Run anyway**. Each release lists its files' SHA-256 checksums in
 `checksums_sha256.txt`, if you want to check the download first.
 
+The macOS app has been signed and notarized since 0.14.0, so it opens the first time like any
+other app. If macOS refuses a copy older than that, download the current one. See
+[Installing](/docs/installing).
+
+## Termina opened on its default settings
+
+Since 0.15 the settings are in `settings.json`, not `settings.properties`. The old file is
+imported the first time 0.15 starts and kept beside the new one with `.migrated` added to its
+name, so nothing in it is lost.
+
+If Termina opens on defaults all the same, look in the settings folder (`~/.termina` unless you
+moved it):
+
+- **A file ending in `.corrupt.bak`** is a settings file that was not valid JSON, set aside as it
+  was. Fix the JSON and put it back under its own name while Termina is closed.
+- **A file ending in `.v<n>.bak`** was written by a newer Termina than the one you are running.
+  Update Termina.
+
+The [debug log](#the-debug-log) says which file was not read and where it was kept. See
+[Settings](/docs/settings#the-settings-files).
+
 ## The debug log
 
-**Settings → Advanced → Diagnostics → Show Debug Log…** shows this session's warnings, errors and
-anything that crashed, with Copy. The same lines are in `termina-session.log` in the settings
-folder (`~/.termina` unless you moved it), started afresh at each launch, so the file from a run
-that failed is still there until you start Termina again. It never leaves your machine.
+**Help → Debug Log** shows everything Termina logged this session, and anything that crashed.
+**Find…** searches it, **Copy** and **Export…** take it out, and **Report a Problem…** builds a bug
+report from it. The same lines are in `termina-session.log` in the settings folder (`~/.termina`
+unless you moved it), started afresh at each launch, and the log of the session before is kept
+beside it as `termina-session.prev.log`. It never leaves your machine.
 
 ## Termina froze
 
@@ -131,6 +152,8 @@ line to standard error whenever the interface goes longer than that without draw
 ```
 [termina] UI thread blocked for 1840ms
 ```
+
+Before that line it prints where the interface was stuck, as a stack trace, once for each stall.
 
 A packaged Termina takes Java options through `JAVA_TOOL_OPTIONS`. Start it from another terminal,
 so that you can read what it prints:
@@ -149,13 +172,32 @@ it keeps the interface drawing 60 frames a second even when nothing changes.
 
 ## Reporting a bug
 
-Open an issue at
+**Help → Report a Problem** does most of it for you. It builds a report of the session: the
+version, Java, the operating system, the settings worth knowing and the end of the debug log.
+Your home folder, user name, addresses, credentials and tokens are taken out.
+
+- **You read it first.** The report is shown for you to read and edit.
+- **Copy and Open GitHub** copies it and opens a GitHub issue in your browser with the bug form
+  filled in. Nothing is sent until you submit the issue there.
+- **A report too long for the link** stays on the clipboard, and a note in the issue's "Problem
+  report" field says to paste it.
+
+**If the window will not start**, run `termina --report` from a terminal. It builds the same
+report from the last session's log, writes it to a file in the current folder (the temp folder
+where that one cannot be written), prints the file's path and opens the issue. It needs no
+display.
+
+To write the issue yourself, open one at
 [github.com/adriandeleon/Termina/issues](https://github.com/adriandeleon/Termina/issues) with:
 
-- **The version.** `termina --version` prints it without opening a window. From a packaged app,
-  run the launcher directly: `/Applications/Termina.app/Contents/MacOS/Termina --version` on
-  macOS, `/opt/termina/bin/Termina --version` on Linux. **Help → About** shows it too.
+- **The version.** `termina --version` prints it, with the build, Java and the operating system,
+  without opening a window. From a packaged app, run the launcher directly:
+  `/Applications/Termina.app/Contents/MacOS/Termina --version` on macOS,
+  `/opt/termina/bin/Termina --version` on Linux, `termina-cli.exe --version` in Termina's folder on
+  Windows. **Help → About** shows the same, with **Copy details**.
 - **Your platform**: the operating system, the desktop on Linux (and whether it is Wayland), and
   the shell.
 - **What you did and what happened**, with the steps to make it happen again.
-- **The debug log**: Copy from the Debug Log window, or `termina-session.log`.
+- **The debug log**: Copy or Export from the Debug Log window, or `termina-session.log`.
+- **The Doctor's rows**, where the problem is something Termina relies on: **Copy as text** in
+  **Help → Doctor**.

@@ -1,6 +1,6 @@
 ---
 title: FAQ
-description: Licensing, data collection and what sync sends, platforms, signing, why JavaFX, why the emulator is JediTerm, tmux, vim and ssh, the kitty keyboard protocol and notifications, ligatures and images, CPU use when idle, the relationship to Editora, and reporting issues.
+description: Licensing, data collection and what sync sends, platforms, signed downloads, why JavaFX, why the emulator is JediTerm, tmux, vim and ssh, the kitty keyboard protocol and notifications, ligatures and images, CPU use when idle, the relationship to Editora, and reporting issues.
 category: Help
 order: 12
 ---
@@ -17,29 +17,34 @@ Mono's license is beside the font file.
 No account, no telemetry, no analytics. The one request Termina makes on its own is the update
 check: at startup, at most once a day, it asks the GitHub releases API for the newest version, and
 sends nothing about you or the machine beyond the request itself. Turn it off under **Settings →
-Advanced → Updates → Check for updates at startup**, or set `updates.check=false` in the settings
-file.
+Advanced → Updates → Check for updates at startup**, or set `"updates.check": false` in
+`settings.json`.
 
 Everything else that reaches the network is something you started: the programs you run, the
 links you click, and [settings sync](/docs/sync) once you connect it, which pushes and pulls your
 key bindings to the Git repository you named and nowhere else. The debug log stays in the settings
-folder, and a program's desktop notification goes to your own desktop.
+folder, and a program's desktop notification goes to your own desktop. **Help → Report a Problem**
+builds a report and opens a GitHub issue in your browser; nothing is sent until you submit it
+there.
 
 ## Which platforms does it run on?
 
 macOS on Apple Silicon and Intel, Windows on x64, and Linux on x64 and arm64. The installers
 bundle their own Java runtime, so you do not need Java installed. They are on the
 [releases page](https://github.com/adriandeleon/Termina/releases): a `.dmg` for each Mac, an `.msi`
-for Windows, and a `.deb` and an `.rpm` for each Linux architecture. Homebrew and winget packages
-are planned but not published yet.
+for Windows, and a `.deb`, an `.rpm`, an `AppImage` and a `tar.gz` for each Linux architecture.
+There is a Homebrew cask for Apple Silicon Macs (`brew install --cask adriandeleon/tap/termina`)
+and a winget package (`winget install AdrianDeLeon.Termina`). See
+[Installing](/docs/installing).
 
-## The app is unsigned. How do I open it?
+## Are the downloads signed?
 
-Nothing is signed yet. The macOS app is not signed with an Apple Developer ID and is not
-notarized, so the first launch is refused: allow it once under **System Settings → Privacy &
-Security → Open Anyway**. On Windows, SmartScreen may warn on the first run: **More info**, then
-**Run anyway**. Each release lists its files' SHA-256 checksums in `checksums_sha256.txt`. See
-[Troubleshooting](/docs/troubleshooting).
+The macOS app is signed with a Developer ID and notarized by Apple, so it opens the first time
+like any other app. Every Linux download has an OpenPGP signature beside it, and the `.deb` and
+the `.rpm` are signed inside as well. The Windows installer is not signed yet, so SmartScreen may
+warn on the first run: **More info**, then **Run anyway**. Each release lists its files' SHA-256
+checksums in `checksums_sha256.txt`. [Installing](/docs/installing#checking-a-download) says how
+to check a download.
 
 ## Why JavaFX?
 
@@ -107,15 +112,24 @@ set to `editora {file}:{line}`; see [Links](/docs/links).
 
 ## Where are my settings?
 
-In `~/.termina/settings.properties` on every platform, unless moved with `--config-dir` or
-`TERMINA_CONFIG_DIR`. It is a plain properties file you can edit while Termina is closed. See
-[Settings](/docs/settings#the-settings-file).
+In the folder `~/.termina` on every platform, unless moved with `--config-dir` or
+`TERMINA_CONFIG_DIR`: `settings.json` holds your preferences, key bindings and profiles, and
+`workspace-state.json` the window's place and size and the tabs of the last session. Both are
+JSON, and `settings.json` can be edited while Termina is closed. A `settings.properties` from a
+version before 0.15 is imported the first time 0.15 starts. **Settings → Advanced** can export
+the whole configuration as a `.zip` and import it on another computer. See
+[Settings](/docs/settings#the-settings-files).
 
 ## How do I report a bug or ask for a feature?
 
-Open an issue at
+For a bug, choose **Help → Report a Problem**. It builds a report of the session — the version,
+Java, the operating system, the settings worth knowing and the end of the debug log — with your
+home folder, user name, addresses, credentials and tokens taken out. You read it and can edit it,
+and it opens as a GitHub issue with the bug form filled in. Nothing is sent until you submit the
+issue. If the window will not start, `termina --report` does the same from a terminal, from the
+last session's log.
+
+For a feature, or to write the issue yourself, open one at
 [github.com/adriandeleon/Termina/issues](https://github.com/adriandeleon/Termina/issues). For a
-bug, include the output of `termina --version`, your platform and shell, what you did and what
-happened, and the debug log (**Settings → Advanced → Diagnostics → Show Debug Log…**, then Copy).
-[Troubleshooting](/docs/troubleshooting#reporting-a-bug) says how to run `--version` from a
-packaged app.
+bug, say what you did and what happened. [Troubleshooting](/docs/troubleshooting#reporting-a-bug)
+has more.
