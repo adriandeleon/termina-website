@@ -55,10 +55,11 @@ under the home page's "In development" heading, and nowhere else.
 Feature screenshots go in `public/screenshots/features/<slug>.png` (the slug matches the page
 URL, e.g. `/features/tabs` → `tabs.png`); without one the card and the page show a placeholder.
 The window screenshot is `public/screenshots/hero/terminal.png`, and the "A look at the window"
-section only renders when it exists. Termina's capture harness makes them:
-`scripts/dev-run.sh -Dtermina.capture=out.png …` in the Termina repository, whose README lists the
-options. Capture from a build of the release tag, run with a scratch `--config-dir`, and in a
-directory with nothing private in it.
+section only renders when it exists. `scripts/screenshots.sh` takes all of them, at 2×, with
+Termina's capture harness (`-Dtermina.capture=out.png …`; the Termina repository's
+`docs/testing.md` lists the options): `scripts/screenshots.sh hero feature-tabs` retakes those two.
+Capture from a build of the release the site describes. The script uses a shell set-up, a home
+folder and a demo project of its own, so nothing private is in a picture.
 
 The captures can run headless, with no window on anyone's desktop: JavaFX 27's own headless
 platform, `-Dglass.platform=Headless -Dprism.order=sw`, with `DISPLAY` unset. Three things differ

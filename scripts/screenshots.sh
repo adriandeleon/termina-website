@@ -3,8 +3,9 @@
 # Retakes the user guide's screenshots from the real window, at 2x, light and dark
 # (DOCS-01, DOCS-18, Pauta 6.0.1).
 #
-#   scripts/screenshots.sh            # every picture
-#   scripts/screenshots.sh panes tabs # only those
+#   scripts/screenshots.sh                    # every picture
+#   scripts/screenshots.sh panes tabs         # only those of the guide
+#   scripts/screenshots.sh hero feature-tabs  # the home page's, and a feature page's
 #
 # Each picture is Termina's own window, drawn by its capture hook on JavaFX's headless platform:
 # no window opens on the desktop and nothing of the desktop is in it. Nothing of your shell's
@@ -17,7 +18,11 @@
 # from a build of the release the site describes. Needs bash, and eza for the file-type icons;
 # without eza the listings are plain `ls -l`.
 #
-# A picture is public/screenshots/docs/<name>.png in the light theme and <name>.dark.png in the
+# The feature pages' pictures (public/screenshots/features/<slug>.png) and the home page's
+# (public/screenshots/hero/terminal.png) are taken here too, in the dark theme; the build makes the
+# WebP beside each (scripts/gen-images.mjs).
+#
+# A guide picture is public/screenshots/docs/<name>.png in the light theme and <name>.dark.png in the
 # dark one; a docs page shows it with ![alt](/screenshots/docs/<name>.png "caption") on a line of
 # its own, and src/lib/rehype-doc-figures.mjs does the rest.
 set -euo pipefail
@@ -66,32 +71,64 @@ chmod +x "$project/Makefile"
 } > "$work/shell"
 chmod +x "$work/shell"
 
-wanted=("$@")
+# The same shell with shell integration set up as the guide's Search and prompts page says to for
+# bash (OSC 133), for the picture of what Termina can then find.
+{
+  printf '%s\n' 'unset HISTFILE'
+  printf '%s\n' "PS1='\\[\\e[1;34m\\]\\W\\[\\e[0m\\] \\\$ '"
+  printf '%s\n' "PS0='\\e]133;C\\a'"
+  printf '%s\n' "PROMPT_COMMAND='printf \"\\e]133;D;%s\\a\\e]133;A\\a\" \"\$?\"'"
+  printf 'cd %q\n' "$project"
+  printf '%s\n' "alias ll='$list'" 'clear'
+} > "$work/rc-marks"
+{
+  printf '%s\n' '#!/bin/sh'
+  printf 'exec bash --rcfile %q -i\n' "$work/rc-marks"
+} > "$work/shell-marks"
+chmod +x "$work/shell-marks"
 
-# shot <name> <capture options…>: the picture in both themes.
+wanted=("$@")
+wants() {
+  [ "${#wanted[@]}" -eq 0 ] || [[ " ${wanted[*]} " == *" $1 "* ]]
+}
+
+# one <file> <theme> <capture options…>: one picture. SHELL_FOR_SHOT names another shell than the
+# plain one, and SETTINGS_FOR_SHOT adds lines to the settings ('"font.size" : "18",').
+one() {
+  local file="$1" theme="$2"
+  shift 2
+  local config="$work/config-$(basename "$file" .png)-$theme"
+  mkdir -p "$config" "$(dirname "$file")"
+  printf '{\n  "schemaVersion" : 3,\n  "settings" : {\n    %s\n    "terminal.shell" : "%s",\n    "theme" : "%s",\n    "updates.check" : "false"\n  }\n}\n' \
+    "${SETTINGS_FOR_SHOT:-}" "${SHELL_FOR_SHOT:-$work/shell}" "$theme" > "$config/settings.json"
+  rm -f "$file"
+  env -u DISPLAY -u WAYLAND_DISPLAY HOME="$work/home" TERMINA_CONFIG_DIR="$config" \
+    "$run" -Dglass.platform=Headless -Dprism.order=sw \
+    -Dtermina.capture="$file" -Dtermina.captureScale=2 "$@" > "$work/log" 2>&1 || true
+  [ -s "$file" ] || {
+    echo "screenshots.sh: no picture for ${file#"$site"/} in $theme; the run said:" >&2
+    tail -20 "$work/log" >&2
+    exit 1
+  }
+  echo "wrote ${file#"$site"/}"
+}
+
+# shot <name> <capture options…>: a picture of the user guide, in both themes.
 shot() {
   local name="$1"
   shift
-  if [ "${#wanted[@]}" -gt 0 ] && [[ ! " ${wanted[*]} " == *" $name "* ]]; then return; fi
-  local theme file config
-  for theme in editora-light editora-dark; do
-    file="$out/$name.png"
-    [ "$theme" = editora-dark ] && file="$out/$name.dark.png"
-    config="$work/config-$name-$theme"
-    mkdir -p "$config"
-    printf '{\n  "schemaVersion" : 3,\n  "settings" : {\n    "terminal.shell" : "%s",\n    "theme" : "%s",\n    "updates.check" : "false"\n  }\n}\n' \
-      "$work/shell" "$theme" > "$config/settings.json"
-    rm -f "$file"
-    env -u DISPLAY -u WAYLAND_DISPLAY HOME="$work/home" TERMINA_CONFIG_DIR="$config" \
-      "$run" -Dglass.platform=Headless -Dprism.order=sw \
-      -Dtermina.capture="$file" -Dtermina.captureScale=2 "$@" > "$work/log" 2>&1 || true
-    [ -s "$file" ] || {
-      echo "screenshots.sh: no picture for $name in $theme; the run said:" >&2
-      tail -20 "$work/log" >&2
-      exit 1
-    }
-    echo "wrote ${file#"$site"/}"
-  done
+  wants "$name" || return 0
+  one "$out/$name.png" editora-light "$@"
+  one "$out/$name.dark.png" editora-dark "$@"
+}
+
+# feature <slug> <capture options…>: a feature page's picture, and its card's on the home page.
+# One theme, the dark one the site opens in; the page has one picture, not a pair.
+feature() {
+  local slug="$1"
+  shift
+  wants "feature-$slug" || return 0
+  one "$site/public/screenshots/features/$slug.png" editora-dark "$@"
 }
 
 # The window: two tabs, a listing with file-type icons and colour.
@@ -128,3 +165,35 @@ shot settings-sync -Dtermina.captureSettings=interval
 shot shortcuts -Dtermina.captureShortcuts=true
 shot doctor -Dtermina.captureDoctor=true -Dtermina.captureAfterCommandMs=12000
 shot pauta -Dtermina.capturePauta=true
+
+# ---------------------------------------------------------------- the feature pages and the home page
+
+listing=("-Dtermina.captureCommand=ll" -Dtermina.captureAfterCommandMs=1500)
+
+# The home page's picture of the window.
+if wants hero; then
+  one "$site/public/screenshots/hero/terminal.png" editora-dark -Dtermina.captureTabs=1 "${listing[@]}"
+fi
+
+feature tabs -Dtermina.captureTabs=3 -Dtermina.captureRenameTab=server "${listing[@]}"
+feature split-panes -Dtermina.capturePanes=right,down "-Dtermina.captureCommand=ll src docs" \
+  -Dtermina.captureAfterCommandMs=1500
+feature search "-Dtermina.captureCommand=cat build/server.log" -Dtermina.captureAfterCommandMs=1500 \
+  -Dtermina.captureSearch=warning
+feature command-palette "${listing[@]}" -Dtermina.capturePalette=tab
+feature keyboard-shortcuts -Dtermina.captureShortcuts=true
+feature settings -Dtermina.captureSettings=true
+feature settings-sync -Dtermina.captureSettings=interval
+feature shell-profiles -Dtermina.captureSettings=profile
+feature themes -Dtermina.captureSettings=theme
+# A tab whose bell rang while another was in front: the mark on its header.
+feature notifications -Dtermina.captureTabs=2 -Dtermina.captureBellIn=1 "${listing[@]}"
+# A link under the pointer with the link modifier held: underlined, ready to open.
+feature links "-Dtermina.captureCommand=cat docs/links.txt" -Dtermina.captureAfterCommandMs=1500 \
+  -Dtermina.captureLinkAt=60,27
+# The text a size up.
+SETTINGS_FOR_SHOT='"font.size" : "20",' feature zoom "${listing[@]}"
+# The last command's output selected, which the prompt's marks make possible.
+SHELL_FOR_SHOT="$work/shell-marks" feature shell-integration \
+  "-Dtermina.captureCommand=cat build/server.log" -Dtermina.captureAfterCommandMs=1500 \
+  -Dtermina.captureSelectLastOutput=true
