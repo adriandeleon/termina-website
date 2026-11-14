@@ -18,6 +18,35 @@ done.
 
 ### Added
 
+- **Three window modes**, in the View menu, the Command Palette and bindable under Settings ▸
+  Keyboard:
+  - **Zen Mode** hides the window's menu bar, tab strip and status bar and leaves the terminal
+    alone.
+  - **Expert Mode** hides the menu bar and the tab strip and keeps the status bar.
+  - **Simple Mode** keeps everything and shortens the menu bar to four menus of everyday
+    commands, for someone new to Termina. It is also Settings ▸ Appearance ▸ Simple mode.
+
+  Zen and Expert belong to one window, last until it closes and change no setting, so leaving
+  the mode brings back exactly what was there. With the menu bar hidden the way out is the
+  Command Palette, which lists Leave Zen Mode or Leave Expert Mode, and the Message Log says so
+  when the mode starts. Simple Mode is a setting and applies to every window. In every mode each
+  command keeps its chord and its row in the palette. On macOS the menus are in the screen's menu
+  bar, which Zen and Expert do not hide.
+- **Pickers: a list to type into for a choice from a list.** Four commands, in the Command
+  Palette and bindable under Settings ▸ Keyboard: **Select Color Theme**, **Select Font**,
+  **Select Cursor Shape** and **New Tab from Profile**. Each opens on the value in force. Type to
+  narrow the list, move with the arrows or Ctrl+N and Ctrl+P, Enter chooses, Escape or Ctrl+G
+  cancels. Select Color Theme shows each theme in the window as you move to it and puts back the
+  one you had if you cancel.
+- **Cancelling a list is a command, Cancel List**, on Ctrl+G by default and bindable under
+  Settings ▸ Keyboard like the four that move a line and a page. The Command Palette, the pickers
+  and the Message Log all close on its chord, and on Escape whatever is bound. Ctrl+G was fixed in
+  the palette before, and with the terminal in front it stays the shell's.
+- **The Message Log moves on Ctrl+N and Ctrl+P and closes on Ctrl+G**, the keys of the palette
+  and the pickers, or whichever chords you have given those commands.
+- **A help key in the Command Palette.** Ctrl+H opens the highlighted command's page of the user
+  guide in your browser; the palette stays open. It is F1, or Shift+F1, if you have given Ctrl+H
+  to a command. The palette's legend names the key.
 - **A High Contrast theme**: white on black, a single cyan accent, and every colour of the
   terminal and of the windows at 7:1 or better on the black. Choose it like any theme. On Windows,
   Termina switches to it while the system's high-contrast mode is on and back to your own theme
@@ -147,6 +176,15 @@ done.
 
 ### Changed
 
+- **An imported colour scheme is stored as JSON.** A theme is `themes/<name>.json` in the settings
+  folder, where it was `<name>.properties`. Each theme you have is rewritten the first time
+  Termina starts, under the same name, and the file it was is kept beside it as
+  `<name>.properties.migrated`. Nothing that uses a theme changes. A configuration zip exported
+  by an older Termina still imports. The settings, the window state and the session's tabs are
+  read and written by Jackson as plain classes now and look the same on disk.
+- **Help opens the guide for the version you are running.** Documentation, the Help link on each
+  page of Settings and the Pauta window's link open `termina-project.dev/docs/v-<version>/`, where
+  they opened the newest guide whatever the version.
 - **The palette's movement keys can be changed.** Moving a line and a page in the Command
   Palette are four commands now, Line Down, Line Up, Page Down and Page Up, under Settings ▸
   Keyboard: Ctrl+N, Ctrl+P, Ctrl+V and Alt+V as before, until you move them. The arrows and Page

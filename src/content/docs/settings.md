@@ -222,6 +222,7 @@ The keys most worth knowing, all in `settings.json`:
 | `window.menuBarInTitleBar` | `true`, `false` | `true` |
 | `ui.showScrollBar` | `true`, `false` | `true` |
 | `ui.showStatusBar` | `true`, `false` | `true` |
+| `ui.simpleMode` | `true`, `false`: the shorter menu bar | `false` |
 | `ui.zoom` | 80 to 200, the interface zoom in percent | `100` |
 | `ui.confirmClose` | `true`, `false` | `true` |
 | `session.restore` | `true`, `false` | `true` |

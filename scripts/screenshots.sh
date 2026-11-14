@@ -149,6 +149,10 @@ shot search "-Dtermina.captureCommand=cat build/server.log" -Dtermina.captureAft
 # The Command Palette, narrowed by a query.
 shot palette "-Dtermina.captureCommand=ll" -Dtermina.captureAfterCommandMs=1500 -Dtermina.capturePalette=tab
 
+# A picker: Select Color Theme, run from the palette.
+shot picker "-Dtermina.captureCommand=ll" -Dtermina.captureAfterCommandMs=1500 \
+  "-Dtermina.capturePalette=select color theme" -Dtermina.capturePaletteKeys=enter
+
 # The Message Log, over the terminal.
 shot message-log "-Dtermina.captureCommand=ll" -Dtermina.captureAfterCommandMs=1500 \
   -Dtermina.captureMessageLogFilter=

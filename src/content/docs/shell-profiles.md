@@ -66,7 +66,9 @@ PowerShell, then Command Prompt, whichever is found first.
   With** in a tab's right-click menu carries the whole list, as the chevron does.
 - **`Ctrl+Shift+1`…`Ctrl+Shift+9`** (`Cmd+Option+1`…`Cmd+Option+9` on macOS) open the first nine
   profiles in the list. A number past the end does nothing.
-- **The command palette** lists every profile as **New Tab: *name***.
+- **The command palette** lists every profile as **New Tab: *name***, and **New Tab from
+  Profile…** there opens a [picker](/docs/keyboard#pickers) of them all with the command each
+  runs.
 
 A profile with no starting directory opens in the current tab's directory, like a plain new tab.
 The default is marked rather than moved to the top, so the numbers bound to chords do not shift.

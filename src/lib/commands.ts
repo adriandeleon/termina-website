@@ -19,6 +19,7 @@ export const commandGroups: CmdGroup[] = [
       { id: "file.closeTabsToTheRight", title: "Close Tabs to the Right", desc: "Closes the tabs to the right of this one, asking once if any is still running a program.", pc: null, mac: null },
       { id: "file.closeWindow", title: "Close Window", desc: "Closes this window and every tab in it.", pc: ["Ctrl", "Shift", "Q"], mac: ["Shift", "Cmd", "W"] },
       { id: "file.newTab", title: "New Tab", desc: "Opens a tab running the default shell.", pc: ["Ctrl", "Shift", "T"], mac: ["Cmd", "T"] },
+      { id: "file.newTabFromProfile", title: "New Tab from Profile…", desc: "Lists every profile by name, with the command it runs, and opens a tab running the one you choose.", pc: null, mac: null },
       { id: "file.newTabProfile1", title: "New Tab With Profile 1", desc: "Opens a tab running profile 1, counted in the profile menu's order.", pc: ["Ctrl", "Shift", "1"], mac: ["Option", "Cmd", "1"] },
       { id: "file.newTabProfile2", title: "New Tab With Profile 2", desc: "Opens a tab running profile 2, counted in the profile menu's order.", pc: ["Ctrl", "Shift", "2"], mac: ["Option", "Cmd", "2"] },
       { id: "file.newTabProfile3", title: "New Tab With Profile 3", desc: "Opens a tab running profile 3, counted in the profile menu's order.", pc: ["Ctrl", "Shift", "3"], mac: ["Option", "Cmd", "3"] },
@@ -58,9 +59,15 @@ export const commandGroups: CmdGroup[] = [
       { id: "view.messageLog", title: "Message Log", desc: "Lists what Termina has reported this session, newest first, with the time of each.", pc: null, mac: null },
       { id: "view.nextPrompt", title: "Next Prompt", desc: "Scrolls down to the next prompt, and back to the live screen after the last.", pc: ["Ctrl", "Shift", "Down"], mac: ["Cmd", "Down"] },
       { id: "view.previousPrompt", title: "Previous Prompt", desc: "Scrolls up to the prompt before this one. Needs the shell to mark its prompts.", pc: ["Ctrl", "Shift", "Up"], mac: ["Cmd", "Up"] },
+      { id: "view.selectCursorShape", title: "Select Cursor Shape…", desc: "Lists the cursor shapes to choose from.", pc: null, mac: null },
+      { id: "view.selectFont", title: "Select Font…", desc: "Lists the monospace fonts on this computer to choose from by typing.", pc: null, mac: null },
+      { id: "view.selectTheme", title: "Select Color Theme…", desc: "Lists every color theme to choose from by typing. Each one is shown as you move to it, and Escape puts back the one you had.", pc: null, mac: null },
+      { id: "view.toggleExpert", title: "Expert Mode", desc: "Hides this window’s menu bar and tab strip and keeps the status bar. No setting changes: leaving the mode brings them back as they were.", pc: null, mac: null },
       { id: "view.toggleMenuBar", title: "Hide Menu Bar", desc: "Hides the menu bar; the right-click menu brings it back.", pc: ["Ctrl", "Shift", "M"], mac: ["Shift", "Cmd", "M"] },
+      { id: "view.toggleSimpleMode", title: "Simple Mode", desc: "Shortens the menu bar to the commands a terminal is used for on the first day, in every window. Every command stays in the Command Palette.", pc: null, mac: null },
       { id: "view.toggleStatusBar", title: "Show Status Bar", desc: "Shows or hides the row under the terminal that says what the last command reported.", pc: null, mac: null },
       { id: "view.toggleTabBar", title: "Show Tab Bar", desc: "Shows or hides the row of tabs, however many are open; hidden, the tabs are still reached by their shortcuts and the Command Palette.", pc: null, mac: null },
+      { id: "view.toggleZen", title: "Zen Mode", desc: "Hides this window’s menu bar, tab strip and status bar, leaving the terminal alone. No setting changes: leaving the mode brings them back as they were.", pc: null, mac: null },
       { id: "view.uiZoomIn", title: "Zoom Interface In", desc: "Makes the menus, tabs, status bar and every other window larger; the terminal text keeps its own size.", pc: null, mac: null },
       { id: "view.uiZoomOut", title: "Zoom Interface Out", desc: "Makes the menus, tabs, status bar and every other window smaller; the terminal text keeps its own size.", pc: null, mac: null },
       { id: "view.uiZoomReset", title: "Reset Interface Zoom", desc: "Returns the menus, tabs, status bar and every other window to 100%.", pc: null, mac: null },
@@ -102,6 +109,7 @@ export const commandGroups: CmdGroup[] = [
   {
     title: "Lists",
     commands: [
+      { id: "nav.cancel", title: "Cancel List", desc: "Closes a list without choosing: the Command Palette, a picker and the Message Log, where its key works. Escape always does the same.", pc: ["Ctrl", "G"], mac: ["Ctrl", "G"] },
       { id: "nav.lineDown", title: "Line Down", desc: "Moves down a line in a list: the Command Palette and the pickers, where its key works. Run as a command, it scrolls the terminal a line towards the newest output.", pc: ["Ctrl", "N"], mac: ["Ctrl", "N"] },
       { id: "nav.lineUp", title: "Line Up", desc: "Moves up a line in a list: the Command Palette and the pickers, where its key works. Run as a command, it scrolls the terminal a line back into its history.", pc: ["Ctrl", "P"], mac: ["Ctrl", "P"] },
       { id: "nav.pageDown", title: "Page Down", desc: "Moves down a page in a list: the Command Palette and the pickers, where its key works. Run as a command, it scrolls the terminal a page towards the newest output.", pc: ["Ctrl", "V"], mac: ["Ctrl", "V"] },
@@ -161,4 +169,4 @@ export const commandGroups: CmdGroup[] = [
   },
 ];
 
-export const commandCount = 114;
+export const commandCount = 122;

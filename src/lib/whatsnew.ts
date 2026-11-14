@@ -6,12 +6,12 @@ export type NewsItem = { title: string; detail: string };
 
 export const whatsNew: NewsItem[] = [
   { title: "Termina 0.15.0", detail: "Out for macOS (Apple Silicon and Intel), Windows (x64) and Linux (x64 and ARM64), each installer with its own Java runtime." },
+  { title: "Three window modes", detail: "In the View menu, the Command Palette and bindable under Settings ▸ Keyboard: - Zen Mode hides the window's menu bar, tab strip and status bar and leaves the terminal alone. - Expert Mode hides the menu bar and the tab strip and keeps the status bar." },
+  { title: "Pickers: a list to type into for a choice from a list", detail: "Four commands, in the Command Palette and bindable under Settings ▸ Keyboard: Select Color Theme, Select Font, Select Cursor Shape and New Tab from Profile. Each opens on the value in force." },
+  { title: "Cancelling a list is a command, Cancel List", detail: "On Ctrl+G by default and bindable under Settings ▸ Keyboard like the four that move a line and a page. The Command Palette, the pickers and the Message Log all close on its chord, and on Escape whatever is bound." },
+  { title: "The Message Log moves on Ctrl+N and Ctrl+P and closes on Ctrl+G", detail: "The keys of the palette and the pickers, or whichever chords you have given those commands." },
+  { title: "A help key in the Command Palette", detail: "Ctrl+H opens the highlighted command's page of the user guide in your browser; the palette stays open. It is F1, or Shift+F1, if you have given Ctrl+H to a command." },
   { title: "A High Contrast theme", detail: "White on black, a single cyan accent, and every colour of the terminal and of the windows at 7:1 or better on the black. Choose it like any theme." },
-  { title: "The tabs you had open come back at the next launch", detail: "Each tab and pane reopens as a new shell in the folder it was in, with the names you gave, the pinned tabs pinned and the same tab in front. The programs that were running are not started again, and a tab opened with <code>-e</code> comes back as a shell." },
-  { title: "Each page of Settings ends in a link to its help", detail: "Help for Appearance, Help for Profiles and so on, opening that page of the documentation." },
-  { title: "<code>TODO.md</code>", detail: "<code>TODO.md</code> is the open list: the Pauta rules not met yet, what has never been run, and the terminal features not done. It changes in the same pull request as the work." },
-  { title: "Help ▸ Doctor", detail: "Help ▸ Doctor checks what Termina relies on: the shell it starts, its settings folder, Git and the GitHub CLI for settings sync, and on Linux the tools for the selection clipboard, notifications and opening links. Each row says OK, Missing, Optional or Problem in words, with what was found, and a row that is not OK says what to install and links to it." },
-  { title: "<code>--dev</code>", detail: "<code>--dev</code> keeps a separate set of settings in <code>~/.termina-dev</code>, so a build being tried out never touches the ones in daily use. <code>--config-dir</code> still takes precedence, and <code>--dev</code> wins over <code>TERMINA_CONFIG_DIR</code>: what is typed on the command line is the more specific instruction." },
 ];
 
 export const next: NewsItem[] = [

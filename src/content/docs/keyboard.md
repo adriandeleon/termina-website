@@ -62,7 +62,7 @@ The keys in it are the arrows and Emacs's:
 | `Ctrl+V` / `Alt+V` (`Ctrl+V` / `Option+V`) | Page Down / Page Up |
 | `Alt+<` / `Alt+>` | First / last row |
 | `Ctrl+H` | Open the highlighted command's page of this guide |
-| `Ctrl+G`, `Esc` | Close |
+| `Ctrl+G`, `Esc` | Cancel List: close without running anything |
 
 The query field takes the Emacs editing keys: `Ctrl+A`, `Ctrl+E`, `Ctrl+F`, `Ctrl+B`, `Alt+F`,
 `Alt+B`, `Ctrl+D`, `Ctrl+K`, `Alt+D`, `Ctrl+W`, `Alt+W`, `Ctrl+Y` and `Ctrl+/`.
@@ -70,15 +70,34 @@ The query field takes the Emacs editing keys: `Ctrl+A`, `Ctrl+E`, `Ctrl+F`, `Ctr
 ### Moving in the list
 
 Moving a line and a page are four commands: **Line Down**, **Line Up**, **Page Down** and **Page
-Up**. They are listed under View on **Settings → Keyboard**, where each can be given another
-shortcut.
+Up**. Closing a list without choosing is a fifth, **Cancel List**. They are listed under View on
+**Settings → Keyboard**, where each can be given another shortcut.
 
-- **The defaults are Emacs's**: `Ctrl+N`, `Ctrl+P`, `Ctrl+V` and `Alt+V`, the same on every
-  system.
-- **The arrows, `PageUp` and `PageDown` always work**, whatever the four commands are on.
-- **Their keys act only in a list.** With the terminal in front, `Ctrl+N` and `Ctrl+P` still
-  reach the shell.
-- **Run from the palette, the four scroll the terminal's history** a line or a page.
+- **The defaults are Emacs's**: `Ctrl+N`, `Ctrl+P`, `Ctrl+V`, `Alt+V` and `Ctrl+G`, the same on
+  every system.
+- **The arrows, `PageUp`, `PageDown` and `Esc` always work**, whatever the five commands are on.
+- **Their keys act only in a list**: the palette, a [picker](#pickers) and the Message Log. With
+  the terminal in front, `Ctrl+N`, `Ctrl+P` and `Ctrl+G` still reach the shell.
+- **Run from the palette, the four that move scroll the terminal's history** a line or a page.
+
+### Pickers
+
+A picker is the palette's card for choosing one thing from a list: a title naming the command, a
+field to type in, and the list, opened on the value in force. Four commands open one. They are in
+the palette, and Settings → Keyboard can give each a shortcut:
+
+| Command | Lists |
+| --- | --- |
+| **Select Color Theme…** | Every theme. Each is shown in the window as you move to it, and `Esc` puts back the one you had |
+| **Select Font…** | The monospace fonts on this computer |
+| **Select Cursor Shape…** | Block, Underline and Bar |
+| **New Tab from Profile…** | Every profile by name, with the command it runs |
+
+![The Select Color Theme picker over the terminal: a title, a field to type in, and the themes with the one in force highlighted](/screenshots/docs/picker.png "Select Color Theme opens on the theme in force; moving shows each theme in the window.")
+
+Type to narrow the list; the best match leads, and rows that match equally stay in the list's
+own order. The keys are the palette's: the arrows and `Ctrl+N` / `Ctrl+P` move, `Enter` or a click
+chooses, `Esc` or `Ctrl+G` cancels.
 
 ### Help for a command
 

@@ -12,7 +12,8 @@ font, so you can see a theme or a font before you look back at the terminal.
 ## Themes
 
 **Settings → Appearance → Theme → Color theme**, or type "theme" in the
-[command palette](/docs/keyboard#the-command-palette). The theme applies to every window, the
+[command palette](/docs/keyboard#the-command-palette). **Select Color Theme…** there opens a
+[picker](/docs/keyboard#pickers) that shows each theme in the window as you move through the list. The theme applies to every window, the
 terminal palette and Termina's own dialogs. A [profile](#a-profiles-own-font-and-theme) can have a
 theme of its own, which then wins in its panes. Five themes are built in, one more choice follows
 the system, and any number can be [imported](#importing-a-theme).
@@ -186,6 +187,28 @@ See [Shell profiles](/docs/shell-profiles#a-profiles-own-font-and-theme).
 - **Show the tab bar** (on by default). Off, the row of tabs is hidden however many are open.
   **View → Hide Tab Bar** is the same switch. The tabs are still reached by their shortcuts, the
   tab menu and the palette.
+
+### Zen, Expert and Simple modes
+
+Three commands in the **View** menu change how much of the window is chrome. Each is also in the
+palette, and Settings → Keyboard can give each a shortcut.
+
+| Mode | Shows |
+| --- | --- |
+| **Zen Mode** | The terminal alone: no menu bar, no tab strip, no status bar |
+| **Expert Mode** | The terminal and the status bar: no menu bar, no tab strip |
+| **Simple Mode** | Everything, with a shorter menu bar: File, Edit, View and Help, each with its everyday commands |
+
+- **Zen and Expert belong to one window** and last until it closes. They change no setting, so
+  leaving the mode brings back exactly what was there. Entering one leaves the other.
+- **The way out is the command again**, which is named **Leave Zen Mode** or **Leave Expert
+  Mode** while its mode is on. With the menu bar hidden, find it in the palette
+  (`Ctrl+Shift+P`, `Cmd+Shift+P` on macOS); the Message Log says so when the mode starts.
+- **Tabs are still there** in both, reached by their shortcuts and by name in the palette.
+- **Simple Mode is a setting**, **Settings → Appearance → Window → Simple mode**, and applies to
+  every window. Every command keeps its shortcut and its row in the palette; only the menus are
+  shorter. **View → Leave Simple Mode** brings the full menus back.
+- **On macOS** the menus are in the screen's menu bar, which Zen and Expert do not hide.
 
 If you came from a version before 0.15 and never changed them, the status bar and the menu bar in
 the title bar are new to you: both used to start off. A choice you had already made is kept.
