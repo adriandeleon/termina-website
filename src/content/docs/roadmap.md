@@ -27,7 +27,6 @@ None: every MUST of the edition is met, which makes the conformance Core.
 
 ### SHOULD
 
-- [ ] **[DOCS-04](https://pauta-project.dev/6.0.1/documentation/#docs-04)** The website checks the commands and keys its guide quotes on pull requests, and not yet in the build that deploys the site.
 - [ ] **[KBD-04](https://pauta-project.dev/6.0.1/keyboard/#kbd-04)** On macOS a greyed row in the menu bar at the top of the screen does not say why it cannot run; every menu Termina draws itself does.
 - [ ] **[REL-17](https://pauta-project.dev/6.0.1/release/#rel-17)** The Windows installer is not signed.
 

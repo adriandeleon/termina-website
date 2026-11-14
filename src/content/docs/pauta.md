@@ -13,7 +13,7 @@ required, a **SHOULD** is expected unless there is a stated reason.
 
 Termina is built to **[Pauta 6.0.1](https://pauta-project.dev/6.0.1/)**.
 
-**Pauta conformance: Core.** Termina meets every MUST of this edition; 3 SHOULDs are pending.
+**Pauta conformance: Core.** Termina meets every MUST of this edition; 2 SHOULDs are pending.
 
 | Conformance | Means |
 |---|---|
@@ -29,10 +29,9 @@ and the conformance.
 
 ## Pending
 
-Rules Termina does not meet yet. Each one links the issue that tracks it. 3 rules: 0 MUST, 3 SHOULD.
+Rules Termina does not meet yet. Each one links the issue that tracks it. 2 rules: 0 MUST, 2 SHOULD.
 
 | Rule | Level | What is different | Link |
 |---|---|---|---|
-| <a href="https://pauta-project.dev/6.0.1/documentation/#docs-04" style="white-space: nowrap"><code>DOCS-04</code></a> | SHOULD | The website checks the commands and keys its guide quotes on pull requests, and not yet in the build that deploys the site. | [#92](https://github.com/adriandeleon/Termina/issues/92) |
 | <a href="https://pauta-project.dev/6.0.1/keyboard/#kbd-04" style="white-space: nowrap"><code>KBD-04</code></a> | SHOULD | On macOS a greyed row in the menu bar at the top of the screen does not say why it cannot run; every menu Termina draws itself does. | [#92](https://github.com/adriandeleon/Termina/issues/92) |
 | <a href="https://pauta-project.dev/6.0.1/release/#rel-17" style="white-space: nowrap"><code>REL-17</code></a> | SHOULD | The Windows installer is not signed. | [#92](https://github.com/adriandeleon/Termina/issues/92) |
