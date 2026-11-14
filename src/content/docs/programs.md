@@ -16,7 +16,7 @@ to print.
 | A declared link (OSC 8) | Makes the text a link, and shows its target on hover | — |
 | The clipboard (OSC 52) | Lets the program set it, never read it | Terminal → Input |
 | A notification (OSC 9, OSC 777) | Marks the tab, and posts to the desktop | Terminal → Display |
-| The directory (OSC 7) | Gives the tab a directory, on Windows only | — |
+| The directory (OSC 7) | Gives the tab a directory, where the system has none (a WSL tab) | — |
 | Prompt marks (OSC 133) | Prompt navigation and failed-command marks | — |
 | The kitty keyboard protocol | Unambiguous keys, while the program asks | — |
 
@@ -51,8 +51,9 @@ printf '\e]777;notify;Build;done\a'   # urxvt's, which foot, kitty and WezTerm r
 printf '\e]9;done\a'                  # iTerm2's
 ```
 
-- **The tab is marked** with a magenta dot, which outranks the bell's yellow and the activity
-  mark's cyan, in the theme's own rendering of each. A tab you are looking at is not marked.
+- **The tab is marked** with a magenta diamond, which outranks the bell's yellow ring and the
+  activity mark's cyan dot, in the theme's own rendering of each color. A tab you are looking at
+  is not marked.
 - **It reaches the desktop unless you are looking at that pane**: the window in front, the tab
   selected and the pane active. On Linux it goes through `notify-send`, or straight to the session
   bus with `gdbus` where `notify-send` is not installed; on macOS through `osascript`; on Windows as
@@ -69,17 +70,16 @@ printf '\e]9;done\a'                  # iTerm2's
 
 ## The directory (OSC 7)
 
-A shell can report its working directory, as a `file://` URI. On Linux and macOS Termina ignores
-the report and asks the operating system instead, which works whatever your prompt does, and which
-a shell inside `ssh` cannot claim for another machine's path.
+A shell can report its working directory, as a `file://` URI. On every system Termina asks the
+operating system instead, which works whatever your prompt does, and which a shell inside `ssh`
+cannot claim for another machine's path. Where the system has an answer, the report is not used.
 
-On Windows the operating system is asked too: the directory is read out of the shell process. But
-a WSL tab's process is `wsl.exe`, whose directory says nothing about where the Linux shell inside
-it is, so there a directory the shell reports wins. The same holds for a program started as
-`bash.exe`, which is how Git Bash runs. Both OSC 7 and ConEmu's `OSC 9;9`, the form
-PowerShell and Command Prompt send when set up for Windows Terminal, are read, and only for a
-directory on this machine that exists. A tab with a directory opens new tabs there and turns relative paths into
-[links](/docs/links#windows).
+The report fills in where the system has none. That is a WSL tab on Windows: its process is
+`wsl.exe`, whose directory says nothing about where the Linux shell inside it is. The same holds
+for a program started as `bash.exe`, which is how Git Bash runs. Both OSC 7 and ConEmu's
+`OSC 9;9`, the form PowerShell and Command Prompt send when set up for Windows Terminal, are read,
+and only for a directory on this machine that exists. A tab with a directory opens new tabs there
+and turns relative paths into [links](/docs/links#windows).
 
 ## Prompt marks (OSC 133)
 

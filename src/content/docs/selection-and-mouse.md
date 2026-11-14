@@ -52,8 +52,8 @@ as soon as it is made, with no Copy needed.
 On Linux every selection is also the **PRIMARY** selection, whether or not copy on select is on,
 and a middle-click pastes PRIMARY, as on any X11 terminal. JavaFX cannot reach PRIMARY itself, so
 Termina goes through the tools for it: `wl-paste` and `wl-copy` under Wayland, `xclip` or `xsel`
-under X11. Without one of them installed, and on macOS and Windows, which have no PRIMARY, a
-middle-click pastes the clipboard and selecting sets nothing.
+under X11. Without one of them installed, a middle-click pastes the clipboard and selecting sets
+nothing. macOS and Windows have no PRIMARY, and a middle-click pastes nothing there.
 
 ## Copy and paste
 
@@ -63,7 +63,7 @@ middle-click pastes the clipboard and selecting sets nothing.
 | `Ctrl+Shift+V` (`Cmd+V`) | Paste the clipboard |
 | `Ctrl+Insert` | Copy |
 | `Shift+Insert` | Paste |
-| Middle-click | Paste PRIMARY on Linux, the clipboard elsewhere |
+| Middle-click | Paste PRIMARY, on Linux only |
 | `Ctrl+Shift+K` (`Cmd+K`) | Clear Scrollback, keeping the screen |
 
 Plain `Ctrl+C` is still SIGINT and plain `Ctrl+V` is still readline's literal-next; both belong to
@@ -73,9 +73,14 @@ the shell.
 
 - **A paste with a line break asks first.** At a prompt every line of a paste runs the moment it
   lands, which is how a copied snippet with a stray newline becomes a command you did not mean to
-  run. The prompt shows the text that will be sent, with **Paste** as the default button.
-  **Settings → Terminal → Input → Ask before pasting several lines** turns it off. A middle-click
-  paste is checked the same way.
+  run. The prompt shows the text that will be sent, with **Paste** as the default button. A
+  middle-click paste is checked the same way.
+- **The question has no switch in Settings.** A setting that only makes Termina less safe is a
+  key in `settings.json` instead: `"input.confirmPaste": false` turns it off. See
+  [Settings](/docs/settings#the-settings-files).
+- **A very large paste asks too**, past a million characters, whether or not it has line breaks,
+  and the prompt shows only its start. Past sixteen million characters it is refused, with a
+  message.
 - **Control characters are stripped.** Escape and the other control characters are removed before
   the paste is sent, keeping tabs and line breaks. A clipboard cannot end a bracketed paste early
   and have the rest run as typing.
@@ -99,9 +104,12 @@ as Midnight Commander wants it as a button. The rule:
 - With no program holding the mouse, right-click opens the menu.
 - While a program holds the mouse, right-click goes to the program.
 - **`Shift`+right-click** always opens the menu.
-- The keyboard's menu key always opens the menu.
+- The keyboard's menu key and `Shift+F10` always open the menu, under the cursor. A plain `F10`
+  goes to the program.
 
-`Escape`, a click anywhere in the terminal, or a click outside the window closes it.
+`Escape`, a click anywhere in the terminal, or a click outside the window closes it. A click that
+closes the menu also does what a click there does, and a right-click elsewhere opens the menu
+there.
 
 ## The wheel and scrollback
 
@@ -122,18 +130,21 @@ kept, from the next tab on.
 
 On Linux, middle-click pastes the PRIMARY selection where `wl-paste`, `xclip` or `xsel` is
 installed (see [above](#the-primary-selection-on-linux)), and the clipboard otherwise. On macOS and
-Windows it pastes the clipboard. Like any click, it goes to the program when the program has the
-mouse, unless `Shift` is held.
+Windows, which have no PRIMARY, it pastes nothing. Like any click, it goes to the program when the
+program has the mouse, unless `Shift` is held.
 
 ## The right-click menu
 
-- **Open Link** and **Copy Link Address**, when you right-click a URL or a file path. See
-  [Links](/docs/links).
 - **New Tab**, **New Window**
-- **Copy**, **Paste** (disabled when there is nothing to copy or paste), **Select All**
-- **Clear Scrollback**
+- **Copy**, **Paste** (greyed when there is nothing to copy or paste), **Select All**
+- **Open Link** and **Copy Link Address**, greyed unless you right-clicked a URL or a file path.
+  See [Links](/docs/links).
+- **Clear Scrollback**, drawn in red because it discards something
 - **Zoom**: the row of `−`, the percentage, `+` and full screen. See [Zoom](/features/zoom).
-- **Show Menu Bar**, a checkbox, on Linux and Windows. It is how the menu bar comes back once
-  hidden.
+- **Show Menu Bar**, a checkbox. It is how the menu bar comes back once hidden. On macOS it is
+  greyed, since the menus are in the screen menu bar.
 - **Command Palette…**, **Settings…** and **About Termina**, so none of them needs the menu bar or a
   chord to reach.
+
+Each row shows the shortcut its command is on, and resting the pointer on a greyed row says why
+it cannot run.

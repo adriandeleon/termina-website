@@ -1,6 +1,6 @@
 ---
 title: Keyboard
-description: Why Termina's chords leave the shell its keys, changing any shortcut on Settings → Keyboard and the keys.* lines in the settings file, the command palette and its Emacs keys, the Keyboard Shortcuts reference, Alt as Meta, AltGr, the keys the terminal handles itself, and jumping to a tab.
+description: Why Termina's chords leave the shell its keys, changing any shortcut on Settings → Keyboard and the keys.* lines in the settings file, the command palette, its movement keys and its help key, the Keyboard Shortcuts reference, Alt as Meta, AltGr, the keys the terminal handles itself, and jumping to a tab.
 category: Customization
 order: 8
 ---
@@ -25,6 +25,9 @@ This page covers the rules behind them, and how to change any of them.
   (`Cmd+Shift+W` on macOS).
 - **The chords work with the menu bar hidden.** They are handled by the window, ahead of the
   terminal, not by the menus.
+- **Focus Menu Bar is `Ctrl+Shift+F10`** (`Cmd+Shift+F10` on macOS). It puts the keyboard in the
+  menu bar and opens its first menu, so the arrow keys walk it. A plain `F10` and a lone `Alt`,
+  which do this in most apps, belong to the program running in the terminal.
 
 Every default chord is declared once, with its menu item, and the menu, the palette and the
 reference all read the chord a command is on now, so none of them can advertise a chord that does
@@ -32,40 +35,88 @@ nothing.
 
 ## The command palette
 
+![The Command Palette over the terminal with the query "tab", listing the commands that match and their shortcuts](/screenshots/docs/palette.png "The palette lists every command; the letters you typed are marked in each title.")
+
 `Ctrl+Shift+P` (`Cmd+Shift+P` on macOS) opens it, as in Windows Terminal and VS Code.
 
 - **Type part of a name.** "nw" finds New Window, "tab close" finds Close Tab with the words in
   either order, and "file new" reaches New Tab through the menu it lives in. The matched letters are
   shown in bold, and each row shows its chord.
-- **Everything is there**: every menu command, every open tab by its title (with the chord that
-  reaches it), every shell profile ("New Tab: zsh"), and every theme ("Theme: Clear Dark").
+- **Everything is there**: every command, every open tab by its title (with the chord that
+  reaches it), every shell profile ("New Tab: zsh"), every theme ("Theme: Clear Dark"), and every
+  setting ("Show a scrollbar: turn off", "Cursor shape: Bar", "Scrollback lines…").
 - **A command that cannot run right now is greyed, not hidden.** Reopen Closed Tab, with nothing
-  closed yet, stays in the list with the reason as its tooltip, and the cursor steps over it.
+  closed yet, stays in the list with the reason as its tooltip, and the cursor steps over it. At
+  an equal match, a command that can run comes before one that cannot.
 - **A line under the list** says what the highlighted command does, and a legend names the keys.
-- `Enter` or a click runs the command; `Esc` closes the palette.
+- `Enter` or a click runs the command; `Esc` closes the palette, and the keyboard goes back to
+  where it was.
 
 The keys in it are the arrows and Emacs's:
 
 | Key | Does |
 | --- | --- |
-| `↑` `↓`, `Ctrl+P` `Ctrl+N` | Move |
-| `Ctrl+V` / `Alt+V` | Page down / up |
+| `↑` `↓` | Move a line |
+| `PageUp` / `PageDown` | Move a page |
+| `Ctrl+N` / `Ctrl+P` | Line Down / Line Up |
+| `Ctrl+V` / `Alt+V` (`Ctrl+V` / `Option+V`) | Page Down / Page Up |
 | `Alt+<` / `Alt+>` | First / last row |
-| `Ctrl+G`, `Esc` | Close |
+| `Ctrl+H` | Open the highlighted command's page of this guide |
+| `Ctrl+G`, `Esc` | Cancel List: close without running anything |
 
 The query field takes the Emacs editing keys: `Ctrl+A`, `Ctrl+E`, `Ctrl+F`, `Ctrl+B`, `Alt+F`,
 `Alt+B`, `Ctrl+D`, `Ctrl+K`, `Alt+D`, `Ctrl+W`, `Alt+W`, `Ctrl+Y` and `Ctrl+/`.
 
+### Moving in the list
+
+Moving a line and a page are four commands: **Line Down**, **Line Up**, **Page Down** and **Page
+Up**. Closing a list without choosing is a fifth, **Cancel List**. They are listed under View on
+**Settings → Keyboard**, where each can be given another shortcut.
+
+- **The defaults are Emacs's**: `Ctrl+N`, `Ctrl+P`, `Ctrl+V`, `Alt+V` and `Ctrl+G`, the same on
+  every system.
+- **The arrows, `PageUp`, `PageDown` and `Esc` always work**, whatever the five commands are on.
+- **Their keys act only in a list**: the palette, a [picker](#pickers) and the Message Log. With
+  the terminal in front, `Ctrl+N`, `Ctrl+P` and `Ctrl+G` still reach the shell.
+- **Run from the palette, the four that move scroll the terminal's history** a line or a page.
+
+### Pickers
+
+A picker is the palette's card for choosing one thing from a list: a title naming the command, a
+field to type in, and the list, opened on the value in force. Four commands open one. They are in
+the palette, and Settings → Keyboard can give each a shortcut:
+
+| Command | Lists |
+| --- | --- |
+| **Select Color Theme…** | Every theme. Each is shown in the window as you move to it, and `Esc` puts back the one you had |
+| **Select Font…** | The monospace fonts on this computer |
+| **Select Cursor Shape…** | Block, Underline and Bar |
+| **New Tab from Profile…** | Every profile by name, with the command it runs |
+
+![The Select Color Theme picker over the terminal: a title, a field to type in, and the themes with the one in force highlighted](/screenshots/docs/picker.png "Select Color Theme opens on the theme in force; moving shows each theme in the window.")
+
+Type to narrow the list; the best match leads, and rows that match equally stay in the list's
+own order. The keys are the palette's: the arrows and `Ctrl+N` / `Ctrl+P` move, `Enter` or a click
+chooses, `Esc` or `Ctrl+G` cancels.
+
+### Help for a command
+
+`Ctrl+H` in the palette opens the page of this guide for the highlighted command. If you have
+given `Ctrl+H` to a command, the help key is `F1`, and `Shift+F1` if that is taken too. The legend
+under the list names the key in use.
+
 ### The palette's own chord
 
 `Ctrl+Shift+P` is the palette's default, and like every other chord it can be changed: it is the
-**Command Palette…** row under View on **Settings → Keyboard** (below). It used to have a row of
-its own on the Terminal page; a chord chosen there is kept.
+**Command Palette…** row under Help on **Settings → Keyboard** (below). The command is also the
+first row of the Help menu.
 
 Until 0.13.0 the default was `Alt+X`, Emacs's `M-x`. That took `M-x` from Emacs and zsh running in
 the terminal, so it moved. If you had chosen a chord yourself, Alt+X included, you keep it.
 
 ## Changing a shortcut
+
+![The Keyboard page of Settings, searched for "new tab": the commands that match, each with the shortcut it is on and a Reset button](/screenshots/docs/settings-keyboard.png "Settings → Keyboard, narrowed here by a search for new tab.")
 
 **Settings → Keyboard** lists every command under the menu it lives in, each with the shortcut it
 is on now. The settings search finds them by name, such as "close tab".
@@ -77,8 +128,8 @@ is on now. The settings search finds them by name, such as "close tab".
 - **Reset** puts one command back on its default. If another command has that chord now, it asks
   first, because that command is left with none. **Reset All Shortcuts** asks, then puts every
   command back.
-- **Commands with no shortcut of their own can be given one**: Rename Tab, Duplicate Tab, Move
-  Pane to New Tab and Sync Settings Now among them.
+- **Commands with no shortcut of their own can be given one**: Rename Tab, Duplicate Tab, Pin
+  Tab, Move Pane to New Tab and Sync Settings Now among them.
 - **`Tab` and `Shift+Tab` leave the field**, as they do everywhere; `Ctrl+Tab` is a chord.
 
 Two rules come from the shell's side of the keyboard:
@@ -90,9 +141,10 @@ Two rules come from the shell's side of the keyboard:
   receives it. Bound to a command, `Ctrl+R` is no longer readline's history search. None of the
   defaults are `Ctrl+letter` for that reason.
 
-Everything that shows a chord shows the one in force: the menus, the palette's rows and its
-opener, the [Keyboard Shortcuts reference](#the-keyboard-shortcuts-reference), and the tooltips
-on the tab strip's `+` and close buttons. A command with no shortcut shows none. The
+Everything that shows a chord shows the one in force: the menus, the right-click menus, the
+palette's rows and its opener, the
+[Keyboard Shortcuts reference](#the-keyboard-shortcuts-reference), and the tooltips on the tab
+strip's `+` and close buttons. A command with no shortcut shows none. The
 [Keybindings](/keybindings) page on this site lists the defaults.
 
 The shortcuts you change can follow you to your other computers: see
@@ -100,24 +152,34 @@ The shortcuts you change can follow you to your other computers: see
 
 ### In the settings file
 
-Each changed command is one line in `settings.properties`, keyed by the command:
+Each changed command is one line in `settings.json`, keyed by `keys.` and the command's id:
 
-```properties
-keys.newTab=Ctrl+Shift+Y
-keys.closeTab=none
+```json
+{
+  "schemaVersion": 3,
+  "settings": {
+    "keys.file.closeTab": "none",
+    "keys.file.newTab": "Ctrl+Shift+Y"
+  }
+}
 ```
 
 - **A command with no line is on its default**, unless another command has been given that
   chord. `none` leaves a command on no key.
-- **The name is the command's id**, usually its menu name run together (`newTab`, `closeTab`,
-  `splitRight`, `commandPalette`), though not always: Sync Settings Now is `syncNow`. The tab chords are `goToTab1` to `goToTab9` (`goToTab9` is the last tab), and
-  the profile chords `newTabProfile1` to `newTabProfile9`.
+- **The name is the command's id**: its area, a dot, and its name (`file.newTab`,
+  `file.closeTab`, `pane.splitRight`, `palette.show`). Sync Settings Now is `sync.now`. The tab
+  chords are `tab.goTo1` to `tab.goTo9` (`tab.goTo9` is the last tab), and the profile chords
+  `file.newTabProfile1` to `file.newTabProfile9`.
+- **Ids from before 0.15 are carried forward.** They had no area (`keys.newTab`,
+  `keys.commandPalette`), and a file that still has them is brought up to date when it is read.
 - **A chord is written with `Ctrl`, `Alt`, `Shift`, `Meta` (Cmd) and `Shortcut`**, which is Cmd on
   macOS and Ctrl elsewhere, then the key: `Shortcut+Shift+T`, `Alt+X`, `F9`.
 - **A line that does not parse, or takes a chord another line already took, is ignored**, as if
   it were not there. A line naming a command this version does not have is left in the file.
 
 ## The Keyboard Shortcuts reference
+
+![The Keyboard Shortcuts window, a searchable list of shortcuts grouped by menu](/screenshots/docs/shortcuts.png "Help → Keyboard Shortcuts shows the shortcuts in force, your own changes included.")
 
 **Help → Keyboard Shortcuts…** (`Ctrl+Shift+/`, `Cmd+/` on macOS) lists every chord the window
 answers to, grouped by menu, with a search box. It is built from the window's own binding table,
@@ -147,12 +209,17 @@ handles itself (below). `Esc` closes it.
 | `Shift+Home` / `Shift+End` | Scroll to the top of the scrollback / to the bottom |
 | `Shift+Insert` | Paste |
 | `Ctrl+Insert` | Copy |
-| Middle-click | Paste the clipboard |
+| Middle-click | Paste the selection, on Linux |
+| `Shift+F10`, the Menu key | Open the right-click menu |
 | `Tab`, `Shift+Tab`, `Esc` | Always go to the shell, never to the window |
 
 - **The four scrolling keys go to the program on the alternate screen.** A full-screen program
   such as `less` has no scrollback behind it, and binds `Shift+PageUp` itself.
-- **Middle-click pastes the clipboard**, not the X11 primary selection, which JavaFX cannot read.
+- **Middle-click pastes the PRIMARY selection on Linux**, and the clipboard there when no tool
+  for the selection is installed. On macOS and Windows it pastes nothing. See
+  [Selection and the mouse](/docs/selection-and-mouse#middle-click).
+- **`Shift+F10` and the Menu key open the terminal's right-click menu**, under the cursor. A plain
+  `F10` still reaches the program.
 - **`Esc` does not leave full screen.** Only `F11` (`Ctrl+Cmd+F` on macOS) does, so `Esc` in vim
   leaves insert mode as it should.
 - `Ctrl+3` through `Ctrl+8` send xterm's control bytes, and the keypad arrows work with NumLock off.

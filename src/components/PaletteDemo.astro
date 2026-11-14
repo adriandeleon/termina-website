@@ -11,16 +11,16 @@ import { keysOf } from "../lib/keys";
 const byId = new Map<string, (typeof commandGroups)[number]["commands"][number]>();
 for (const g of commandGroups) for (const c of g.commands) byId.set(c.id, c);
 const rows = [
-  { id: "reopenClosedTab", match: true },
-  { id: "newTab", match: false },
-  { id: "renameTab", match: false },
-  { id: "previousTab", match: false },
-  { id: "keyboardShortcuts", match: false },
+  { id: "file.reopenClosedTab", match: true },
+  { id: "file.newTab", match: false },
+  { id: "tab.rename", match: false },
+  { id: "tab.previous", match: false },
+  { id: "help.keyboardShortcuts", match: false },
 ].flatMap(({ id, match }) => {
   const c = byId.get(id);
   return c ? [{ title: c.title, keys: keysOf(c), match }] : [];
 });
-const palette = byId.get("commandPalette");
+const palette = byId.get("palette.show");
 const paletteKeys = palette ? keysOf(palette) : null;
 
 // The shell behind the palette, one run per [ANSI class, text]: what `ls -l` and `git log` look

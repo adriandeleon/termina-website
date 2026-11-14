@@ -25,7 +25,7 @@ opens a context menu.
 **URLs** with one of six schemes: `http`, `https`, `ftp`, `ftps`, `file` and `mailto`. Terminal
 output is whatever a program printed, and a registered handler is a program on your machine, so
 `javascript:`, `data:` and custom `app://` schemes are never opened. A URL that wraps at the right
-edge is one link, not two.
+edge is one link, not two. A URL inside a Markdown link, `[docs](https://…)`, is a link as well.
 
 **File paths**, and only when they name something that **exists**. Any word under the pointer is a
 candidate — a bare filename out of `ls`, a directory, `src/main/Foo.java`, `~/notes.txt` — and it
@@ -65,7 +65,11 @@ See [What programs can ask for](/docs/programs) for the other requests a program
 ## Open Link and Copy Link Address
 
 Right-click a link for **Open Link** and **Copy Link Address**, with no modifier needed. Copy Link
-Address copies the URL, or for a path the full path of the file it resolved to.
+Address copies the URL, or for a path the full path of the file it resolved to. The two rows are
+always in the right-click menu, greyed where there is no link.
+
+Both are commands too, in the palette, and Settings → Keyboard can give them shortcuts. Run that
+way they act on the link under the pointer.
 
 ## Opening files in your editor
 
@@ -100,8 +104,8 @@ to.
 ## Windows
 
 Relative paths need the tab's directory, and on Windows Termina reads it from the shell process,
-or takes it from the shell when the shell reports one (OSC 7). A tab whose directory is known
-resolves relative paths as on the other platforms. A WSL tab's process is `wsl.exe`, which says
+as on the other platforms. A tab whose directory is known resolves relative paths as they do. A
+WSL tab's process is `wsl.exe`, which says
 nothing about where the Linux shell inside it is, so there relative paths are links only once the
 shell reports its directory. The same holds for a program started as `bash.exe`, which is how Git
 Bash runs. See [What programs can ask for](/docs/programs#the-directory-osc-7).

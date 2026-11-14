@@ -55,10 +55,11 @@ under the home page's "In development" heading, and nowhere else.
 Feature screenshots go in `public/screenshots/features/<slug>.png` (the slug matches the page
 URL, e.g. `/features/tabs` → `tabs.png`); without one the card and the page show a placeholder.
 The window screenshot is `public/screenshots/hero/terminal.png`, and the "A look at the window"
-section only renders when it exists. Termina's capture harness makes them:
-`scripts/dev-run.sh -Dtermina.capture=out.png …` in the Termina repository, whose README lists the
-options. Capture from a build of the release tag, run with a scratch `--config-dir`, and in a
-directory with nothing private in it.
+section only renders when it exists. `scripts/screenshots.sh` takes all of them, at 2×, with
+Termina's capture harness (`-Dtermina.capture=out.png …`; the Termina repository's
+`docs/testing.md` lists the options): `scripts/screenshots.sh hero feature-tabs` retakes those two.
+Capture from a build of the release the site describes. The script uses a shell set-up, a home
+folder and a demo project of its own, so nothing private is in a picture.
 
 The captures can run headless, with no window on anyone's desktop: JavaFX 27's own headless
 platform, `-Dglass.platform=Headless -Dprism.order=sw`, with `DISPLAY` unset. Three things differ
@@ -68,6 +69,56 @@ is photographed on its own, and its transparent margin comes out white unless it
 snapshotted on a transparent fill; composite it onto the window at the position it reports. And
 the platform cannot draw a title bar, so Settings → Appearance says so on the title-bar row: take
 that page on a desktop, or show another.
+
+**The user guide's own pictures** are `public/screenshots/docs/<name>.png`, taken in the app's
+light theme, each with a `<name>.dark.png` twin taken in the dark one, both at 2×.
+`scripts/screenshots.sh` retakes all of them, headless, from a Termina checkout
+(`TERMINA_REPO`, else `../Termina`): it writes its own shell start-up file, home folder and demo
+project, so the same Termina gives the same pictures on any machine. `scripts/screenshots.sh panes
+tabs` retakes only those. A docs page shows one with an image on a line of its own:
+
+```md
+![What the picture shows](/screenshots/docs/panes.png "The caption under it")
+```
+
+`src/lib/rehype-doc-figures.mjs` turns that into a figure, reads its size from the file, links the
+full-size picture, and lets the site's theme pick the light or the dark one. Alt text is required;
+a missing file fails the build. Retake them after any change to how the window looks (DOCS-18).
+
+## What is generated from the app
+
+Four things come from the Termina repository, and their output is committed so the site builds
+without it (DOCS-04, PAUTA-14). Each script takes the checkout as its argument (else
+`TERMINA_REPO`, else `../Termina`) and reads it at a git ref: the newest `vX.Y.Z` tag, or
+`--ref=<tag|branch>`. `--as=0.15.0` makes the site ready ahead of a release, from a branch whose
+pom still says `-SNAPSHOT`.
+
+| Run | Writes | From |
+| --- | --- | --- |
+| `java scripts/GenCommands.java` | `src/lib/commands.ts`, `src/lib/version.ts` | `messages.properties`, the key maps, `pom.xml` |
+| `java scripts/GenChangelog.java` | `src/content/docs/whats-new.md`, `roadmap.md`, `src/lib/whatsnew.ts` | `CHANGELOG.md`, `TODO.md` |
+| `java scripts/GenPauta.java` | `src/content/docs/pauta.md` | `pauta.json`, `pom.xml` |
+| `scripts/screenshots.sh` | `public/screenshots/` | the built app, driven headless |
+
+`commands.ts` feeds the Commands page, a page for each command, Keybindings, the home page's keys
+and the palette demo. After a release, run all four from the tag and commit the result.
+
+`npm run check:docs` then checks what the hand-written pages quote: a backticked command id must
+be a real command, and a key in a table beside a command's title must not be another command's
+key. The **Check** workflow runs it, and the build, on every pull request.
+
+## The guide is served under its version
+
+The user guide is at `/docs/v-<version>/…`, the address the app of that version opens from its
+Help menu, its Settings pages and its palette (DOCS-03). Bare `/docs` and every unversioned slug
+redirect to the current version (`astro.config.mjs`), so write links as `/docs/links`, in Markdown
+and in templates alike: a rehype plugin puts a Markdown link under the version, and the rest go
+through the redirect. A release changes `src/lib/version.ts` and nothing else.
+
+Only the current version is served. Before generating the version after this one, either keep
+the old pages (Editora's site archives them under `src/content/docs-archive/<version>/`) or add a
+redirect from each `/docs/v-<old>/…` address to the current one: an installed app of the old
+version still opens those addresses.
 
 ## Themes
 

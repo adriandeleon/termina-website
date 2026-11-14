@@ -67,18 +67,18 @@ const featureGroups = await groupedFeatures();
 
 // The keys a newcomer reaches for first, read from the generated command data.
 const keyIds = [
-  "commandPalette",
-  "newTab",
-  "closeTab",
-  "reopenClosedTab",
-  "copy",
-  "paste",
-  "nextTab",
-  "goToTab",
-  "zoomIn",
-  "fullScreen",
-  "settings",
-  "keyboardShortcuts",
+  "palette.show",
+  "file.newTab",
+  "file.closeTab",
+  "file.reopenClosedTab",
+  "edit.copy",
+  "edit.paste",
+  "tab.next",
+  "tab.goTo1",
+  "view.zoomIn",
+  "view.fullScreen",
+  "settings.show",
+  "help.keyboardShortcuts",
 ];
 const keyRows = keyIds.flatMap((id) => {
   const c = allCommands.find((x) => x.id === id);
@@ -151,7 +151,7 @@ const platforms = [
               <source srcset={url("screenshots/hero/terminal.webp")} type="image/webp" />
               <img
                 src={url("screenshots/hero/terminal.png")}
-                alt="Termina's window: a tab strip over a shell showing a coloured directory listing with file-type icons and a git log"
+                alt="Termina's window: a menu bar and two tabs over a shell showing a coloured directory listing with file-type icons"
                 fetchpriority="high"
               />
             </picture>
@@ -397,10 +397,11 @@ const platforms = [
         the application menu as a terminal emulator.
       </p>
       <p class="note">
-        Installers are currently unsigned. On macOS the first launch is blocked:
-        open <em>System Settings → Privacy &amp; Security</em> and click
-        <em>Open Anyway</em>. On Windows, if SmartScreen appears, choose
-        <em>More info → Run anyway</em>. Each release lists SHA-256 checksums.
+        The macOS downloads are signed and notarized, and each Linux download has
+        an OpenPGP signature beside it. The Windows installer is not signed yet:
+        if SmartScreen appears, choose <em>More info → Run anyway</em>. Each
+        release lists SHA-256 checksums; <a href={href("/docs/installing/")}>Installing</a>
+        has the steps for each system.
       </p>
     </section>
 

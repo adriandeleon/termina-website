@@ -1,6 +1,6 @@
 ---
 title: Settings sync
-description: Syncing key bindings between computers through a private Git repository you own, setting it up, when it runs, what is synced and what is not, one list per platform family, a shortcut changed on two computers, backups and the stop on a large removal, signing in, several GitHub CLI accounts, and a settings folder inside a dotfiles repository.
+description: Syncing key bindings between computers through a private Git repository you own, setting it up, when it runs, what is synced and what is not, one file for every system and how a Mac's Command is written in it, updating every computer, a shortcut changed on two computers, backups and the stop on a large removal, signing in, several GitHub CLI accounts, and a settings folder inside a dotfiles repository.
 category: Customization
 order: 10.5
 ---
@@ -11,6 +11,8 @@ What is synced is the shortcuts you change on [Settings → Keyboard](/docs/keyb
 and nothing else.
 
 ## Setting it up
+
+![The Sync page of Settings, searched for "interval": the switch that syncs automatically, the interval in minutes, and the note on what is synced](/screenshots/docs/settings-sync.png "Settings → Sync, narrowed here by a search for interval.")
 
 1. **Make a private repository** on GitHub, GitLab or any other Git host, empty or already used by
    another of your computers.
@@ -47,35 +49,60 @@ And whenever you ask:
 
 - **Sync Now** on the Sync page, which shows how the last sync went: "Last synced at 14:02: 3
   received, 1 sent", or why it did not finish. **Cancel** stops a sync before anything on this
-  computer is written.
+  computer is written. A status beside it reads Off, Synced, Syncing or Problem.
+- **A sync that fails on its own says so**, in the status bar and the Message Log, once for each
+  kind of failure.
 - **File → Sync Settings Now**, also in the [command palette](/docs/keyboard#the-command-palette),
   syncs from anywhere and says how it went. It has no shortcut by default; the Keyboard page can
   give it one.
 
-Only one Termina on a settings folder syncs. A second one started on the same folder says so on its
-Sync page and leaves the repository to the first.
+Only one Termina on a settings folder syncs. A second one started on the same folder, with
+`--new-instance`, says so on its Sync page and leaves the repository to the first.
 
 ## What is synced
 
 - **The shortcuts you have changed**, one line per command. A command on its default has no line,
   and `none` is a command you took off every key.
-- **One list for Macs, another for Windows and Linux**: `keybindings/macos.properties` and
-  `keybindings/windows-linux.properties`. A chord means a different key on each: the defaults are
-  `Cmd` chords on macOS and `Ctrl+Shift` ones elsewhere, and a chord recorded on Linux names the
-  Control key, which on a Mac is a different key. Each computer syncs only its own family's file and
-  leaves the other as it is, so a Mac and a Linux machine can share a repository. Windows and Linux
-  share a file because they use the same modifiers.
-- **Not synced**: everything else in `settings.properties`, including the theme, the font and the
+- **One file for every system**: `keybindings/keybindings.properties`. A shortcut you change on a
+  Mac changes on your Linux and Windows computers, and the other way.
+- **Not synced**: everything else in `settings.json`, including the theme, the font and the
   profiles, which name shells by their path on each computer. Imported themes are not synced
-  either.
+  either, and neither are the last session's tabs.
 
-The files are plain text, in the same notation as the `keys.*` lines of
-[the settings file](/docs/keyboard#in-the-settings-file), and editing one in the repository by hand
-is fine: every connected computer picks the change up on its next sync. Termina also writes a
-`README.md`, a `termina-sync.properties` that records the repository's format, and a
-`.gitattributes`. Each sync that changes something is one commit, "Sync from" and the computer's
-name. A repository written by a newer Termina stops the sync, with a message to update Termina on
-this computer.
+The file is plain text, one `command=chord` line for each changed command, with the command's id
+as in the `keys.*` lines of [the settings file](/docs/keyboard#in-the-settings-file). Editing it
+in the repository by hand is fine: every connected computer picks the change up on its next sync.
+Termina also writes a `README.md`, a `termina-sync.properties` that records the repository's
+format, and a `.gitattributes`. Each sync that changes something is one commit, "Sync from" and
+the computer's name.
+
+### A Mac's Command is Ctrl+Shift in the file
+
+A chord does not mean the same on every system: New Tab is `Cmd+T` on a Mac and `Ctrl+Shift+T`
+elsewhere, because off macOS a plain `Ctrl+T` belongs to the shell. So the file's chords are
+written as Windows and Linux press them, and a Mac translates as it reads and writes:
+
+- **`Cmd+K` on a Mac is `Ctrl+Shift+K` in the file**, and back. `Option` and `Alt` are the same
+  key.
+- **A chord without Command is carried as written**: `F11`, `Alt+1`, or a plain `Ctrl+K` that you
+  chose.
+- **Only what you changed is synced.** The defaults stay each system's own.
+- **A chord that the other system keeps for itself can arrive taken.** `Ctrl+Shift+Q` on Linux
+  becomes `Cmd+Q` on a Mac, which is the system's Quit. Settings → Keyboard shows the conflict.
+
+### Update every computer
+
+Until 0.15 there was one file for Macs and another for Windows and Linux,
+`keybindings/macos.properties` and `keybindings/windows-linux.properties`, and each computer
+synced only its own. The command ids changed in 0.15 too.
+
+- **An older Termina stops syncing** with a repository that 0.15 has written. It says the
+  repository was written by a newer Termina, until it is updated. Update every computer that
+  shares the repository.
+- **The two old files are left in the repository** and no longer read. Each computer's own
+  bindings are in its settings, and its first sync writes them to the new file.
+- **Two computers that had each changed the same command will disagree once.** The one that syncs
+  second wins, as with any other shortcut changed on two computers (below).
 
 ## A shortcut changed on two computers
 
@@ -109,10 +136,10 @@ own. For GitHub over `https://`, `gh auth setup-git` makes the GitHub CLI git's 
   on the Sync page instead of waiting on a prompt nobody can see. A sync you start, by connecting
   or with Sync Now, can use your credential helper's own prompt.
 - **A URL with a password or token in it is refused**, such as `https://me:TOKEN@github.com/…` or
-  `https://ghp_…@github.com/…`. It would sit in plain text in `settings.properties` and in the
+  `https://ghp_…@github.com/…`. It would sit in plain text in `settings.json` and in the
   clone's configuration. Connect offers the URL without it. If one was written into the settings
-  file by hand, the Sync page says that it is not syncing, with **Remove from URL**. An SSH user
-  name, as in `git@github.com:…`, is not a secret and is accepted.
+  file by hand, the Sync page says that it is not syncing, with **Remove from URL**, which asks
+  first. An SSH user name, as in `git@github.com:…`, is not a secret and is accepted.
 
 ### Several GitHub CLI accounts
 
@@ -136,7 +163,7 @@ that repository ignores `sync/`, sync refuses rather than nest it, and says why.
 
 ## Where it is kept
 
-In `settings.properties`, the `sync.*` keys: `sync.repository`, `sync.branch` (`main`),
+In `settings.json`, the `sync.*` keys: `sync.repository`, `sync.branch` (`main`),
 `sync.auto` (`true`) and `sync.intervalMinutes` (15, from 5 to 1440), with `sync.enabled` set by
 Connect and Disconnect. [Reset to Defaults](/docs/settings#reset-to-defaults) leaves them alone,
 so sync stays connected.

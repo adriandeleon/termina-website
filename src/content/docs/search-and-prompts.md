@@ -7,6 +7,8 @@ order: 6.5
 
 ## The find bar
 
+![The find bar at the top right of the terminal with the query "warning", and both matches marked in the text](/screenshots/docs/search.png "Every match is marked as you type; the framed one is where Enter last stopped.")
+
 **Edit → Find…**, `Ctrl+Shift+F` (`Cmd+F`), opens a bar at the top right of the pane. It searches
 the whole scrollback and the screen as you type, highlights every match in the theme's yellow, and
 outlines the current one. In a split tab each pane has a bar of its own, and the chord opens the
@@ -30,7 +32,9 @@ The bar shows where you are, such as `3 of 17`, or `No matches`. The count stops
 - **Case is smart.** A query in lower case matches either case; a capital anywhere makes it exact,
   so `error` finds `Error` and `ERROR`, and `Error` finds only `Error`.
 - **`.*`** in the bar switches to a regular expression. One that does not compile yet, because you
-  are still typing it, says `Invalid` rather than reporting no matches.
+  are still typing it, says `Invalid` rather than reporting no matches. **Toggle Regular
+  Expression** in the palette flips the same switch, opening the bar first if it is closed, and
+  Settings → Keyboard can give it a shortcut.
 - **A word that wrapped at the right edge** is found as one word.
 - **Double-width characters**, such as CJK, match as the text they are.
 - **Matches stay on their text** as output arrives, and are found again after the pane is resized.
@@ -43,7 +47,9 @@ The bar shows where you are, such as `3 of 17`, or `No matches`. The count stops
 | `Ctrl+Shift+H` (`Cmd+Shift+G`) | Find Previous: the next match down, toward the prompt |
 
 They work from anywhere, not only from the bar, and open it when it is closed. Off macOS the pair
-is GNOME Terminal's; on macOS it is the system's, since `Cmd+H` hides the application.
+is GNOME Terminal's; on macOS it is the system's, since `Cmd+H` hides the application. Find
+itself, run while the bar is open, steps to the next match and puts the keyboard back in the
+field.
 
 **Select something first** and Find uses it: a selection on one line, up to 200 characters, becomes
 the query.
