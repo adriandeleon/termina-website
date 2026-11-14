@@ -74,8 +74,10 @@ key bindings are ignored.
 - **Importing a file again replaces** the theme of that name rather than adding a second copy.
 - **Remove** asks first, then deletes the imported theme chosen above it, and the color theme goes
   back to Editora Dark. The built-in themes cannot be removed.
-- **Each is a plain file** in `~/.termina/themes`, named after the theme in lower case with
-  hyphens between the words (`solarized-dark.properties`), that you can read and edit.
+- **Each is a plain JSON file** in `~/.termina/themes`, named after the theme in lower case with
+  hyphens between the words (`solarized-dark.json`), that you can read and edit. Until 0.15 it was
+  `solarized-dark.properties`: the first time 0.15 starts it writes each theme again as JSON and
+  keeps the file it was as `solarized-dark.properties.migrated`.
 
 ## Font and size
 

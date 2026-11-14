@@ -161,7 +161,7 @@ id, because the Default Shell and the discovered profiles have no block of their
 A missing key means Default. The size is clamped to 7 to 40 when read, like the global one. A
 built-in theme's id is `editora-dark`, `editora-light`, `clear-dark`, `clear-light` or
 `high-contrast`, `system` follows the system, and an imported theme's id is `user-` and the name
-of its file in `~/.termina/themes`, without `.properties` (`user-solarized-dark`).
+of its file in `~/.termina/themes`, without `.json` (`user-solarized-dark`).
 
 A Windows path in a command or a directory has its backslashes doubled, as JSON asks:
 `"C:\\Tools\\nu.exe"`.

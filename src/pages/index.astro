@@ -397,10 +397,11 @@ const platforms = [
         the application menu as a terminal emulator.
       </p>
       <p class="note">
-        Installers are currently unsigned. On macOS the first launch is blocked:
-        open <em>System Settings → Privacy &amp; Security</em> and click
-        <em>Open Anyway</em>. On Windows, if SmartScreen appears, choose
-        <em>More info → Run anyway</em>. Each release lists SHA-256 checksums.
+        The macOS downloads are signed and notarized, and each Linux download has
+        an OpenPGP signature beside it. The Windows installer is not signed yet:
+        if SmartScreen appears, choose <em>More info → Run anyway</em>. Each
+        release lists SHA-256 checksums; <a href={href("/docs/installing/")}>Installing</a>
+        has the steps for each system.
       </p>
     </section>
 
