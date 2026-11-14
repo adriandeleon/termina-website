@@ -26,7 +26,7 @@ Terminal's, `--working-directory` and `--title` are GNOME Terminal's spelling.
 ## The options
 
 - **`-h`, `--help`** prints the usage and exits.
-- **`-v`, `-V`, `--version`** prints `Termina 0.15.0` on its first line, then when it was built
+- **`-v`, `-V`, `--version`** prints `Termina 0.15.1` on its first line, then when it was built
   and from which commit, the Pauta edition it follows, and the Java, JavaFX and operating system
   versions, and exits.
 - **`--report`** builds a problem report without opening a window, from the last session's debug

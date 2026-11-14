@@ -115,12 +115,14 @@ The user guide is at `/docs/v-<version>/…`, the address the app of that versio
 Help menu, its Settings pages and its palette (DOCS-03). Bare `/docs` and every unversioned slug
 redirect to the current version (`astro.config.mjs`), so write links as `/docs/links`, in Markdown
 and in templates alike: a rehype plugin puts a Markdown link under the version, and the rest go
-through the redirect. A release changes `src/lib/version.ts` and nothing else.
+through the redirect. A release changes `src/lib/version.ts` and lists the version it replaces in
+`retiredVersions` (below).
 
-Only the current version is served. Before generating the version after this one, either keep
-the old pages (Editora's site archives them under `src/content/docs-archive/<version>/`) or add a
-redirect from each `/docs/v-<old>/…` address to the current one: an installed app of the old
-version still opens those addresses.
+Only the current version is served. An installed app of an older version still opens its own
+`/docs/v-<old>/…` addresses, so when a release moves the guide on, add the version it replaces to
+`retiredVersions` in `astro.config.mjs`: every page of the old guide then forwards to the same
+page of the current one. Keeping the old pages instead (Editora's site archives them under
+`src/content/docs-archive/<version>/`) is for a release whose guide reads differently.
 
 ## Themes
 

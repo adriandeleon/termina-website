@@ -5,13 +5,10 @@
 export type NewsItem = { title: string; detail: string };
 
 export const whatsNew: NewsItem[] = [
-  { title: "Termina 0.15.0", detail: "Out for macOS (Apple Silicon and Intel), Windows (x64) and Linux (x64 and ARM64), each installer with its own Java runtime." },
-  { title: "Three window modes", detail: "In the View menu, the Command Palette and bindable under Settings ▸ Keyboard: - Zen Mode hides the window's menu bar, tab strip and status bar and leaves the terminal alone. - Expert Mode hides the menu bar and the tab strip and keeps the status bar." },
-  { title: "Pickers: a list to type into for a choice from a list", detail: "Four commands, in the Command Palette and bindable under Settings ▸ Keyboard: Select Color Theme, Select Font, Select Cursor Shape and New Tab from Profile. Each opens on the value in force." },
-  { title: "Cancelling a list is a command, Cancel List", detail: "On Ctrl+G by default and bindable under Settings ▸ Keyboard like the four that move a line and a page. The Command Palette, the pickers and the Message Log all close on its chord, and on Escape whatever is bound." },
-  { title: "The Message Log moves on Ctrl+N and Ctrl+P and closes on Ctrl+G", detail: "The keys of the palette and the pickers, or whichever chords you have given those commands." },
-  { title: "A help key in the Command Palette", detail: "Ctrl+H opens the highlighted command's page of the user guide in your browser; the palette stays open. It is F1, or Shift+F1, if you have given Ctrl+H to a command." },
-  { title: "A High Contrast theme", detail: "White on black, a single cyan accent, and every colour of the terminal and of the windows at 7:1 or better on the black. Choose it like any theme." },
+  { title: "Termina 0.15.1", detail: "Out for macOS (Apple Silicon and Intel), Windows (x64) and Linux (x64 and ARM64), each installer with its own Java runtime." },
+  { title: "Built to Pauta 6.1.0", detail: "Still at Core conformance. The edition makes an icon on every menu row optional rather than required; Termina keeps one on every row, so its menus look as they did." },
+  { title: "The find bar's arrows wear the Find Next and Find Previous icons", detail: "The ones their rows in the menus show, instead of arrows of their own. And Find Next's icon now points up: it steps to older output, up the scrollback, where it used to point down." },
+  { title: "On Linux a window opens at the opacity set in Settings ▸ Appearance", detail: "Below 100% it came up opaque, and turned see-through only after a trip through full screen or a change to a setting." },
 ];
 
 export const next: NewsItem[] = [

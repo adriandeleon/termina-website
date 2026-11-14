@@ -6,19 +6,39 @@ import { site, base, href } from "./src/lib/site.ts";
 import rehypeDocFigures from "./src/lib/rehype-doc-figures.mjs";
 import { readdirSync } from "node:fs";
 import { docsBase } from "./src/lib/termina.ts";
+import { commandGroups } from "./src/lib/commands.ts";
 
 // The user guide is served under its version, /docs/v-<version>/… (DOCS-03, Pauta 6.0.1), which
 // is what the app of that version opens. Bare /docs and every unversioned slug redirect to the
 // current version, so a link in a page, in the README or in an older app never carries one and
 // a release changes one generated file (src/lib/version.ts). A static build writes each redirect
 // as a small page that forwards.
+//
+// Only the current version is served. An app of an older version still opens its own addresses,
+// /docs/v-<old>/…, so each released version whose guide is no longer built is listed here and
+// every page of it forwards to the same page of the current guide: the introduction, each
+// page, the commands list and each command. Keeping an old guide whole instead is what
+// Editora's site does (src/content/docs-archive/<version>/), worth it once a guide differs.
+const retiredVersions = ["0.15.0"];
 const docSlugs = readdirSync(new URL("./src/content/docs", import.meta.url))
   .filter((f) => f.endsWith(".md") && f !== "introduction.md")
   .map((f) => f.replace(/\.md$/, ""));
+function retiredRedirects(old) {
+  const from = `/docs/v-${old}`;
+  return [
+    [from, `${docsBase}/`],
+    [`${from}/commands`, `${docsBase}/commands/`],
+    ...docSlugs.map((slug) => [`${from}/${slug}`, `${docsBase}/${slug}/`]),
+    ...commandGroups.flatMap((group) =>
+      group.commands.map((command) => [`${from}/commands/${command.id}`, `${docsBase}/commands/${command.id}/`]),
+    ),
+  ];
+}
 const docRedirects = Object.fromEntries([
   ["/docs", `${docsBase}/`],
   ["/docs/commands", `${docsBase}/commands/`],
   ...docSlugs.map((slug) => [`/docs/${slug}`, `${docsBase}/${slug}/`]),
+  ...retiredVersions.flatMap(retiredRedirects),
 ]);
 
 // Markdown is written with plain "/docs/links"; this puts such a link under the version, so the
@@ -57,10 +77,6 @@ function rehypeBaseLinks() {
   };
 }
 
-// Only the current version is served. Before the version after 0.15.0 is generated, either keep
-// the old pages (Editora's site archives them under src/content/docs-archive/<version>/ and serves
-// both) or add a redirect from each /docs/v-<old>/… to the current one here: an app of the old
-// version still opens those addresses.
 export default defineConfig({
   site,
   base,
