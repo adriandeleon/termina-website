@@ -111,6 +111,18 @@ Editora is a text editor by the same author, and Termina takes several things fr
 Settings are separate. A file path in the terminal can open in Editora with **Open files with**
 set to `editora {file}:{line}`; see [Links](/docs/links).
 
+## What is Pauta?
+
+[Pauta](https://pauta-project.dev/) is a set of guidelines for desktop apps that look and work the
+same on Windows, macOS and Linux: the menus and their order, the keys, dialogs, settings,
+accessibility, documentation and releases. Termina, Editora and their sibling apps are all built
+to it. Each rule has an ID and a level, MUST or SHOULD, and each edition has a number.
+
+Termina meets every MUST of the edition it is built to, which Pauta calls **Core** conformance.
+[Pauta conformance](/docs/pauta) names the edition and lists the rules Termina does not meet yet,
+each with its reason; **Help → Pauta Conformance** shows the same list, and **About** names the
+edition.
+
 ## Where are my settings?
 
 In the folder `~/.termina` on every platform, unless moved with `--config-dir` or

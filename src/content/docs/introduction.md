@@ -125,3 +125,7 @@ Help:
 - [Troubleshooting](/docs/troubleshooting): the Doctor and the Message Log, titles, icons, full
   screen, the Windows installer's warning, and the debug log.
 - [FAQ](/docs/faq).
+- [What's new](/docs/whats-new): every release's changes, newest first.
+- [Pauta conformance](/docs/pauta): the edition of [Pauta](https://pauta-project.dev/), the
+  guidelines Termina and its sibling apps follow, that Termina is built to, and every rule it does
+  not meet yet. **Help → Pauta Conformance** shows the same list in the app.
