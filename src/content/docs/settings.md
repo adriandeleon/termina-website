@@ -63,7 +63,10 @@ tabs** on the next tab.
   [Tabs and windows](/docs/tabs-and-windows#the-last-session-comes-back)), **Scrollback lines**
   (5,000 by default, 0 to 200,000, held in memory), and **Shell** (empty uses `$SHELL`, started as
   a login shell). The shell field says "Not found" or "Not executable" as you type, and a path that
-  fails is not saved: the setting keeps the last one that passed.
+  fails is not saved: the setting keeps the last one that passed. **When Termina is opened
+  again** (a new window by default, a new tab in the last window, or a separate Termina) decides
+  where a launch goes while Termina is running; see
+  [Command line](/docs/command-line#one-termina-per-settings-folder).
 - **Links**: **Open files with**, a command for opening a clicked file path, such as
   `editora {file}:{line}`. Empty uses the desktop's own opener. See [Links](/docs/links).
 - **Input**: **Use Alt as Meta** (on by default; see
@@ -226,6 +229,7 @@ The keys most worth knowing, all in `settings.json`:
 | `ui.zoom` | 80 to 200, the interface zoom in percent | `100` |
 | `ui.confirmClose` | `true`, `false` | `true` |
 | `session.restore` | `true`, `false` | `true` |
+| `instance.otherLaunches` | `WINDOW`, `TAB`, `OWN_PROCESS`: what opening Termina again opens | `WINDOW` |
 | `window.opacity` | 0.6 to 1.0 | `1.0` |
 | `ui.language` | `en`, `it`, `es`, `fr`, `pt`, `de`; empty follows the system | empty |
 | `links.openCommand` | A command with `{file}`, `{line}`, `{column}`; empty uses the desktop | empty |

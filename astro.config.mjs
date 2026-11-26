@@ -19,7 +19,7 @@ import { commandGroups } from "./src/lib/commands.ts";
 // every page of it forwards to the same page of the current guide: the introduction, each
 // page, the commands list and each command. Keeping an old guide whole instead is what
 // Editora's site does (src/content/docs-archive/<version>/), worth it once a guide differs.
-const retiredVersions = ["0.15.0"];
+const retiredVersions = ["0.15.0", "0.15.1"];
 const docSlugs = readdirSync(new URL("./src/content/docs", import.meta.url))
   .filter((f) => f.endsWith(".md") && f !== "introduction.md")
   .map((f) => f.replace(/\.md$/, ""));
