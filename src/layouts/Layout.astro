@@ -40,7 +40,6 @@ const nav = [
   { href: url("docs"), label: "Docs" },
   { href: url("keybindings"), label: "Keybindings" },
   { href: url("news"), label: "News" },
-  { href: url("blog"), label: "Blog" },
   { href: repo, label: "GitHub", external: true },
 ];
 
@@ -60,7 +59,6 @@ const footerCols = [
     title: "Project",
     links: [
       { href: url("news"), label: "News" },
-      { href: url("blog"), label: "Blog" },
       { href: `${repo}/blob/master/CHANGELOG.md`, label: "Changelog" },
       { href: "https://editora-project.dev", label: "Editora" },
     ],
@@ -119,12 +117,6 @@ const isActive = (href: string) => {
     <meta name="twitter:image" content={ogImageUrl} />
     <link rel="icon" type="image/png" href={url("favicon.png")} />
     <link rel="apple-touch-icon" href={url("apple-touch-icon.png")} />
-    <link
-      rel="alternate"
-      type="application/rss+xml"
-      title="Termina Blog"
-      href={url("blog/rss.xml")}
-    />
     <link
       rel="alternate"
       type="application/rss+xml"
@@ -596,7 +588,7 @@ const isActive = (href: string) => {
     font-size: 0.8rem;
   }
 
-  /* "Beta" pill — used on feature cards and beta news/blog entries. */
+  /* "Beta" pill — used on feature cards and beta news entries. */
   .beta-pill {
     display: inline-block;
     margin-left: 0.5rem;

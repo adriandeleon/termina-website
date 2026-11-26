@@ -32,8 +32,8 @@ const featureShot = (id: string) => {
 // The window screenshot, from the app's capture harness (README); a PNG with a WebP beside it.
 const heroShot = existsSync(resolve("public", "screenshots/hero/terminal.png"));
 
-// Latest entries for the home-page teaser, News and Blog interleaved by date. Same-day items
-// tie-break on version (newest release first), then on the link.
+// Latest news for the home-page teaser, newest first. Same-day items tie-break on version
+// (newest release first), then on the link.
 const newsItems = (await getCollection("news")).map((e) => ({
   kind: "News",
   href: href(`/news/${e.id}`),
@@ -43,16 +43,7 @@ const newsItems = (await getCollection("news")).map((e) => ({
   version: e.data.version,
   beta: e.data.beta,
 }));
-const blogItems = (await getCollection("blog")).map((e) => ({
-  kind: "Blog",
-  href: href(`/blog/${e.id}`),
-  title: e.data.title,
-  description: e.data.description,
-  date: e.data.date,
-  version: undefined as string | undefined,
-  beta: e.data.beta,
-}));
-const latest = [...newsItems, ...blogItems]
+const latest = [...newsItems]
   .sort(
     (a, b) =>
       b.date.valueOf() - a.date.valueOf() ||
@@ -231,9 +222,9 @@ const platforms = [
       latest.length > 0 && (
         <section id="latest" class="section">
           <div class="latest-head">
-            <h2>From the blog &amp; news</h2>
+            <h2>News</h2>
             <span class="latest-links">
-              <a href={href("/news")}>All news</a> · <a href={href("/blog")}>All posts</a>
+              <a href={href("/news")}>All news</a>
             </span>
           </div>
           <div class="latest-grid">
@@ -791,7 +782,7 @@ const platforms = [
     color: var(--muted);
   }
 
-  /* Latest blog & news teaser */
+  /* Latest news teaser */
   .latest-head {
     display: flex;
     align-items: baseline;
@@ -845,10 +836,6 @@ const platforms = [
   .latest-kind.kind-news {
     color: var(--accent);
     border-color: color-mix(in srgb, var(--accent) 40%, transparent);
-  }
-  .latest-kind.kind-blog {
-    color: var(--warn);
-    border-color: color-mix(in srgb, var(--warn) 40%, transparent);
   }
   .latest-title {
     font-weight: 600;
