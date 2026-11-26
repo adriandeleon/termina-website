@@ -17,8 +17,8 @@ download carries its own Java runtime, so you need nothing else.
 | --- | --- |
 | macOS, Apple Silicon | `brew install --cask adriandeleon/tap/termina`, or the `macos-arm64` `.dmg` |
 | macOS, Intel | The `macos-x64` `.dmg`: open it and drag Termina to Applications |
-| Windows | `winget install AdrianDeLeon.Termina`, or run the `.msi` |
-| Debian, Ubuntu | `sudo apt install ./Termina-*.deb` |
+| Windows | Run the `.msi` |
+| Debian, Ubuntu | `sudo apt install termina` from the [Vitrina repository](/docs/installing#linux), or `sudo apt install ./Termina-*.deb` |
 | Fedora, RHEL, openSUSE | `sudo dnf install ./Termina-*.rpm` |
 | Any other Linux | The `AppImage`, or the `tar.gz` if you have no root |
 

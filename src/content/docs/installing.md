@@ -16,7 +16,7 @@ system it is for. Each one carries its own Java runtime, so there is nothing els
 | macOS, Apple Silicon | `Termina-<version>-macos-arm64.dmg` | Open it and drag Termina to Applications |
 | macOS, Intel | `Termina-<version>-macos-x64.dmg` | Open it and drag Termina to Applications |
 | Windows | `Termina-<version>-windows-x64.msi` | Run it |
-| Debian, Ubuntu | `…-linux-x64.deb`, `…-linux-arm64.deb` | `sudo apt install ./Termina-*.deb` |
+| Debian, Ubuntu | `…-linux-x64.deb`, `…-linux-arm64.deb` | `sudo apt install ./Termina-*.deb`, or `sudo apt install termina` from [Vitrina](#linux) |
 | Fedora, RHEL, openSUSE | `…-linux-x64.rpm`, `…-linux-arm64.rpm` | `sudo dnf install ./Termina-*.rpm` |
 | Any Linux | `…-linux-x64.AppImage`, `…-linux-arm64.AppImage` | `chmod +x` it and run it (needs FUSE) |
 | Any Linux, without root | `…-linux-x64.tar.gz`, `…-linux-arm64.tar.gz` | Unpack it and run `termina-<version>/bin/Termina` |
@@ -37,18 +37,43 @@ other app.
 
 ### Windows
 
-```powershell
-winget install AdrianDeLeon.Termina
-```
-
-Or download the `.msi` and run it. The installer is not signed yet, so SmartScreen may warn the
+Download the `.msi` and run it. The installer is not signed yet, so SmartScreen may warn the
 first time: choose **More info → Run anyway**.
 
 The installer puts two programs in Termina's folder. `Termina.exe` is the one the Start menu opens.
 `termina-cli.exe` is the same program for use from a terminal, where `--help`, `--version` and
 `--report` need a console to print in. See [Command line](/docs/command-line).
 
+Termina's winget package, `AdrianDeLeon.Termina`, has been submitted and is waiting for
+Microsoft's review. Until it is accepted, `winget install AdrianDeLeon.Termina` does not find it.
+
 ### Linux
+
+On Debian, Ubuntu and their derivatives, Termina is in the
+[Vitrina](https://vitrina-project.dev) apt repository, for x64 and arm64, signed with the same key
+as the downloads. Add the repository once:
+
+```bash
+sudo install -d -m 0755 /etc/apt/keyrings
+curl -fsSL https://vitrina-project.dev/vitrina.asc | sudo tee /etc/apt/keyrings/vitrina.asc > /dev/null
+sudo tee /etc/apt/sources.list.d/vitrina.sources > /dev/null <<'EOF'
+Types: deb
+URIs: https://vitrina-project.dev/apt
+Suites: stable
+Components: main
+Architectures: amd64 arm64
+Signed-By: /etc/apt/keyrings/vitrina.asc
+EOF
+sudo apt update
+```
+
+Then install Termina; `sudo apt upgrade` keeps it up to date:
+
+```bash
+sudo apt install termina
+```
+
+Or install a download directly:
 
 ```bash
 # Debian, Ubuntu
@@ -118,7 +143,8 @@ entry.
 
 Termina checks for a newer release once a day and says so in the status bar; **Help → Check for
 Updates** checks now. It never downloads or installs anything by itself. To update, install the
-newer download over the old one, or use `brew upgrade` or `winget upgrade`.
+newer download over the old one, or use `brew upgrade`, or `sudo apt upgrade` with the Vitrina
+repository.
 
 To remove it, use the system's own way: drag the app to the Trash on macOS, **Apps → Installed
 apps** on Windows, `sudo apt remove termina` or `sudo dnf remove termina` on Linux. Your settings

@@ -26,7 +26,7 @@ Terminal's, `--working-directory` and `--title` are GNOME Terminal's spelling.
 ## The options
 
 - **`-h`, `--help`** prints the usage and exits.
-- **`-v`, `-V`, `--version`** prints `Termina 0.15.1` on its first line, then when it was built
+- **`-v`, `-V`, `--version`** prints `Termina 0.17.0` on its first line, then when it was built
   and from which commit, the Pauta edition it follows, and the Java, JavaFX and operating system
   versions, and exits.
 - **`--report`** builds a problem report without opening a window, from the last session's debug
@@ -76,7 +76,13 @@ configured in Settings.
 
 Only one Termina runs on a settings folder. Launching it again opens a new window in the Termina
 that is already running, with that launch's `-d`, `-e` and `-T`, in the directory it was launched
-from. The second process exits as soon as the first has the request.
+from. The second process exits as soon as the first has the request. Two launches in quick
+succession, such as a double click, still make one Termina: the second waits up to five seconds for
+the first to be ready.
+
+**Settings → Terminal → When Termina is opened again** chooses what such a launch opens: a **New
+window** (the default), a **New tab in the last window**, which brings that window back up if it
+was minimised, or a **Separate Termina**. The choice applies from the next launch, with no restart.
 
 `--new-instance` starts a separate Termina. So does a launch on another settings folder, with
 `--config-dir`, `--dev` or `TERMINA_CONFIG_DIR`.

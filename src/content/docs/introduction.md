@@ -1,6 +1,6 @@
 ---
 title: Introduction
-description: What Termina is, the three layers it is built from, what version 0.15.1 can do, and how the documentation is organized.
+description: What Termina is, the three layers it is built from, what version 0.17.0 can do, and how the documentation is organized.
 category: Getting started
 order: 1
 ---
@@ -13,7 +13,7 @@ It is free and open source under the MIT License.
 It runs on macOS (Apple Silicon and Intel), Windows (x64) and Linux (x64 and arm64). The
 installers bundle their own Java runtime, so there is nothing else to install.
 
-This guide describes Version 0.15.1. Downloads are on the
+This guide describes Version 0.17.0. Downloads are on the
 [releases page](https://github.com/adriandeleon/Termina/releases), and
 [Installing](/docs/installing) says how to install each one.
 
@@ -39,7 +39,7 @@ A terminal does three jobs, and Termina writes only one of them.
 
 Programs running inside see `TERM=xterm-256color` and `COLORTERM=truecolor`.
 
-## What is in 0.15.1
+## What is in 0.17.0
 
 - **Tabs, panes and windows.** A tab is named after the program running in it, or the directory it
   is in. You can rename it with a double-click, drag it to reorder, reopen it after closing, and
@@ -48,7 +48,8 @@ Programs running inside see `TERM=xterm-256color` and `COLORTERM=truecolor`.
   mark on a background tab says that something happened in it. Closing a tab that is still running
   something asks first.
 - **The last session comes back.** The tabs and panes open when Termina ends reopen at the next
-  launch, each as a new shell in the folder it was in.
+  launch, each as a new shell in the folder it was in. Opening Termina again while it runs opens a
+  new window, a tab in the window used last, or a separate Termina, as Settings chooses.
 - **Search and shell integration.** A find bar searches the scrollback as you type. A shell that
   marks its prompts lets you jump between them and select the last command's output.
 - **Shell profiles.** Termina finds the shells a machine has. On macOS and Linux that means the
@@ -78,12 +79,12 @@ Programs running inside see `TERM=xterm-256color` and `COLORTERM=truecolor`.
   Termina relies on. **Help → Report a Problem** builds a bug report for you to read and send.
 - **Safer pastes.** A paste that contains a line break asks first, and control characters are
   stripped before the text is sent.
-- **Native installers** for every platform, with Homebrew and winget packages and an AppImage and
-  a tarball for Linux, and a command line (`-e`, `-d`, `-T`, `--config-dir`). The macOS app is
+- **Native installers** for every platform, with a Homebrew cask, an apt repository for Debian
+  and Ubuntu, and an AppImage and a tarball for Linux, and a command line (`-e`, `-d`, `-T`, `--config-dir`). The macOS app is
   signed and notarized, and the Linux downloads are OpenPGP-signed. The Linux packages put
   `termina` on the path and offer it as an `x-terminal-emulator`.
 
-Not in 0.15.1: key sequences of more than one chord, images in the terminal, and ligatures.
+Not in 0.17.0: key sequences of more than one chord, images in the terminal, and ligatures.
 
 ## Start here
 

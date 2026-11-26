@@ -34,7 +34,8 @@ bundle their own Java runtime, so you do not need Java installed. They are on th
 [releases page](https://github.com/adriandeleon/Termina/releases): a `.dmg` for each Mac, an `.msi`
 for Windows, and a `.deb`, an `.rpm`, an `AppImage` and a `tar.gz` for each Linux architecture.
 There is a Homebrew cask for Apple Silicon Macs (`brew install --cask adriandeleon/tap/termina`)
-and a winget package (`winget install AdrianDeLeon.Termina`). See
+and an apt repository for Debian and Ubuntu, [Vitrina](https://vitrina-project.dev); a winget
+package is waiting for Microsoft's review. See
 [Installing](/docs/installing).
 
 ## Are the downloads signed?
