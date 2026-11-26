@@ -207,6 +207,20 @@ const platforms = [
             applies the moment you make it.
           </p>
         </div>
+        <div class="pillar">
+          <svg class="pillar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M9 6h11M9 12h11M9 18h11" />
+            <path d="m3 6 1.5 1.5L7 5M3 12l1.5 1.5L7 11M3 18l1.5 1.5L7 17" />
+          </svg>
+          <h3>Built to Pauta</h3>
+          <p>
+            <a href="https://pauta-project.dev/">Pauta</a> is the set of guidelines
+            Termina shares with Editora and its other sibling apps: the same menus,
+            keys, dialogs and accessibility on every desktop. Termina meets every
+            MUST rule, and <a href={href("/docs/pauta")}>Pauta conformance</a> lists
+            what it does not meet yet, and why.
+          </p>
+        </div>
       </div>
 
       <h3 class="why-sub">Three layers, two of them not ours</h3>
@@ -1259,11 +1273,17 @@ const platforms = [
   }
 
   /* --- Why: pillars --- */
+  /* Four pillars: two by two, never three and one; one column on a phone. */
   .pillars {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-    gap: 1.5rem;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.5rem 2rem;
     margin-top: 2rem;
+  }
+  @media (max-width: 640px) {
+    .pillars {
+      grid-template-columns: 1fr;
+    }
   }
   .pillar-icon {
     width: 30px;
