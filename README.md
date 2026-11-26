@@ -40,7 +40,6 @@ npm run preview   # serve the build (site search only works here, after a build)
 Most content is Markdown under `src/content/`:
 
 - `docs/` — documentation pages (sidebar grouped by `category` + `order`; `introduction` is `/docs`)
-- `blog/` — blog posts
 - `news/` — release-style announcements
 - `features/` — one page per feature (also drives the home-page grid; `summary` is HTML)
 

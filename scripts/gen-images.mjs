@@ -47,7 +47,6 @@ const cards = [
   { slug: "features", kicker: "Features", title: "Tabs, profiles, links and a palette" },
   { slug: "docs", kicker: "Documentation", title: "Termina documentation" },
   { slug: "keybindings", kicker: "Reference", title: "Every command and its key" },
-  { slug: "blog", kicker: "Blog", title: "Notes from building Termina" },
   { slug: "news", kicker: "News", title: "What's new in Termina" },
 ];
 
