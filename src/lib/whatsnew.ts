@@ -5,10 +5,10 @@
 export type NewsItem = { title: string; detail: string };
 
 export const whatsNew: NewsItem[] = [
-  { title: "Termina 0.15.1", detail: "Out for macOS (Apple Silicon and Intel), Windows (x64) and Linux (x64 and ARM64), each installer with its own Java runtime." },
-  { title: "Built to Pauta 6.1.0", detail: "Still at Core conformance. The edition makes an icon on every menu row optional rather than required; Termina keeps one on every row, so its menus look as they did." },
-  { title: "The find bar's arrows wear the Find Next and Find Previous icons", detail: "The ones their rows in the menus show, instead of arrows of their own. And Find Next's icon now points up: it steps to older output, up the scrollback, where it used to point down." },
-  { title: "On Linux a window opens at the opacity set in Settings ▸ Appearance", detail: "Below 100% it came up opaque, and turned see-through only after a trip through full screen or a change to a setting." },
+  { title: "Termina 0.17.0", detail: "Out for macOS (Apple Silicon and Intel), Windows (x64) and Linux (x64 and ARM64), each installer with its own Java runtime." },
+  { title: "Built to Pauta 6.2.0", detail: "Still at Core conformance. The edition makes a status bar optional and the echo area, the one line that says how the last action went, a rule of its own; Termina's echo area is the status bar's left side, as before, so nothing you see changes." },
+  { title: "Termina's other windows open centred on the window you opened them from", detail: "Settings, About, Doctor, Report a Problem, Pauta Conformance, Keyboard Shortcuts and the Debug Log used to open near that window's top-left corner. A window too big to fit is still kept on that window's screen, and one that the interface zoom makes bigger is kept on it and no bigger than it." },
+  { title: "One click on a menu row runs it", detail: "A click on a row's edge, or on the space between its title and its shortcut, highlighted the row and did nothing, so a command often took two clicks." },
 ];
 
 export const next: NewsItem[] = [
